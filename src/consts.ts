@@ -5,6 +5,16 @@ export class Consts {
     public static maxNumberRepairer = 1;
     public static maxNumberCarrier = 4;
 
+    public static roleBuilder = 'builder';
+    public static roleCarrier = 'carrier';
+    public static roleHarvester = 'harvester';
+    public static roleHarvesterStandStill = 'harvesterStandStill';
+    public static roleRepairer = 'repairer';
+    public static roleUpgrader = 'upgrader';
+    public static rolefighterHealer = 'harvester';
+    public static roleFighterMelee = 'meleeFighter';
+    public static roleFighterRanged = 'rangedFighter';
+
     public static bodyLevel1 = [WORK, CARRY, MOVE, MOVE];
     public static bodyLevel2 = [WORK, WORK, CARRY, CARRY, MOVE, MOVE];
     public static bodyLevel3 = [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
