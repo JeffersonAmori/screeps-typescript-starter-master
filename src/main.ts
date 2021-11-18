@@ -69,59 +69,86 @@ export const loop = ErrorMapper.wrapLoop(() => {
     //     if(Game.creeps.Diplo.reserveController(Game.creeps.Diplo.room.controller) == ERR_NOT_IN_RANGE)
     //         Game.creeps.Diplo.moveTo(Game.creeps.Diplo.room.controller);
 
+    CreepsAct();
+
     for (let s in Game.spawns) {
         const spawn: StructureSpawn = Game.spawns[s];
-        var hostiles = spawn.room.find(FIND_HOSTILE_CREEPS);
-        if (hostiles.length > 0) {
-            Defcon.run(spawn);
-        }
 
-        let creepFactory: CreepFactory = new CreepFactory(spawn);
-        for (var name in Game.creeps) {
-            var creep = Game.creeps[name];
-            switch (creep.memory.role) {
-                case Consts.roleHarvester: {
-                    RoleHarvester.run(creep);
-                    break;
-                }
-                case Consts.roleHarvesterStandStill: {
-                    RoleHarvesterStandStill.run(creep);
-                    break;
-                }
-                case Consts.roleCarrier: {
-                    RoleCarrier.run(creep);
-                    break;
-                }
-                case Consts.roleUpgrader: {
-                    RoleUpgrader.run(creep);
-                    break;
-                }
-                case Consts.roleBuilder: {
-                    RoleBuilder.run(creep);
-                    break;
-                }
-                case Consts.roleRepairer: {
-                    RoleRepairer.run(creep);
-                    break;
-                }
-                case Consts.roleFighterMelee: {
-                    FighterMelee.run(creep);
-                    break;
-                }
-                case Consts.roleFighterRanged: {
-                    FighterRanged.run(creep);
-                    break;
-                }
-                case Consts.rolefighterHealer: {
-                    FighterHealer.run(creep);
-                    break;
-                }
-                default: {
-                    break;
-                }
+        checkForHostiles(spawn);
+        CreateCreeps(spawn);
+    }
+
+    // structureSpawn.tryCreateCreep('harvester',  Consts.maxNumberHarvester);
+    //MyStructureSpawn.tryCreateCreep('upgrader', Consts.maxNumberUpgrader);
+    // if (Game.spawns.Spawn1.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+    //     MyStructureSpawn.tryCreateCreep(Consts.roleBuilder, Consts.maxNumberBuilder);
+    // }
+    // MyStructureSpawn.tryCreateCreep(Consts.roleRepairer, Consts.maxNumberRepairer);
+});
+
+function checkForHostiles(spawn: StructureSpawn) {
+    var hostiles = spawn.room.find(FIND_HOSTILE_CREEPS);
+    if (hostiles.length > 0) {
+        Defcon.run(spawn);
+    }
+}
+
+function CreepsAct() {
+    for (var name in Game.creeps) {
+        var creep = Game.creeps[name];
+        switch (creep.memory.role) {
+            case Consts.roleHarvester: {
+                RoleHarvester.run(creep);
+                break;
+            }
+            case Consts.roleHarvesterStandStill: {
+                RoleHarvesterStandStill.run(creep);
+                break;
+            }
+            case Consts.roleCarrier: {
+                RoleCarrier.run(creep);
+                break;
+            }
+            case Consts.roleUpgrader: {
+                RoleUpgrader.run(creep);
+                break;
+            }
+            case Consts.roleBuilder: {
+                RoleBuilder.run(creep);
+                break;
+            }
+            case Consts.roleRepairer: {
+                RoleRepairer.run(creep);
+                break;
+            }
+            case Consts.roleFighterMelee: {
+                FighterMelee.run(creep);
+                break;
+            }
+            case Consts.roleFighterRanged: {
+                FighterRanged.run(creep);
+                break;
+            }
+            case Consts.rolefighterHealer: {
+                FighterHealer.run(creep);
+                break;
+            }
+            default: {
+                break;
             }
         }
+    }
+}
 
+function CreateCreeps(spawn: StructureSpawn) {
+    let creepFactory: CreepFactory = new CreepFactory(spawn);
+    let container = spawn.room.find(FIND_STRUCTURES, {
+        filter: (structure) => {
+            return (structure.structureType == STRUCTURE_CONTAINER);
+        }
+    });
+
+    if (container) {
         const topHarvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvesterStandStill && c.memory.myContainerId == Consts.topContainerId);
         if (topHarvesters.length == 0) {
             spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleHarvesterStandStill), Consts.roleHarvesterStandStill + '-' + Math.random().toString(36).substr(2, 5),
@@ -145,32 +172,31 @@ export const loop = ErrorMapper.wrapLoop(() => {
             spawn.spawnCreep(Consts.carrierBody, Consts.roleCarrier + '-' + Math.random().toString(36).substr(2, 5),
                 { memory: { role: Consts.roleCarrier, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId } });
         }
-
-        const upgraders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleUpgrader);
-        if (upgraders.length < Consts.maxNumberUpgrader) {
-            spawn.spawnCreep(Consts.upgraderBody, Consts.roleUpgrader + '-' + Math.random().toString(36).substr(2, 5),
-                { memory: { role: Consts.roleUpgrader, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
-        }
-
-        const repairer = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleRepairer);
-        if (repairer.length < Consts.maxNumberRepairer) {
-            spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleRepairer), Consts.roleRepairer + '-' + Math.random().toString(36).substr(2, 5),
-                { memory: { role: Consts.roleRepairer, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
-        }
-
-        if(spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-            const builders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleBuilder);
-            if (builders.length < Consts.maxNumberBuilder) {
-                spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleBuilder), Consts.roleBuilder + '-' + Math.random().toString(36).substr(2, 5),
-                    { memory: { role: Consts.roleBuilder, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
-            }
+    } else {
+        const harvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvester && c.memory.myContainerId == Consts.topContainerId);
+        if (harvesters.length == 0) {
+            spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleHarvester), Consts.roleHarvester + '-' + Math.random().toString(36).substr(2, 5),
+                { memory: { role: Consts.roleHarvester, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId } });
         }
     }
 
-    // structureSpawn.tryCreateCreep('harvester',  Consts.maxNumberHarvester);
-    //MyStructureSpawn.tryCreateCreep('upgrader', Consts.maxNumberUpgrader);
-    // if (Game.spawns.Spawn1.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-    //     MyStructureSpawn.tryCreateCreep(Consts.roleBuilder, Consts.maxNumberBuilder);
-    // }
-    // MyStructureSpawn.tryCreateCreep(Consts.roleRepairer, Consts.maxNumberRepairer);
-});
+    const upgraders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleUpgrader);
+    if (upgraders.length < Consts.maxNumberUpgrader) {
+        spawn.spawnCreep(Consts.upgraderBody, Consts.roleUpgrader + '-' + Math.random().toString(36).substr(2, 5),
+            { memory: { role: Consts.roleUpgrader, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+    }
+
+    const repairer = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleRepairer);
+    if (repairer.length < Consts.maxNumberRepairer) {
+        spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleRepairer), Consts.roleRepairer + '-' + Math.random().toString(36).substr(2, 5),
+            { memory: { role: Consts.roleRepairer, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+    }
+
+    if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+        const builders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleBuilder);
+        if (builders.length < Consts.maxNumberBuilder) {
+            spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleBuilder), Consts.roleBuilder + '-' + Math.random().toString(36).substr(2, 5),
+                { memory: { role: Consts.roleBuilder, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+        }
+    }
+}

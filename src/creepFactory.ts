@@ -17,7 +17,7 @@ export class BodyPartRequest {
     }
 }
 
-export class BodyPartsReference{
+export class BodyPartsReference {
 
     private _role: string;
     private _body: BodyPartRequest[];
@@ -36,7 +36,7 @@ export class BodyPartsReference{
 }
 
 export class CreepFactory {
-    public static BodyPartsReferenceByRole : BodyPartsReference[] = [
+    public static BodyPartsReferenceByRole: BodyPartsReference[] = [
         new BodyPartsReference(Consts.roleHarvester, [
             new BodyPartRequest(WORK, 10),
             new BodyPartRequest(CARRY, 8),
@@ -79,7 +79,7 @@ export class CreepFactory {
             new BodyPartRequest(TOUGH, 20),
             new BodyPartRequest(HEAL, 10),
             new BodyPartRequest(MOVE, 6)])
-        ];
+    ];
 
 
     private _spawn: StructureSpawn;
@@ -97,14 +97,16 @@ export class CreepFactory {
             isBuilding = false;
 
             for (let part in desirableBody) {
-                if (_.filter(bodyParts, bp => bp == desirableBody[part].bodyPart).length < desirableBody[part].bodyPartCount) {
-                    bodyParts.push(desirableBody[part].bodyPart);
-                    energyAvailable -= BODYPART_COST[desirableBody[part].bodyPart];
+                let db = desirableBody[part];
+                let bodyPartCost = BODYPART_COST[db.bodyPart]
+                if (_.filter(bodyParts, bp => bp == db.bodyPart).length < db.bodyPartCount && energyAvailable >= bodyPartCost) {
+                    bodyParts.push(db.bodyPart);
+                    energyAvailable -= bodyPartCost;
                     isBuilding = true;
                 }
             }
 
-            if (!isBuilding) {
+            if (!isBuilding || energyAvailable === 0) {
                 break;
             }
         }
@@ -113,8 +115,8 @@ export class CreepFactory {
     }
 
     public GetBodyPartsByRole(role: string): BodyPartConstant[] {
-        let bodyPartsReference : BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, x => x.role == role);
-        if(!bodyPartsReference)
+        let bodyPartsReference: BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, x => x.role == role);
+        if (!bodyPartsReference)
             throw new RangeError('CreepFactory - Role not found');
 
         let bodyParts: BodyPartConstant[] = this.GetBodyPartsInternal(bodyPartsReference.body);
