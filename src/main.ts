@@ -1,4 +1,5 @@
 import { Consts } from "consts";
+import { CreepFactory } from "creepFactory";
 import { Defcon } from "military/defcon";
 import { getMaxListeners } from "process";
 import { RoleBuilder } from "roles/builder";
@@ -75,6 +76,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
             Defcon.run(spawn);
         }
 
+        let creepFactory : CreepFactory = new CreepFactory(spawn);
         for (var name in Game.creeps) {
             var creep = Game.creeps[name];
             switch (creep.memory.role) {
@@ -122,13 +124,13 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
         const topHarvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == 'harvesterStandStill' && c.memory.myContainerId == Consts.topContainerId);
         if (topHarvesters.length == 0) {
-            spawn.spawnCreep(Consts.harvesterStandStillBody, 'harvesterStandStill' + '-' + Math.random().toString(36).substr(2, 5),
+            spawn.spawnCreep(creepFactory.GetHarvesterBodyParts(), 'harvesterStandStill' + '-' + Math.random().toString(36).substr(2, 5),
                 { memory: { role: 'harvesterStandStill', working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId } });
         }
 
         const bottomHarvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == 'harvesterStandStill' && c.memory.myContainerId == Consts.bottomContainerId);
         if (bottomHarvesters.length == 0) {
-            spawn.spawnCreep(Consts.harvesterStandStillBody, 'harvesterStandStill' + '-' + Math.random().toString(36).substr(2, 5),
+            spawn.spawnCreep(creepFactory.GetHarvesterBodyParts(), 'harvesterStandStill' + '-' + Math.random().toString(36).substr(2, 5),
                 { memory: { role: 'harvesterStandStill', working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.bottomContainerId } });
         }
 
