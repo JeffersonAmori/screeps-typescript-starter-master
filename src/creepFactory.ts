@@ -1,3 +1,5 @@
+import { Consts } from "consts";
+
 export class BodyPartRequest {
     private _bodyPart: BodyPartConstant;
     private _bodyPartCount: number;
@@ -13,10 +15,73 @@ export class BodyPartRequest {
         this._bodyPart = bodyPart;
         this._bodyPartCount = bodyPartCount;
     }
+}
 
+export class BodyPartsReference{
+
+    private _role: string;
+    private _body: BodyPartRequest[];
+
+    public get role(): string {
+        return this._role;
+    }
+    public get body(): BodyPartRequest[] {
+        return this._body;
+    }
+
+    constructor(role: string, bodyPartCount: BodyPartRequest[]) {
+        this._role = role;
+        this._body = bodyPartCount;
+    }
 }
 
 export class CreepFactory {
+    public static BodyPartsReferenceByRole : BodyPartsReference[] = [
+        new BodyPartsReference(Consts.roleHarvester, [
+            new BodyPartRequest(WORK, 10),
+            new BodyPartRequest(CARRY, 8),
+            new BodyPartRequest(MOVE, 4)]),
+
+        new BodyPartsReference(Consts.roleHarvesterStandStill, [
+            new BodyPartRequest(WORK, 5),
+            new BodyPartRequest(MOVE, 3)]),
+
+        new BodyPartsReference(Consts.roleCarrier, [
+            new BodyPartRequest(CARRY, 12),
+            new BodyPartRequest(MOVE, 10)]),
+
+        new BodyPartsReference(Consts.roleUpgrader, [
+            new BodyPartRequest(WORK, 12),
+            new BodyPartRequest(CARRY, 8),
+            new BodyPartRequest(MOVE, 2)]),
+
+        new BodyPartsReference(Consts.roleRepairer, [
+            new BodyPartRequest(WORK, 4),
+            new BodyPartRequest(CARRY, 10),
+            new BodyPartRequest(MOVE, 4)]),
+
+        new BodyPartsReference(Consts.roleBuilder, [
+            new BodyPartRequest(WORK, 10),
+            new BodyPartRequest(CARRY, 8),
+            new BodyPartRequest(MOVE, 4)]),
+
+        new BodyPartsReference(Consts.roleFighterMelee, [
+            new BodyPartRequest(TOUGH, 20),
+            new BodyPartRequest(ATTACK, 10),
+            new BodyPartRequest(MOVE, 4)]),
+
+        new BodyPartsReference(Consts.roleFighterRanged, [
+            new BodyPartRequest(TOUGH, 15),
+            new BodyPartRequest(RANGED_ATTACK, 12),
+            new BodyPartRequest(MOVE, 4)]),
+
+        new BodyPartsReference(Consts.rolefighterHealer, [
+            new BodyPartRequest(TOUGH, 20),
+            new BodyPartRequest(HEAL, 10),
+            new BodyPartRequest(MOVE, 6)])
+        ];
+
+
     private _spawn: StructureSpawn;
 
     constructor(spawn: StructureSpawn) {
@@ -47,13 +112,12 @@ export class CreepFactory {
         return bodyParts;
     }
 
-    public GetHarvesterBodyParts(): BodyPartConstant[] {
-        let desirableBody: BodyPartRequest[] = [
-            new BodyPartRequest(WORK, 5),
-            new BodyPartRequest(MOVE, 3)
-        ];
+    public GetBodyPartsByRole(role: string): BodyPartConstant[] {
+        let bodyPartsReference : BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, x => x.role == role);
+        if(!bodyPartsReference)
+            throw new RangeError('CreepFactory - Role not found');
 
-        let bodyParts: BodyPartConstant[] = this.GetBodyPartsInternal(desirableBody)
+        let bodyParts: BodyPartConstant[] = this.GetBodyPartsInternal(bodyPartsReference.body);
 
         return bodyParts;
     }
