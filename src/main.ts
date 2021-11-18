@@ -144,10 +144,10 @@ export const loop = ErrorMapper.wrapLoop(() => {
                 { memory: { role: 'carrier', working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId } });
         }
 
-        const upgraders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == 'upgrader' && c.memory.myContainerId == Consts.topContainerId);
+        const upgraders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == 'upgrader');
         if (upgraders.length < Consts.maxNumberUpgrader) {
             spawn.spawnCreep(Consts.upgraderBody, 'upgrader' + '-' + Math.random().toString(36).substr(2, 5),
-                { memory: { role: 'upgrader', working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId } });
+                { memory: { role: 'upgrader', working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
         }
     }
 

@@ -14,7 +14,7 @@ export class Consts {
     public static harvesterStandStillBody = [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE];
     public static carrierBody = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
     //public static carrierBody = [CARRY, CARRY, MOVE, MOVE];
-    public static upgraderBody: [WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];;
+    public static upgraderBody = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
 
     public static topContainerId = '619411f334dca3036bdc435f';
     public static bottomContainerId = '6193f73d27ccd4567c91516f';
