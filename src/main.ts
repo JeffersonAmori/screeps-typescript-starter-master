@@ -1,8 +1,10 @@
+import { Console } from "console";
 import { Consts } from "consts";
 import { CreepFactory } from "creepFactory";
 import { Defcon } from "military/defcon";
 import { getMaxListeners } from "process";
 import { RoleBuilder } from "roles/builder";
+import { RoleBuilderForAnotherRoom } from "roles/builderForAnotherRoom";
 import { RoleCarrier } from "roles/carrier";
 import { FighterHealer } from "roles/fighterHealer";
 import { FighterMelee } from "roles/fighterMelee";
@@ -11,6 +13,7 @@ import { RoleHarvester } from "roles/harvester";
 import { RoleHarvesterStandStill } from "roles/harvesterStandStill";
 import { RoleRepairer } from "roles/repairer";
 import { RoleUpgrader } from "roles/upgrader";
+import { RoleUpgraderForAnotherRoom } from "roles/upgraderForAnotherRoom";
 import { MyStructureSpawn } from "structure/spawn";
 import { ErrorMapper } from "utils/ErrorMapper";
 
@@ -63,17 +66,32 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     // Game.creeps.Jeff.moveTo(Game.spawns.Spawn1);
 
-    // if(Game.creeps.Diplo.room != Game.flags.attackFlag.room)
+    // if (Game.creeps.Diplo.room != Game.flags.attackFlag.room)
     //     Game.creeps.Diplo.moveTo(Game.flags.attackFlag);
-    // else
-    //     if(Game.creeps.Diplo.reserveController(Game.creeps.Diplo.room.controller) == ERR_NOT_IN_RANGE)
-    //         Game.creeps.Diplo.moveTo(Game.creeps.Diplo.room.controller);
+    // else {
+    //     const controller = Game.creeps.Diplo.room.controller;
 
-    CreepsAct();
+    //     if (controller) {
+    //         if (Game.creeps.Diplo.claimController(controller) == ERR_NOT_IN_RANGE)
+    //             Game.creeps.Diplo.moveTo(controller);
+    //     }
+    // }
+
+
+    try {
+        CreepsAct();
+    } catch (error) {
+        console.log('Error on CreepsAct')
+    }
 
     for (let s in Game.spawns) {
         const spawn: StructureSpawn = Game.spawns[s];
-
+        let controller = spawn.room.controller;
+        if (controller) {
+            if (controller.level < 4) {
+                return;
+            }
+        }
         checkForHostiles(spawn);
         CreateCreeps(spawn);
     }
@@ -113,8 +131,16 @@ function CreepsAct() {
                 RoleUpgrader.run(creep);
                 break;
             }
+            case Consts.roleUpgraderForAnotherRoom: {
+                RoleUpgraderForAnotherRoom.run(creep);
+                break;
+            }
             case Consts.roleBuilder: {
                 RoleBuilder.run(creep);
+                break;
+            }
+            case Consts.roleBuilderForAnotherRoom: {
+                RoleBuilderForAnotherRoom.run(creep);
                 break;
             }
             case Consts.roleRepairer: {
@@ -163,13 +189,13 @@ function CreateCreeps(spawn: StructureSpawn) {
 
         const bottomCarriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier && c.memory.myContainerId == Consts.bottomContainerId);
         if (bottomCarriers.length < 1) {
-            spawn.spawnCreep(Consts.carrierBody, Consts.roleCarrier + '-' + Math.random().toString(36).substr(2, 5),
+            spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleCarrier), Consts.roleCarrier + '-' + Math.random().toString(36).substr(2, 5),
                 { memory: { role: Consts.roleCarrier, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.bottomContainerId } });
         }
 
         const topCarriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier && c.memory.myContainerId == Consts.topContainerId);
         if (topCarriers.length < 1) {
-            spawn.spawnCreep(Consts.carrierBody, Consts.roleCarrier + '-' + Math.random().toString(36).substr(2, 5),
+            spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleCarrier), Consts.roleCarrier + '-' + Math.random().toString(36).substr(2, 5),
                 { memory: { role: Consts.roleCarrier, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId } });
         }
     } else {
@@ -182,7 +208,7 @@ function CreateCreeps(spawn: StructureSpawn) {
 
     const upgraders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleUpgrader);
     if (upgraders.length < Consts.maxNumberUpgrader) {
-        spawn.spawnCreep(Consts.upgraderBody, Consts.roleUpgrader + '-' + Math.random().toString(36).substr(2, 5),
+        spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleUpgrader), Consts.roleUpgrader + '-' + Math.random().toString(36).substr(2, 5),
             { memory: { role: Consts.roleUpgrader, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
     }
 
@@ -197,6 +223,25 @@ function CreateCreeps(spawn: StructureSpawn) {
         if (builders.length < Consts.maxNumberBuilder) {
             spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleBuilder), Consts.roleBuilder + '-' + Math.random().toString(36).substr(2, 5),
                 { memory: { role: Consts.roleBuilder, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+        }
+    }
+
+    let controller = spawn.room.controller;
+    if (controller) {
+        if (controller.level >= 5) {
+            const buildersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleBuilderForAnotherRoom);
+            if (buildersForAntotherRoom.length < Consts.maxNumberBuilderForAnotherRoom) {
+                spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleBuilderForAnotherRoom), Consts.roleBuilderForAnotherRoom + '-' + Math.random().toString(36).substr(2, 5),
+                    { memory: { role: Consts.roleBuilderForAnotherRoom, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+            }
+
+            const upgradersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleUpgraderForAnotherRoom);
+            if (upgradersForAntotherRoom.length < Consts.maxNumberUpgradersForAnotherRoom) {
+                console.log('aqui');
+                let ret = spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleUpgraderForAnotherRoom), Consts.roleUpgraderForAnotherRoom + '-' + Math.random().toString(36).substr(2, 5),
+                    { memory: { role: Consts.roleUpgraderForAnotherRoom, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+                console.log(ret);
+            }
         }
     }
 }

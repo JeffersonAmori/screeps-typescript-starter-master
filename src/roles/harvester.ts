@@ -2,16 +2,25 @@ export class RoleHarvester {
 
     /** @param {Creep} creep **/
     public static run(creep: Creep): void {
-        if (creep.store.getFreeCapacity(RESOURCE_ENERGY) > 0 && creep.memory.working) {
-            var dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+        if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == creep.store.getCapacity(RESOURCE_ENERGY)) {
+            creep.say('transfering');
+            creep.memory.working = false;
+        }
+
+        if (creep.memory.working) {
+            let dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
             if (dropedEnergy) {
                 if (creep.pickup(dropedEnergy) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(dropedEnergy);
                 }
             } else {
-                if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == creep.store.getCapacity(RESOURCE_ENERGY)) {
-                    creep.say('transfering');
-                    creep.memory.working = false;
+                let source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+                if (!source) {
+                    return;
+                }
+
+                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source);
                 }
             }
         }

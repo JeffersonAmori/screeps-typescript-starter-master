@@ -27,22 +27,25 @@ export class RoleBuilder {
             }
         }
         else {
-            let source: Structure | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+            var storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
                     return (structure.structureType == STRUCTURE_STORAGE) && structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
                 }
-            });
+            })
+            if (storage) {
+                if (creep.withdraw(storage, RESOURCE_ENERGY, creep.store.getFreeCapacity()) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(storage);
+                }
+            } else {
+                var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+                if (!source) {
+                    return;
+                }
 
-            if (source) {
-                if (creep.withdraw(source, RESOURCE_ENERGY, creep.store.getFreeCapacity()) == ERR_NOT_IN_RANGE) {
+                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(source);
                 }
             }
-
-            // var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-            // if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            //     creep.moveTo(source);
-            // }
         }
     }
 }

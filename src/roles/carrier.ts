@@ -1,3 +1,5 @@
+import { Consts } from "consts";
+
 export class RoleCarrier {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
@@ -6,7 +8,7 @@ export class RoleCarrier {
             let dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
             let targetHarvesterStandStill: Creep | null = creep.pos.findClosestByPath(FIND_CREEPS, {
                 filter: (c) => {
-                    return (c.memory.myContainerId == creep.memory.myContainerId && c.memory.role == 'harvesterStandStill');
+                    return (c.memory.myContainerId == creep.memory.myContainerId && c.memory.role == Consts.roleHarvesterStandStill);
                 }
             });
 
@@ -52,7 +54,7 @@ export class RoleCarrier {
             if (!target) {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                     filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_TOWER) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
+                        return (structure.structureType == STRUCTURE_TOWER) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > (structure.store.getCapacity(RESOURCE_ENERGY) / 2);
                     }
                 });
             }
