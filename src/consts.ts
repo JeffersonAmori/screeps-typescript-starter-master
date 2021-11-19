@@ -1,8 +1,8 @@
 export class Consts {
     public static maxNumberHarvester = 0;
-    public static maxNumberUpgrader = 1;
+    public static maxNumberUpgrader = 3;
     public static maxNumberUpgradersForAnotherRoom = 1;
-    public static maxNumberBuilder = 1;
+    public static maxNumberBuilder = 3;
     public static maxNumberBuilderForAnotherRoom = 2;
     public static maxNumberRepairer = 1;
     public static maxNumberCarrier = 4;

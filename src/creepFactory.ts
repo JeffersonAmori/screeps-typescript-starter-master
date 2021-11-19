@@ -1,3 +1,5 @@
+import { spawn } from "child_process";
+import { error } from "console";
 import { Consts } from "consts";
 
 export class BodyPartRequest {
@@ -132,5 +134,13 @@ export class CreepFactory {
         let bodyParts: BodyPartConstant[] = this.GetBodyPartsInternal(bodyPartsReference.body);
 
         return bodyParts;
+    }
+
+    public CreateCreep(role: string, memory: CreepMemory) {
+        let bodyPartsReference: BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, bp => bp.role === role);
+        if (!bodyPartsReference)
+            throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole');
+
+        this._spawn.spawnCreep(this.GetBodyPartsByRole(role), this._spawn.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
     }
 }
