@@ -10,7 +10,7 @@ import { FighterHealer } from "roles/fighterHealer";
 import { FighterMelee } from "roles/fighterMelee";
 import { FighterRanged } from "roles/fighterRanged";
 import { RoleHarvester } from "roles/harvester";
-import { RoleHarvesterStandStill } from "roles/harvesterStandStill";
+import { RoleMiner } from "roles/miner";
 import { RoleRepairer } from "roles/repairer";
 import { RoleUpgrader } from "roles/upgrader";
 import { RoleUpgraderForAnotherRoom } from "roles/upgraderForAnotherRoom";
@@ -38,7 +38,8 @@ declare global {
         working: boolean;
         otherResources: ResourceConstant[];
         myContainerId: string;
-        targetContainer?: StructureContainer;
+        targetContainerId?: string;
+        forceMoveToTargetContainer?: boolean;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")
@@ -82,7 +83,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     try {
         CreepsAct();
     } catch (error) {
-        console.log('Error on CreepsAct')
+        console.log('Error on CreepsAct ' + (<Error>error).message);
     }
 
     for (let s in Game.spawns) {
@@ -115,8 +116,8 @@ function CreepsAct() {
                 RoleHarvester.run(creep);
                 break;
             }
-            case Consts.roleHarvesterStandStill: {
-                RoleHarvesterStandStill.run(creep);
+            case Consts.roleMiner: {
+                RoleMiner.run(creep);
                 break;
             }
             case Consts.roleCarrier: {
@@ -177,18 +178,18 @@ function CreateCreeps(spawn: StructureSpawn) {
         }
 
         const bottomCarriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier && c.memory.myContainerId == Consts.bottomContainerId);
-        if (bottomCarriers.length < 3) {
+        if (bottomCarriers.length < 1) {
             creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.bottomContainerId })
         }
 
-        const topHarvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvesterStandStill && c.memory.myContainerId == Consts.topContainerId);
-        if (topHarvesters.length == 0) {
-            creepFactory.CreateCreep(Consts.roleHarvesterStandStill, { role: Consts.roleHarvesterStandStill, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId })
+        const topMiners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner && c.memory.myContainerId == Consts.topContainerId);
+        if (topMiners.length == 0) {
+            creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
-        const bottomHarvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvesterStandStill && c.memory.myContainerId == Consts.bottomContainerId);
-        if (bottomHarvesters.length == 0) {
-            creepFactory.CreateCreep(Consts.roleHarvesterStandStill, { role: Consts.roleHarvesterStandStill, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.bottomContainerId })
+        const bottomMiners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner && c.memory.myContainerId == Consts.bottomContainerId);
+        if (bottomMiners.length == 0) {
+            creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.bottomContainerId })
         }
     } else {
         const harvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvester && c.memory.myContainerId == Consts.topContainerId);

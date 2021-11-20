@@ -1,6 +1,6 @@
 export class Consts {
     public static maxNumberHarvester = 0;
-    public static maxNumberUpgrader = 3;
+    public static maxNumberUpgrader = 5;
     public static maxNumberUpgradersForAnotherRoom = 1;
     public static maxNumberBuilder = 3;
     public static maxNumberBuilderForAnotherRoom = 2;
@@ -11,7 +11,7 @@ export class Consts {
     public static roleBuilderForAnotherRoom = 'builderForAnotherRoom';
     public static roleCarrier = 'carrier';
     public static roleHarvester = 'harvester';
-    public static roleHarvesterStandStill = 'harvesterStandStill';
+    public static roleMiner = 'miner';
     public static roleRepairer = 'repairer';
     public static roleUpgrader = 'upgrader';
     public static roleUpgraderForAnotherRoom = 'upgraderForAnotherRoom';

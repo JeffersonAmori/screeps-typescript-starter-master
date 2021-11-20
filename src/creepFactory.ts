@@ -44,7 +44,7 @@ export class CreepFactory {
             new BodyPartRequest(CARRY, 8),
             new BodyPartRequest(MOVE, 4)]),
 
-        new BodyPartsReference(Consts.roleHarvesterStandStill, [
+        new BodyPartsReference(Consts.roleMiner, [
             new BodyPartRequest(WORK, 5),
             new BodyPartRequest(MOVE, 3)]),
 

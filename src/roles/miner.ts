@@ -1,4 +1,4 @@
-export class RoleHarvesterStandStill {
+export class RoleMiner {
 
     /** @param {Creep} creep **/
     public static run(creep: Creep): void {

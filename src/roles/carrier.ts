@@ -1,45 +1,53 @@
 import { Consts } from "consts";
+import { filter } from "lodash";
 
 export class RoleCarrier {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
         if (creep.memory.working) {
-            let sourceContainer: StructureContainer | null = Game.getObjectById<StructureContainer>(creep.memory.myContainerId);
-            let dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-            let targetHarvesterStandStill: Creep | null = creep.pos.findClosestByPath(FIND_CREEPS, {
-                filter: (c) => {
-                    return (c.memory.myContainerId == creep.memory.myContainerId && c.memory.role == Consts.roleHarvesterStandStill);
-                }
-            });
-
-            if (!sourceContainer)
-                return;
-
-            if (!targetHarvesterStandStill)
-                return;
-
-            if (dropedEnergy) {
-                if (creep.pickup(dropedEnergy) == ERR_NOT_IN_RANGE) {
-                    if (creep.withdraw(sourceContainer, RESOURCE_ENERGY, creep.store.getFreeCapacity()) === ERR_NOT_IN_RANGE) {
-                        creep.moveTo(targetHarvesterStandStill);
+            if (!creep.memory.targetContainerId) {
+                let sourceContainer = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_CONTAINER);
                     }
+                });
+
+                if (!sourceContainer || sourceContainer.length == 0)
+                    return;
+
+                let target: AnyStructure = _.max(sourceContainer, c => (<StructureContainer>c).store.getUsedCapacity());
+                let targetContainer: StructureContainer = (<StructureContainer>target);
+                creep.memory.targetContainerId = targetContainer.id;
+                creep.memory.forceMoveToTargetContainer = targetContainer.store.getFreeCapacity() === 0;
+            }
+
+            // let sourceContainer: StructureContainer | null = Game.getObjectById<StructureContainer>(creep.memory.myContainerId);
+            let dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
+
+            if (dropedEnergy && !creep.memory.forceMoveToTargetContainer) {
+                if (creep.pickup(dropedEnergy) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(dropedEnergy);
                 }
             }
             else {
-                if (creep.withdraw(sourceContainer, RESOURCE_ENERGY, creep.store.getFreeCapacity()) === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targetHarvesterStandStill);
+                let targetContainer = Game.getObjectById<StructureContainer>(creep.memory.targetContainerId);
+                if (!targetContainer)
+                    return;
+                if (creep.withdraw(targetContainer, RESOURCE_ENERGY, creep.store.getFreeCapacity()) === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targetContainer);
                 }
             }
 
             if (creep.store.getFreeCapacity() == 0) {
                 creep.say('delivering');
                 creep.memory.working = false;
+                delete creep.memory.targetContainerId;
             }
         }
         else {
             let target: Structure | null = null;
             if (!creep.memory.otherResources) {
-                let otherResources = _.filter(RESOURCES_ALL, r => r != RESOURCE_ENERGY && creep.store.getUsedCapacity(r) > 0)
+                let otherResources = _.filter(RESOURCES_ALL, r => r != RESOURCE_ENERGY && creep.store.getUsedCapacity(r) > 0);
                 creep.memory.otherResources = otherResources;
             }
 
