@@ -6,6 +6,7 @@ export class Consts {
     public static maxNumberBuilderForAnotherRoom = 2;
     public static maxNumberRepairer = 1;
     public static maxNumberCarrier = 2;
+    public static maxNumberMeleeFightersForAnotherRoom = 1;
 
     public static roleBuilder = 'builder';
     public static roleBuilderForAnotherRoom = 'builderForAnotherRoom';
@@ -17,6 +18,7 @@ export class Consts {
     public static roleUpgraderForAnotherRoom = 'upgraderForAnotherRoom';
     public static rolefighterHealer = 'harvester';
     public static roleFighterMelee = 'meleeFighter';
+    public static roleFighterMeleeForAnotherRoom = 'meleeFighterForAnotherRoom';
     public static roleFighterRanged = 'rangedFighter';
 
     public static bodyLevel1 = [WORK, CARRY, MOVE, MOVE];
