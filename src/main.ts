@@ -61,12 +61,13 @@ export const loop = ErrorMapper.wrapLoop(() => {
             delete Memory.creeps[name];
         }
     }
+
     // var hostilesStructure = Game.creeps.Jeff.room.find(FIND_HOSTILE_SPAWNS)[0];
     // if(hostilesStructure)
     //     if(Game.creeps.Jeff.attack(hostilesStructure) == ERR_NOT_IN_RANGE)
     //         Game.creeps.Jeff.moveTo(hostilesStructure);
 
-    // Game.creeps.Jeff.moveTo(Game.spawns.Spawn1);
+    // Game.creeps.Jeff.moveTo(spawn);
 
     // if (Game.creeps.Diplo.room != Game.flags.attackFlag.room)
     //     Game.creeps.Diplo.moveTo(Game.flags.attackFlag);
@@ -78,7 +79,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
     //             Game.creeps.Diplo.moveTo(controller);
     //     }
     // }
-
 
     try {
         CreepsAct();
@@ -95,7 +95,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     // structureSpawn.tryCreateCreep('harvester',  Consts.maxNumberHarvester);
     //MyStructureSpawn.tryCreateCreep('upgrader', Consts.maxNumberUpgrader);
-    // if (Game.spawns.Spawn1.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+    // if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
     //     MyStructureSpawn.tryCreateCreep(Consts.roleBuilder, Consts.maxNumberBuilder);
     // }
     // MyStructureSpawn.tryCreateCreep(Consts.roleRepairer, Consts.maxNumberRepairer);
@@ -172,46 +172,41 @@ function CreateCreeps(spawn: StructureSpawn) {
     });
 
     if (container) {
-        const topCarriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier && c.memory.myContainerId == Consts.topContainerId);
-        if (topCarriers.length < 1) {
-            creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId })
-        }
-
-        const bottomCarriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier && c.memory.myContainerId == Consts.bottomContainerId);
-        if (bottomCarriers.length < 1) {
-            creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.bottomContainerId })
+        const carriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier);
+        if (carriers.length < Consts.maxNumberCarrier) {
+            creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
 
         const topMiners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner && c.memory.myContainerId == Consts.topContainerId);
         if (topMiners.length == 0) {
-            creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId })
+            creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
         const bottomMiners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner && c.memory.myContainerId == Consts.bottomContainerId);
         if (bottomMiners.length == 0) {
-            creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.bottomContainerId })
+            creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.bottomContainerId })
         }
     } else {
         const harvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvester && c.memory.myContainerId == Consts.topContainerId);
         if (harvesters.length == 0) {
-            creepFactory.CreateCreep(Consts.roleHarvester, { role: Consts.roleHarvester, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: Consts.topContainerId })
+            creepFactory.CreateCreep(Consts.roleHarvester, { role: Consts.roleHarvester, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
     }
 
     const upgraders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleUpgrader);
     if (upgraders.length < Consts.maxNumberUpgrader) {
-        creepFactory.CreateCreep(Consts.roleUpgrader, { role: Consts.roleUpgrader, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' })
+        creepFactory.CreateCreep(Consts.roleUpgrader, { role: Consts.roleUpgrader, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
     }
 
     const repairer = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleRepairer);
     if (repairer.length < Consts.maxNumberRepairer) {
-        creepFactory.CreateCreep(Consts.roleRepairer, { role: Consts.roleRepairer, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' })
+        creepFactory.CreateCreep(Consts.roleRepairer, { role: Consts.roleRepairer, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
     }
 
     if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
         const builders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleBuilder);
         if (builders.length < Consts.maxNumberBuilder) {
-            creepFactory.CreateCreep(Consts.roleBuilder, { role: Consts.roleBuilder, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' })
+            creepFactory.CreateCreep(Consts.roleBuilder, { role: Consts.roleBuilder, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
     }
 
@@ -221,14 +216,14 @@ function CreateCreeps(spawn: StructureSpawn) {
     //         const buildersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleBuilderForAnotherRoom);
     //         if (buildersForAntotherRoom.length < Consts.maxNumberBuilderForAnotherRoom) {
     //             spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleBuilderForAnotherRoom), Consts.roleBuilderForAnotherRoom + '-' + Math.random().toString(36).substr(2, 5),
-    //                 { memory: { role: Consts.roleBuilderForAnotherRoom, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+    //                 { memory: { role: Consts.roleBuilderForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' } });
     //         }
 
     //         const upgradersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleUpgraderForAnotherRoom);
     //         if (upgradersForAntotherRoom.length < Consts.maxNumberUpgradersForAnotherRoom) {
     //             console.log('aqui');
     //             let ret = spawn.spawnCreep(creepFactory.GetBodyPartsByRole(Consts.roleUpgraderForAnotherRoom), Consts.roleUpgraderForAnotherRoom + '-' + Math.random().toString(36).substr(2, 5),
-    //                 { memory: { role: Consts.roleUpgraderForAnotherRoom, working: false, room: Game.spawns.Spawn1.room.name, otherResources: [], myContainerId: '' } });
+    //                 { memory: { role: Consts.roleUpgraderForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' } });
     //             console.log(ret);
     //         }
     //     }

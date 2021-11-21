@@ -24,8 +24,8 @@ export class RoleUpgrader {
         else {
             var storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                 filter: (structure) => {
-                    return (structure.structureType == STRUCTURE_STORAGE ||
-                            structure.structureType == STRUCTURE_SPAWN) && structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0;
+                    return ((structure.structureType == STRUCTURE_STORAGE) && structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0) ||
+                            (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) > structure.store.getCapacity(RESOURCE_ENERGY) / 2);
                 }
             })
             if (storage) {
