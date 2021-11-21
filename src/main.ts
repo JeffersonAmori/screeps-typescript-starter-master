@@ -40,6 +40,7 @@ declare global {
         myContainerId: string;
         targetContainerId?: string;
         forceMoveToTargetContainer?: boolean;
+        targetEnemyId? : string;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")

@@ -1,4 +1,5 @@
 import { Consts } from "consts";
+import { CreepFactory } from "creepFactory";
 import { MyStructureSpawn } from "structure/spawn";
 import { MyStructureTower } from "structure/tower";
 
@@ -8,7 +9,9 @@ export class Defcon {
         var username = hostiles[0].owner.username;
         Game.notify(`User ${username} spotted in room ${spawn.room.name}`);
 
-        if (hostiles.length > 1) {
+        if (hostiles.length > 0) {
+            let factory: CreepFactory = new CreepFactory(spawn);
+
             const fighterCount = _.filter(Game.creeps, (c: Creep) => c.memory.role === 'meleeFighter');
             const rangedCounter = _.filter(Game.creeps, (c: Creep) => c.memory.role === 'rangedFighter');
             const healerCounter = _.filter(Game.creeps, (c: Creep) => c.memory.role === 'healerFighter');
@@ -18,7 +21,7 @@ export class Defcon {
                 MyStructureSpawn.trySpawnCreep(spawn, Consts.healerFighterBody, 'healerFighter');
             }
             else {
-                MyStructureSpawn.trySpawnCreep(spawn, Consts.meleeFighterBody, 'meleeFighter');
+                factory.CreateCreep(Consts.roleFighterMelee, { role: Consts.roleFighterMelee, working: false, room: spawn.room, otherResources: [], myContainerId: '' })
             }
         }
 
