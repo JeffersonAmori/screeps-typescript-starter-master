@@ -43,6 +43,7 @@ declare global {
         targetSourceId?: string;
         forceMoveToTargetContainer?: boolean;
         targetEnemyId?: string;
+        structureToRepairId?: string;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")
@@ -188,9 +189,7 @@ function CreateCreeps(spawn: StructureSpawn) {
     const miners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner);
 
     if (carriers.length == 0 || miners.length == 0)
-        Consts.emergencyState = true;
-    else
-        Consts.emergencyState = false;
+        creepFactory.isEmergencyState = true;
 
     if (containers.length > 0) {
         if (miners.length < Math.min(sources.length, containers.length)) {

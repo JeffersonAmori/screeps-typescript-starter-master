@@ -14,6 +14,7 @@ export class RoleRepairer {
 
         if (creep.memory.working && creep.carry.energy == 0) {
             creep.memory.working = false;
+            delete creep.memory.structureToRepairId;
             creep.say('harvesting');
         }
 
@@ -25,26 +26,23 @@ export class RoleRepairer {
 
         // if creep is supposed to repair something
         if (creep.memory.working == true) {
-            // find closest structure with less than max hits
-            // Exclude walls because they have way too many max hits and would keep
-            // our repairers busy forever. We have to find a solution for that later.
-            let structures = creep.room.find(FIND_STRUCTURES, {
-                // the second argument for findClosestByPath is an object which takes
-                // a property called filter which can be a function
-                // we use the arrow operator to define it
-                filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL)
-            });
+            if (!creep.memory.structureToRepairId) {
+                let structures = creep.room.find(FIND_STRUCTURES, {
+                    filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL)
+                });
 
-            if (!structures)
-                return;
+                if (!structures)
+                    return;
 
-            let structureToRepair = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
+                let targetStructure = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
 
-            // if we find one
+                creep.memory.structureToRepairId = targetStructure.id;
+            }
+
+            let structureToRepair : Structure | null = Game.getObjectById<Structure>(creep.memory.structureToRepairId);
+
             if (structureToRepair) {
-                // try to repair it, if it is out of range
                 if (creep.repair(structureToRepair) == ERR_NOT_IN_RANGE) {
-                    // move towards it
                     creep.moveTo(structureToRepair);
                 }
             }
@@ -56,12 +54,25 @@ export class RoleRepairer {
         }
         // if creep is supposed to get energy
         else {
-            var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-            if (!source)
-                return;
+            var storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+                filter: (structure) => {
+                    return ((structure.structureType == STRUCTURE_STORAGE) && structure.store.getUsedCapacity(RESOURCE_ENERGY) > creep.store.getCapacity()) ||
+                            (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) > structure.store.getCapacity(RESOURCE_ENERGY) / 2);
+                }
+            })
+            if (storage) {
+                if (creep.withdraw(storage, RESOURCE_ENERGY, creep.store.getFreeCapacity()) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(storage);
+                }
+            } else {
+                var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+                if (!source) {
+                    return;
+                }
 
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
+                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source);
+                }
             }
         }
     }

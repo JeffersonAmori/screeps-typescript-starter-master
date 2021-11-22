@@ -13,6 +13,7 @@ export class RoleMiner {
                 return;
 
             if (creep.pos.x == targetContainer.pos.x && creep.pos.y == targetContainer.pos.y) {
+                creep.harvest(targetSource);
             } else {
                 creep.moveTo(targetContainer);
             }
@@ -35,7 +36,12 @@ export class RoleMiner {
                 creep.memory.targetSourceId = targetSource.id;
             }
 
-            let targetContainer = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+            let targetSource = Game.getObjectById<Source>(creep.memory.targetSourceId);
+
+            if (!targetSource)
+                return;
+
+            let targetContainer = targetSource.pos.findClosestByRange(FIND_STRUCTURES, {
                 filter: (structure: Structure) => {
                     return (structure.structureType == STRUCTURE_CONTAINER);
                 }

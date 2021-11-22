@@ -1,4 +1,3 @@
-import { spawn } from "child_process";
 import { error } from "console";
 import { Consts } from "consts";
 
@@ -39,6 +38,7 @@ export class BodyPartsReference {
 
 export class CreepFactory {
     private _isBuilding: boolean = false;
+    public isEmergencyState: boolean = false;
 
     public static BodyPartsReferenceByRole: BodyPartsReference[] = [
         new BodyPartsReference(Consts.roleHarvester, [
@@ -109,7 +109,7 @@ export class CreepFactory {
 
     private GetBodyPartsInternal(desirableBody: BodyPartRequest[]): BodyPartConstant[] {
         let bodyParts: BodyPartConstant[] = [];
-        let energyAvailable: number = Consts.emergencyState ? 150 : this._spawn.room.energyCapacityAvailable;
+        let energyAvailable: number = this.isEmergencyState ? 300 : Math.max(this._spawn.room.energyAvailable, this._spawn.room.energyCapacityAvailable / 2);
         let isBuilding: boolean = true;
 
         while (energyAvailable > 0) {
@@ -152,6 +152,6 @@ export class CreepFactory {
         if (!bodyPartsReference)
             throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole');
 
-        this._spawn.spawnCreep(this.GetBodyPartsByRole(role), this._spawn.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
+        let ret = this._spawn.spawnCreep(this.GetBodyPartsByRole(role), this._spawn.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
     }
 }
