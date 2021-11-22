@@ -181,14 +181,18 @@ function CreateCreeps(spawn: StructureSpawn) {
         }
     });
 
+    const carriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier);
+    const miners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner);
+
+    if(carriers.length == 0 || miners.length == 0)
+        Consts.emergencyState = true;
+
     if (container) {
-        const carriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier);
         if (carriers.length < Consts.maxNumberCarrier) {
             creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
 
-        const topMiners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner);
-        if (topMiners.length < 2 ) {
+        if (miners.length < 2 ) {
             creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 

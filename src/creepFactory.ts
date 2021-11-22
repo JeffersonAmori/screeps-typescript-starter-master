@@ -107,7 +107,7 @@ export class CreepFactory {
 
     private GetBodyPartsInternal(desirableBody: BodyPartRequest[]): BodyPartConstant[] {
         let bodyParts: BodyPartConstant[] = [];
-        let energyAvailable: number = this._spawn.room.energyCapacityAvailable
+        let energyAvailable: number = Consts.emergencyState ? 150 : this._spawn.room.energyCapacityAvailable;
         let isBuilding: boolean = true;
 
         while (energyAvailable > 0) {
@@ -142,6 +142,10 @@ export class CreepFactory {
     }
 
     public CreateCreep(role: string, memory: CreepMemory) {
+        if (Consts.isBuilding)
+            return;
+
+        Consts.isBuilding = true;
         let bodyPartsReference: BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, bp => bp.role === role);
         if (!bodyPartsReference)
             throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole');

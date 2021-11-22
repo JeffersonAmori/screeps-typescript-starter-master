@@ -1,6 +1,6 @@
 export class Consts {
     public static maxNumberHarvester = 0;
-    public static maxNumberUpgrader = 4;
+    public static maxNumberUpgrader = 1;
     public static maxNumberUpgradersForAnotherRoom = 1;
     public static maxNumberBuilder = 3;
     public static maxNumberBuilderForAnotherRoom = 2;
@@ -34,4 +34,5 @@ export class Consts {
 
     public static topContainerId = '619411f334dca3036bdc435f';
     public static bottomContainerId = '6193f73d27ccd4567c91516f';
+    public static emergencyState : boolean;
 };
