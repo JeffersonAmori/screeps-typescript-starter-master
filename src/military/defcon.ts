@@ -9,7 +9,7 @@ export class Defcon {
         var username = hostiles[0].owner.username;
         Game.notify(`User ${username} spotted in room ${spawn.room.name}`);
 
-        if (hostiles.length > 0) {
+        if (hostiles.length > 1) {
             let factory: CreepFactory = new CreepFactory(spawn);
 
             const fighterCount = _.filter(Game.creeps, (c: Creep) => c.memory.role === 'meleeFighter');

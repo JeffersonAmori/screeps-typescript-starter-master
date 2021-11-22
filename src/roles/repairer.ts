@@ -42,13 +42,17 @@ export class RoleRepairer {
             let structureToRepair : Structure | null = Game.getObjectById<Structure>(creep.memory.structureToRepairId);
 
             if (structureToRepair) {
+                if(structureToRepair.hits == structureToRepair.hitsMax)
+                {
+                    delete creep.memory.structureToRepairId;
+                    return;
+                }
+
                 if (creep.repair(structureToRepair) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(structureToRepair);
                 }
             }
-            // if we can't fine one
             else {
-                // look for construction sites
                 RoleBuilder.run(creep);
             }
         }
