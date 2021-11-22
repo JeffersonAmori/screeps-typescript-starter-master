@@ -13,10 +13,7 @@ export class RoleMiner {
                 return;
 
             if (creep.pos.x == targetContainer.pos.x && creep.pos.y == targetContainer.pos.y) {
-                console.log(creep.name + ' harvest ' + creep.memory.targetSourceId);
-                console.log(creep.harvest(targetSource));
             } else {
-                console.log(creep.name + ' move');
                 creep.moveTo(targetContainer);
             }
         } else {

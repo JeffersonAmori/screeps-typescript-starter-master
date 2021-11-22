@@ -197,7 +197,7 @@ function CreateCreeps(spawn: StructureSpawn) {
             creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
-        if (carriers.length < Consts.maxNumberCarrier) {
+        if (carriers.length < Math.max(miners.length, containers.length)) {
             creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
     } else {
