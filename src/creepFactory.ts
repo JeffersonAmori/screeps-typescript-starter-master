@@ -38,6 +38,8 @@ export class BodyPartsReference {
 }
 
 export class CreepFactory {
+    private _isBuilding: boolean = false;
+
     public static BodyPartsReferenceByRole: BodyPartsReference[] = [
         new BodyPartsReference(Consts.roleHarvester, [
             new BodyPartRequest(WORK, 10),
@@ -142,10 +144,10 @@ export class CreepFactory {
     }
 
     public CreateCreep(role: string, memory: CreepMemory) {
-        if (Consts.isBuilding)
+        if (this._isBuilding)
             return;
 
-        Consts.isBuilding = true;
+        this._isBuilding = true;
         let bodyPartsReference: BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, bp => bp.role === role);
         if (!bodyPartsReference)
             throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole');

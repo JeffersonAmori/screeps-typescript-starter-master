@@ -1,20 +1,10 @@
 import { Consts } from "consts";
+import { runInThisContext } from "vm";
 
 export class RoleMiner {
 
     /** @param {Creep} creep **/
     public static run(creep: Creep): void {
-        // var source = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-        // if (!source)
-        //     return;
-
-        // if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-        //     const creepContainer = Game.getObjectById<Structure>(creep.memory.myContainerId);
-        //     if (!creepContainer)
-        //         return;
-
-        //     creep.moveTo(creepContainer);
-        // }
         if (creep.memory.targetContainerId && creep.memory.targetSourceId) {
             let targetContainer = Game.getObjectById<StructureContainer>(creep.memory.targetContainerId)
             let targetSource = Game.getObjectById<Source>(creep.memory.targetSourceId)
@@ -23,38 +13,41 @@ export class RoleMiner {
                 return;
 
             if (creep.pos.x == targetContainer.pos.x && creep.pos.y == targetContainer.pos.y) {
-                creep.harvest(targetSource);
+                console.log(creep.name + ' harvest ' + creep.memory.targetSourceId);
+                console.log(creep.harvest(targetSource));
             } else {
+                console.log(creep.name + ' move');
                 creep.moveTo(targetContainer);
             }
         } else {
-
             let otherMiner = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == Consts.roleMiner && c.id != creep.id);
             if (!otherMiner) {
-                let source: Source | null = creep.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-                if (!source)
-                    return;
-
-                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source);
-                }
-            } else {
-                let occupiedSource = otherMiner.pos.findClosestByPath(FIND_SOURCES_ACTIVE);
-                let targetSource: Source | undefined = _.find(creep.room.find(FIND_SOURCES_ACTIVE), s => s.id != occupiedSource?.id);
+                let targetSource: Source | null = creep.pos.findClosestByPath(FIND_SOURCES);
 
                 if (!targetSource)
                     return;
 
-                let possibleContainers = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_CONTAINER);
-                    }
-                });
+                creep.memory.targetSourceId = targetSource.id;
+            } else {
+                let occupiedSource = otherMiner.pos.findClosestByPath(FIND_SOURCES);
+                let targetSource: Source | undefined = _.find(creep.room.find(FIND_SOURCES), s => s.id != occupiedSource?.id);
 
-                let targetContainer: StructureContainer = (<StructureContainer[]>_.sortBy(possibleContainers, c => c.pos.getRangeTo(targetSource!)))[0];
-                creep.memory.targetContainerId = targetContainer.id;
+                if (!targetSource)
+                    return;
+
                 creep.memory.targetSourceId = targetSource.id;
             }
+
+            let targetContainer = creep.pos.findClosestByRange(FIND_STRUCTURES, {
+                filter: (structure: Structure) => {
+                    return (structure.structureType == STRUCTURE_CONTAINER);
+                }
+            });
+
+            if (!targetContainer)
+                return;
+
+            creep.memory.targetContainerId = targetContainer.id;
         }
     }
 };

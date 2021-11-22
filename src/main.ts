@@ -90,6 +90,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
         CreepsAct();
     } catch (error) {
         console.log('Error on CreepsAct ' + (<Error>error).message);
+        throw error;
     }
 
     for (let s in Game.spawns) {
@@ -175,27 +176,30 @@ function CreepsAct() {
 
 function CreateCreeps(spawn: StructureSpawn) {
     let creepFactory: CreepFactory = new CreepFactory(spawn);
-    let container = spawn.room.find(FIND_STRUCTURES, {
+    let containers = spawn.room.find(FIND_STRUCTURES, {
         filter: (structure) => {
             return (structure.structureType == STRUCTURE_CONTAINER);
         }
     });
 
+    let sources: Source[] | null = spawn.room.find(FIND_SOURCES);
+
     const carriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier);
     const miners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner);
 
-    if(carriers.length == 0 || miners.length == 0)
+    if (carriers.length == 0 || miners.length == 0)
         Consts.emergencyState = true;
+    else
+        Consts.emergencyState = false;
 
-    if (container) {
-        if (carriers.length < Consts.maxNumberCarrier) {
-            creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
-        }
-
-        if (miners.length < 2 ) {
+    if (containers.length > 0) {
+        if (miners.length < Math.min(sources.length, containers.length)) {
             creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
+        if (carriers.length < Consts.maxNumberCarrier) {
+            creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
+        }
     } else {
         const harvesters = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvester);
         if (harvesters.length == 0) {

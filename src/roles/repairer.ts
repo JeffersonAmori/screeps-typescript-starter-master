@@ -38,10 +38,10 @@ export class RoleRepairer {
             if (!structures)
                 return;
 
-            let structureToRepair = _.sortBy(structures, s => s.hits / s.hitsMax);
+            let structureToRepair = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
 
             // if we find one
-            if (!structureToRepair) {
+            if (structureToRepair) {
                 // try to repair it, if it is out of range
                 if (creep.repair(structureToRepair) == ERR_NOT_IN_RANGE) {
                     // move towards it
