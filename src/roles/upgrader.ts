@@ -1,3 +1,5 @@
+import { RoleCommon } from "./_common";
+
 export class RoleUpgrader {
 
     /** @param {Creep} creep **/
@@ -22,27 +24,7 @@ export class RoleUpgrader {
             }
         }
         else {
-            var storage = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                filter: (structure) => {
-                    return ((structure.structureType == STRUCTURE_STORAGE) && structure.store.getUsedCapacity(RESOURCE_ENERGY) > creep.store.getCapacity()) ||
-                            (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) > structure.store.getCapacity(RESOURCE_ENERGY) / 2);
-                }
-            })
-            if (storage) {
-                if (creep.withdraw(storage, RESOURCE_ENERGY, creep.store.getFreeCapacity()) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(storage);
-                }
-            } else {
-                var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
-                if (!source) {
-                    return;
-                }
-
-                if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source);
-                }
-            }
-
+            RoleCommon.getEnergy(creep);
         }
     }
 };
