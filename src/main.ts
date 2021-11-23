@@ -45,6 +45,7 @@ declare global {
         forceMoveToTargetContainer?: boolean;
         targetEnemyId?: string;
         structureToRepairId?: string;
+        targetEnergySourceId?: string;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")
