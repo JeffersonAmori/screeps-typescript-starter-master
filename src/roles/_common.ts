@@ -10,13 +10,15 @@ export class RoleCommon {
             try {
                 targetEnergySource = Game.getObjectById(creep.memory.targetEnergySourceId);
 
-                if(!targetEnergySource){
+                if (!targetEnergySource) {
                     delete creep.memory.targetEnergySourceId;
+                    return;
                 }
             }
             catch {
+            }
+            finally {
                 delete creep.memory.targetEnergySourceId;
-                return;
             }
 
             if (targetEnergySource instanceof Resource) {
@@ -40,13 +42,13 @@ export class RoleCommon {
                 if (creep.store.getFreeCapacity() == 0)
                     delete creep.memory.targetEnergySourceId;
             }
-            else if (targetEnergySource instanceof Tombstone) {
-                if (targetEnergySource.creep.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
-                    creep.moveTo(targetEnergySource);
-
-                if (creep.store.getFreeCapacity() == 0)
-                    delete creep.memory.targetEnergySourceId;
-            }
+            // else if (targetEnergySource instanceof Tombstone) {
+            //     if (targetEnergySource.creep.transfer(creep, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE)
+            //         creep.moveTo(targetEnergySource);
+            //     else {
+            //             delete creep.memory.targetEnergySourceId;
+            //     }
+            // }
         }
         else {
             let dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
