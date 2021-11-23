@@ -79,6 +79,11 @@ export class CreepFactory {
             new BodyPartRequest(CARRY, 10),
             new BodyPartRequest(MOVE, 10)]),
 
+        new BodyPartsReference(Consts.rolePioneer, [
+            new BodyPartRequest(WORK, 8),
+            new BodyPartRequest(CARRY, 10),
+            new BodyPartRequest(MOVE, 10)]),
+
         new BodyPartsReference(Consts.roleFighterMelee, [
             new BodyPartRequest(TOUGH, 20),
             new BodyPartRequest(ATTACK, 10),

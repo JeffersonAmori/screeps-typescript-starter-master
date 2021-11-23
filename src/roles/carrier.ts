@@ -33,8 +33,13 @@ export class RoleCarrier {
                 let targetContainer = Game.getObjectById<StructureContainer>(creep.memory.targetContainerId);
                 if (!targetContainer)
                     return;
-                if (creep.withdraw(targetContainer, RESOURCE_ENERGY, creep.store.getFreeCapacity()) === ERR_NOT_IN_RANGE) {
+
+                let ret = creep.withdraw(targetContainer, RESOURCE_ENERGY, creep.store.getFreeCapacity());
+                if (ret === ERR_NOT_IN_RANGE) {
                     creep.moveTo(targetContainer);
+                }
+                if(ret === ERR_NOT_ENOUGH_ENERGY){
+                    delete creep.memory.targetContainerId;
                 }
             }
 

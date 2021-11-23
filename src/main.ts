@@ -12,6 +12,7 @@ import { FighterMelee } from "roles/fighterMelee";
 import { FighterRanged } from "roles/fighterRanged";
 import { RoleHarvester } from "roles/harvester";
 import { RoleMiner } from "roles/miner";
+import { RolePioneer } from "roles/pioneer";
 import { RoleRepairer } from "roles/repairer";
 import { RoleUpgrader } from "roles/upgrader";
 import { RoleUpgraderForAnotherRoom } from "roles/upgraderForAnotherRoom";
@@ -152,6 +153,10 @@ function CreepsAct() {
                 RoleRepairer.run(creep);
                 break;
             }
+            case Consts.rolePioneer: {
+                RolePioneer.run(creep);
+                break;
+            }
             case Consts.roleFighterMelee: {
                 FighterMelee.run(creep);
                 break;
@@ -225,21 +230,29 @@ function CreateCreeps(spawn: StructureSpawn) {
 
     let controller = spawn.room.controller;
     if (controller) {
-        if (controller.level >= 4) {
-            const buildersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleBuilderForAnotherRoom);
-            if (buildersForAntotherRoom.length < Consts.maxNumberBuilderForAnotherRoom) {
-                creepFactory.CreateCreep(Consts.roleBuilderForAnotherRoom, { role: Consts.roleBuilderForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
-            }
+        let minLevelController = _.sortBy(Game.spawns, s => s.room.controller?.level)[0].room.controller?.level;
+        if (minLevelController) {
+            if (controller.level >= 4 && minLevelController < 4) {
+                const pioneers = _.filter(Game.creeps, (c) => c.memory.role == Consts.rolePioneer);
+                if (pioneers.length < Consts.maxNumberPioneer) {
+                    creepFactory.CreateCreep(Consts.rolePioneer, { role: Consts.rolePioneer, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
+                }
 
-            const upgradersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleUpgraderForAnotherRoom);
-            if (upgradersForAntotherRoom.length < Consts.maxNumberUpgradersForAnotherRoom) {
-                creepFactory.CreateCreep(Consts.roleUpgraderForAnotherRoom, { role: Consts.roleUpgraderForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
-            }
+                // const buildersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleBuilderForAnotherRoom);
+                // if (buildersForAntotherRoom.length < Consts.maxNumberBuilderForAnotherRoom) {
+                //     creepFactory.CreateCreep(Consts.roleBuilderForAnotherRoom, { role: Consts.roleBuilderForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
+                // }
 
-            // const meleeFighterForAnotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleFighterMeleeForAnotherRoom);
-            // if (meleeFighterForAnotherRoom.length < Consts.maxNumberMeleeFightersForAnotherRoom) {
-            //     creepFactory.CreateCreep(Consts.roleFighterMeleeForAnotherRoom, { role: Consts.roleFighterMeleeForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
-            // }
+                // const upgradersForAntotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleUpgraderForAnotherRoom);
+                // if (upgradersForAntotherRoom.length < Consts.maxNumberUpgradersForAnotherRoom) {
+                //     creepFactory.CreateCreep(Consts.roleUpgraderForAnotherRoom, { role: Consts.roleUpgraderForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
+                // }
+
+                // const meleeFighterForAnotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleFighterMeleeForAnotherRoom);
+                // if (meleeFighterForAnotherRoom.length < Consts.maxNumberMeleeFightersForAnotherRoom) {
+                //     creepFactory.CreateCreep(Consts.roleFighterMeleeForAnotherRoom, { role: Consts.roleFighterMeleeForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
+                // }
+            }
         }
     }
 }
