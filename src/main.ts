@@ -68,9 +68,9 @@ export const loop = ErrorMapper.wrapLoop(() => {
         Init();
 
     LoadMemory();
+    CleanMemory();
 
     // Automatically delete memory of missing creeps
-    CleanMemory();
     try {
         // if (Game.creeps.Jeff.room != Game.flags.attackFlag.room) {
         //     Game.creeps.Jeff.moveTo(Game.flags.attackFlag);
@@ -224,6 +224,7 @@ function CreateCreeps(spawn: StructureSpawn) {
         creepFactory.isEmergencyState = true;
 
     if (containers.length > 0) {
+
         let sumOfDistancesToSourcesFromSpawnHeuristic = 0;
         let roomsInfo: RoomInfo = GlobalMemory.RoomInfo;
         let currentRoomData = roomsInfo[spawn.name];
@@ -242,7 +243,7 @@ function CreateCreeps(spawn: StructureSpawn) {
             creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
-        if (carriers.length < Math.ceil(sumOfDistancesToSourcesFromSpawnHeuristic)) {
+        if (carriers.length < Math.round(sumOfDistancesToSourcesFromSpawnHeuristic)) {
             creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
     } else {

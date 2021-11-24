@@ -1,7 +1,7 @@
 import { RoleUpgrader } from "./upgrader";
 import { RoleCommon } from "./_common";
 
-export class RoleBuilder {
+export class RoleBuilder extends RoleCommon {
 
     /** @param {Creep} creep **/
     public static run(creep: Creep): void {
