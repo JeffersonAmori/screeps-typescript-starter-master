@@ -81,16 +81,24 @@ export class RoleCommon {
                 //     creep.memory.targetEnergySourceId = tombstone.id;
                 // }
                 // else {
+
+                // Find all energies
                 let dropedEnergies = creep.room.find(FIND_DROPPED_RESOURCES);
-                let dropedEnergy = _.filter(dropedEnergies, e => prohibitedIds.indexOf(e.id) == -1);
-                let closestEnergy = creep.pos.findClosestByPath(dropedEnergy);
+                // Find the energies allowed to be picked-up
+                let allowedDropedEnergy = _.filter(dropedEnergies, e => prohibitedIds.indexOf(e.id) == -1);
+                // Find the closest one
+                let closestEnergy = creep.pos.findClosestByPath(allowedDropedEnergy);
+                // If found something...
                 if (closestEnergy && !creep.memory.forceMoveToTargetContainer) {
                     creep.memory.targetEnergySourceId = closestEnergy.id;
+
                     if (creep.store.getFreeCapacity() >= closestEnergy.amount) {
                         creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
                     }
                 }
+                // If did not find energy...
                 else {
+                    // ...try to find a container
                     let container: StructureStorage | StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
                         filter: (structure) => {
                             return (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) > structure.store.getCapacity(RESOURCE_ENERGY) / 2);
@@ -98,11 +106,14 @@ export class RoleCommon {
                     })
                     if (container) {
                         creep.memory.targetEnergySourceId = container.id;
+
                         if (creep.store.getFreeCapacity() >= container.store.getUsedCapacity()) {
                             creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
                         }
                     }
+                    // If did not find a container...
                     else {
+                        // ...try to find an energy source
                         var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
                         if (!source) {
                             return;
