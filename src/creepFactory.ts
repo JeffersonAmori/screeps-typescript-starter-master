@@ -40,6 +40,17 @@ export class CreepFactory {
     private _isBuilding: boolean = false;
     public isEmergencyState: boolean = false;
 
+    private bodyPartsOrder: BodyPartConstant[] = [
+        TOUGH,
+        WORK,
+        CARRY,
+        MOVE,
+        ATTACK,
+        RANGED_ATTACK,
+        HEAL,
+        CLAIM
+    ]
+
     public static BodyPartsReferenceByRole: BodyPartsReference[] = [
         new BodyPartsReference(Consts.roleHarvester, [
             new BodyPartRequest(WORK, 10),
@@ -112,7 +123,7 @@ export class CreepFactory {
         this._spawn = spawn;
     }
 
-    private GetBodyPartsInternal(desirableBody: BodyPartRequest[]): BodyPartConstant[] {
+    private GetBodyPartsInternal(desirableBody: BodyPartRequest[], sortBody: boolean = true): BodyPartConstant[] {
         let bodyParts: BodyPartConstant[] = [];
         let energyAvailable: number = this.isEmergencyState ? 300 : Math.max(this._spawn.room.energyAvailable, this._spawn.room.energyCapacityAvailable / 2);
         let isBuilding: boolean = true;
@@ -134,6 +145,9 @@ export class CreepFactory {
                 break;
             }
         }
+
+        if (sortBody)
+            bodyParts = bodyParts.sort((a, b) => bodyParts.indexOf(a) - this.bodyPartsOrder.indexOf(b));
 
         return bodyParts;
     }
