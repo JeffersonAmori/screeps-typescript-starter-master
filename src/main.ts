@@ -1,6 +1,7 @@
 import { Console } from "console";
 import { Consts } from "consts";
 import { CreepFactory } from "creepFactory";
+import { filter } from "lodash";
 import { Defcon } from "military/defcon";
 import { getMaxListeners } from "process";
 import { RoleBuilder } from "roles/builder";
@@ -46,6 +47,7 @@ declare global {
         targetEnemyId?: string;
         structureToRepairId?: string;
         targetEnergySourceId?: string;
+        targetEnergySourceNeedsOnlyOneHarvester?: boolean;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")
@@ -68,24 +70,44 @@ export const loop = ErrorMapper.wrapLoop(() => {
         }
     }
     try {
-        // var hostilesStructure = Game.creeps.Jeff.room.find(FIND_HOSTILE_SPAWNS)[0];
-        // if(hostilesStructure)
-        //     if(Game.creeps.Jeff.attack(hostilesStructure) == ERR_NOT_IN_RANGE)
-        //         Game.creeps.Jeff.moveTo(hostilesStructure);
+        if (Game.creeps.Jeff.room != Game.flags.attackFlag.room) {
+            Game.creeps.Jeff.moveTo(Game.flags.attackFlag);
+        } else {
+            var hostilesStructure = Game.creeps.Jeff.room.find(FIND_HOSTILE_STRUCTURES)[0];
+            if (hostilesStructure)
+                if (Game.creeps.Jeff.attack(hostilesStructure) == ERR_NOT_IN_RANGE) {
+                    Game.creeps.Jeff.moveTo(hostilesStructure);
+                }
+            // else {
+            //     let structures = Game.creeps.Jeff.room.find(FIND_STRUCTURES, {
+            //         filter: (s) => (s.hits == 1 && s.structureType == STRUCTURE_WALL)
+            //     });
+
+            //     if (!structures)
+            //         return;
+
+            //     let targetStructure = Game.creeps.Jeff.pos.findClosestByRange(structures);
+            //     if (targetStructure)
+            //         if (Game.creeps.Jeff.attack(targetStructure) == ERR_NOT_IN_RANGE)
+            //             Game.creeps.Jeff.moveTo(targetStructure);
+            // }
+        }
+        // }
 
         // Game.creeps.Jeff.moveTo(spawn);
 
+        if (Game.creeps.Diplo.room != Game.flags.attackFlag.room)
+            Game.creeps.Diplo.moveTo(Game.flags.attackFlag);
+        else {
+            const controller = Game.creeps.Diplo.room.controller;
 
-        // if (Game.creeps.Diplo.room != Game.flags.attackFlag.room)
-        //     Game.creeps.Diplo.moveTo(Game.flags.attackFlag);
-        // else {
-        //     const controller = Game.creeps.Diplo.room.controller;
-
-        //     if (controller) {
-        //         if (Game.creeps.Diplo.claimController(controller) == ERR_NOT_IN_RANGE)
-        //             Game.creeps.Diplo.moveTo(controller);
-        //     }
-        // }
+            if (controller) {
+                let ret = Game.creeps.Diplo.claimController(controller);
+                console.log(ret);
+                if (ret == ERR_NOT_IN_RANGE)
+                    Game.creeps.Diplo.moveTo(controller);
+            }
+        }
     }
     catch { }
 
