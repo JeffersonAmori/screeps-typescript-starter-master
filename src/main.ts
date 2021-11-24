@@ -213,6 +213,10 @@ function CreateCreeps(spawn: StructureSpawn) {
 
     let sources: Source[] | null = spawn.room.find(FIND_SOURCES);
 
+    let sumOfDistancesToSourcesFromSpawn: number = 0;
+    let sumOfDistancesToSourcesFromSpawnHeuristic = 15;
+    sources.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(spawn.pos, s.pos).cost);
+
     const carriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier);
     const miners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner);
 
@@ -224,7 +228,7 @@ function CreateCreeps(spawn: StructureSpawn) {
             creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
-        if (carriers.length < Math.max(miners.length, containers.length)) {
+        if (carriers.length < Math.ceil(sumOfDistancesToSourcesFromSpawn / sumOfDistancesToSourcesFromSpawnHeuristic)) {
             creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
     } else {
