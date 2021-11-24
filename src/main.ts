@@ -1,7 +1,8 @@
 import { Console } from "console";
 import { Consts } from "consts";
 import { CreepFactory } from "creepFactory";
-import { filter } from "lodash";
+import { GlobalMemory } from "GlobalMemory";
+import { filter, initial } from "lodash";
 import { Defcon } from "military/defcon";
 import { getMaxListeners } from "process";
 import { RoleBuilder } from "roles/builder";
@@ -17,6 +18,7 @@ import { RolePioneer } from "roles/pioneer";
 import { RoleRepairer } from "roles/repairer";
 import { RoleUpgrader } from "roles/upgrader";
 import { RoleUpgraderForAnotherRoom } from "roles/upgraderForAnotherRoom";
+import { RoomData, RoomInfo } from "roomInfo";
 import { MyStructureSpawn } from "structure/spawn";
 import { ErrorMapper } from "utils/ErrorMapper";
 
@@ -31,8 +33,8 @@ declare global {
     */
     // Memory extension samples
     interface Memory {
-        uuid: number;
-        log: any;
+        RoomsInfo: string;
+        Started: boolean;
     }
 
     interface CreepMemory {
@@ -62,52 +64,52 @@ declare global {
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
 export const loop = ErrorMapper.wrapLoop(() => {
     console.log(`Current game tick is ${Game.time}`);
+    if (!Memory.Started)
+        Init();
+
+    LoadMemory();
 
     // Automatically delete memory of missing creeps
-    for (const name in Memory.creeps) {
-        if (!(name in Game.creeps)) {
-            delete Memory.creeps[name];
-        }
-    }
+    CleanMemory();
     try {
-        if (Game.creeps.Jeff.room != Game.flags.attackFlag.room) {
-            Game.creeps.Jeff.moveTo(Game.flags.attackFlag);
-        } else {
-            var hostilesStructure = Game.creeps.Jeff.room.find(FIND_HOSTILE_STRUCTURES)[0];
-            if (hostilesStructure)
-                if (Game.creeps.Jeff.attack(hostilesStructure) == ERR_NOT_IN_RANGE) {
-                    Game.creeps.Jeff.moveTo(hostilesStructure);
-                }
-            // else {
-            //     let structures = Game.creeps.Jeff.room.find(FIND_STRUCTURES, {
-            //         filter: (s) => (s.hits == 1 && s.structureType == STRUCTURE_WALL)
-            //     });
+        // if (Game.creeps.Jeff.room != Game.flags.attackFlag.room) {
+        //     Game.creeps.Jeff.moveTo(Game.flags.attackFlag);
+        // } else {
+        //     var hostilesStructure = Game.creeps.Jeff.room.find(FIND_HOSTILE_STRUCTURES)[0];
+        //     if (hostilesStructure)
+        //         if (Game.creeps.Jeff.attack(hostilesStructure) == ERR_NOT_IN_RANGE) {
+        //             Game.creeps.Jeff.moveTo(hostilesStructure);
+        //         }
+        // else {
+        //     let structures = Game.creeps.Jeff.room.find(FIND_STRUCTURES, {
+        //         filter: (s) => (s.hits == 1 && s.structureType == STRUCTURE_WALL)
+        //     });
 
-            //     if (!structures)
-            //         return;
+        //     if (!structures)
+        //         return;
 
-            //     let targetStructure = Game.creeps.Jeff.pos.findClosestByRange(structures);
-            //     if (targetStructure)
-            //         if (Game.creeps.Jeff.attack(targetStructure) == ERR_NOT_IN_RANGE)
-            //             Game.creeps.Jeff.moveTo(targetStructure);
-            // }
-        }
+        //     let targetStructure = Game.creeps.Jeff.pos.findClosestByRange(structures);
+        //     if (targetStructure)
+        //         if (Game.creeps.Jeff.attack(targetStructure) == ERR_NOT_IN_RANGE)
+        //             Game.creeps.Jeff.moveTo(targetStructure);
+        // }
+        // }
         // }
 
         // Game.creeps.Jeff.moveTo(spawn);
 
-        if (Game.creeps.Diplo.room != Game.flags.attackFlag.room)
-            Game.creeps.Diplo.moveTo(Game.flags.attackFlag);
-        else {
-            const controller = Game.creeps.Diplo.room.controller;
+        // if (Game.creeps.Diplo.room != Game.flags.attackFlag.room)
+        //     Game.creeps.Diplo.moveTo(Game.flags.attackFlag);
+        // else {
+        //     const controller = Game.creeps.Diplo.room.controller;
 
-            if (controller) {
-                let ret = Game.creeps.Diplo.claimController(controller);
-                console.log(ret);
-                if (ret == ERR_NOT_IN_RANGE)
-                    Game.creeps.Diplo.moveTo(controller);
-            }
-        }
+        //     if (controller) {
+        //         let ret = Game.creeps.Diplo.claimController(controller);
+        //         console.log(ret);
+        //         if (ret == ERR_NOT_IN_RANGE)
+        //             Game.creeps.Diplo.moveTo(controller);
+        //     }
+        // }
     }
     catch { }
 
@@ -124,6 +126,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
         checkForHostiles(spawn);
         CreateCreeps(spawn);
     }
+
+    SaveMemory();
 
     // structureSpawn.tryCreateCreep('harvester',  Consts.maxNumberHarvester);
     //MyStructureSpawn.tryCreateCreep('upgrader', Consts.maxNumberUpgrader);
@@ -213,10 +217,6 @@ function CreateCreeps(spawn: StructureSpawn) {
 
     let sources: Source[] | null = spawn.room.find(FIND_SOURCES);
 
-    let sumOfDistancesToSourcesFromSpawn: number = 0;
-    let sumOfDistancesToSourcesFromSpawnHeuristic = 15;
-    sources.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(spawn.pos, s.pos).cost);
-
     const carriers = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier);
     const miners = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner);
 
@@ -224,11 +224,25 @@ function CreateCreeps(spawn: StructureSpawn) {
         creepFactory.isEmergencyState = true;
 
     if (containers.length > 0) {
+        let sumOfDistancesToSourcesFromSpawnHeuristic = 0;
+        let roomsInfo: RoomInfo = GlobalMemory.RoomInfo;
+        let currentRoomData = roomsInfo[spawn.name];
+        if (currentRoomData) {
+            sumOfDistancesToSourcesFromSpawnHeuristic = currentRoomData.sumOfDistancesToSourcesFromSpawnHeuristic;
+        }
+        else {
+            let sumOfDistancesToSourcesFromSpawn: number = 0;
+            sources.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(spawn.pos, s.pos).cost);
+            sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawn / 15;
+            let roomData: RoomData = { sumOfDistancesToSourcesFromSpawnHeuristic: sumOfDistancesToSourcesFromSpawnHeuristic }
+            GlobalMemory.RoomInfo[spawn.name] = roomData;
+        }
+
         if (miners.length < Math.min(sources.length, containers.length)) {
             creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
-        if (carriers.length < Math.ceil(sumOfDistancesToSourcesFromSpawn / sumOfDistancesToSourcesFromSpawnHeuristic)) {
+        if (carriers.length < Math.ceil(sumOfDistancesToSourcesFromSpawnHeuristic)) {
             creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
     } else {
@@ -280,6 +294,27 @@ function CreateCreeps(spawn: StructureSpawn) {
                 //     creepFactory.CreateCreep(Consts.roleFighterMeleeForAnotherRoom, { role: Consts.roleFighterMeleeForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
                 // }
             }
+        }
+    }
+}
+
+function Init() {
+    Memory.RoomsInfo = JSON.stringify([]);
+    Memory.Started = true;
+}
+
+function LoadMemory() {
+    GlobalMemory.RoomInfo = JSON.parse(Memory.RoomsInfo);
+}
+
+function SaveMemory() {
+    Memory.RoomsInfo = JSON.stringify(GlobalMemory.RoomInfo);
+}
+
+function CleanMemory() {
+    for (const name in Memory.creeps) {
+        if (!(name in Game.creeps)) {
+            delete Memory.creeps[name];
         }
     }
 }
