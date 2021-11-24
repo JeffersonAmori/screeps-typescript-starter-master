@@ -234,7 +234,7 @@ function CreateCreeps(spawn: StructureSpawn) {
         else {
             let sumOfDistancesToSourcesFromSpawn: number = 0;
             sources.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(spawn.pos, s.pos).cost);
-            sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawn / 15;
+            sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20);
             let roomData: RoomData = { sumOfDistancesToSourcesFromSpawnHeuristic: sumOfDistancesToSourcesFromSpawnHeuristic }
             GlobalMemory.RoomInfo[spawn.name] = roomData;
         }
@@ -243,7 +243,7 @@ function CreateCreeps(spawn: StructureSpawn) {
             creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: spawn.room.name, otherResources: [], myContainerId: Consts.topContainerId })
         }
 
-        if (carriers.length < Math.round(sumOfDistancesToSourcesFromSpawnHeuristic)) {
+        if (carriers.length < sumOfDistancesToSourcesFromSpawnHeuristic) {
             creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
         }
     } else {
@@ -300,7 +300,7 @@ function CreateCreeps(spawn: StructureSpawn) {
 }
 
 function Init() {
-    Memory.RoomsInfo = JSON.stringify([]);
+    Memory.RoomsInfo = JSON.stringify({});
     Memory.Started = true;
 }
 
