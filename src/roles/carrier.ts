@@ -1,52 +1,40 @@
 import { Consts } from "consts";
 import { filter } from "lodash";
+import { RoleCommon } from "./_common";
 
 export class RoleCarrier {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
         if (creep.memory.working) {
-            if (!creep.memory.targetContainerId) {
-                let sourceContainer = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_CONTAINER);
+            if (!creep.memory.targetEnergySourceId) {
+                if (!RoleCommon.findContainer(creep)) {
+                    // If did not find a container...
+                    if (!RoleCommon.findDroppedEnery(creep)) {
                     }
-                });
+                }
 
-                if (!sourceContainer || sourceContainer.length == 0)
-                    return;
-
-                let target: AnyStructure = _.max(sourceContainer, c => (<StructureContainer>c).store.getUsedCapacity());
-                let targetContainer: StructureContainer = (<StructureContainer>target);
-                creep.memory.targetContainerId = targetContainer.id;
-                creep.memory.forceMoveToTargetContainer = targetContainer.store.getFreeCapacity() === 0;
-            }
-
-            // let sourceContainer: StructureContainer | null = Game.getObjectById<StructureContainer>(creep.memory.myContainerId);
-            let dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
-
-            if (dropedEnergy && !creep.memory.forceMoveToTargetContainer) {
-                if (creep.pickup(dropedEnergy) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(dropedEnergy);
+                if (creep.memory.targetEnergySourceId) {
+                    let targetContainer: StructureContainer = (<StructureContainer>Game.getObjectById(creep.memory.targetEnergySourceId));
+                    creep.memory.forceMoveToTargetContainer = targetContainer.store.getFreeCapacity() === 0;
                 }
             }
             else {
-                let targetContainer = Game.getObjectById<StructureContainer>(creep.memory.targetContainerId);
+                let targetContainer = Game.getObjectById<StructureContainer>(creep.memory.targetEnergySourceId);
                 if (!targetContainer)
                     return;
 
                 let ret = creep.withdraw(targetContainer, RESOURCE_ENERGY, creep.store.getFreeCapacity());
                 if (ret === ERR_NOT_IN_RANGE) {
                     creep.moveTo(targetContainer);
-                }
-                if(ret === ERR_NOT_ENOUGH_ENERGY){
-                    delete creep.memory.targetContainerId;
+                } else if (ret === ERR_NOT_ENOUGH_ENERGY) {
+                    RoleCommon.deleteGetEnergyRelatedMemory(creep);
                 }
             }
 
             if (creep.store.getFreeCapacity() == 0) {
                 creep.say('delivering');
                 creep.memory.working = false;
-                delete creep.memory.targetContainerId;
+                delete creep.memory.targetEnergySourceId;
             }
         }
         else {

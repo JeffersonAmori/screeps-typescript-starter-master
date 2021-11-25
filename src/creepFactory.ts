@@ -59,7 +59,7 @@ export class CreepFactory {
 
         new BodyPartsReference(Consts.roleMiner, [
             new BodyPartRequest(WORK, 5),
-            new BodyPartRequest(MOVE, 3)]),
+            new BodyPartRequest(MOVE, 5)]),
 
         new BodyPartsReference(Consts.roleCarrier, [
             new BodyPartRequest(CARRY, 8),
@@ -76,14 +76,14 @@ export class CreepFactory {
             new BodyPartRequest(MOVE, 10)]),
 
         new BodyPartsReference(Consts.roleRepairer, [
-            new BodyPartRequest(WORK, 4),
+            new BodyPartRequest(WORK, 8),
             new BodyPartRequest(CARRY, 10),
-            new BodyPartRequest(MOVE, 4)]),
+            new BodyPartRequest(MOVE, 16)]),
 
         new BodyPartsReference(Consts.roleBuilder, [
             new BodyPartRequest(WORK, 10),
             new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 4)]),
+            new BodyPartRequest(MOVE, 14)]),
 
         new BodyPartsReference(Consts.roleBuilderForAnotherRoom, [
             new BodyPartRequest(WORK, 8),
@@ -98,22 +98,22 @@ export class CreepFactory {
         new BodyPartsReference(Consts.roleFighterMelee, [
             new BodyPartRequest(TOUGH, 20),
             new BodyPartRequest(ATTACK, 10),
-            new BodyPartRequest(MOVE, 4)]),
+            new BodyPartRequest(MOVE, 10)]),
 
         new BodyPartsReference(Consts.roleFighterMeleeForAnotherRoom, [
             new BodyPartRequest(TOUGH, 20),
             new BodyPartRequest(ATTACK, 10),
-            new BodyPartRequest(MOVE, 4)]),
+            new BodyPartRequest(MOVE, 10)]),
 
         new BodyPartsReference(Consts.roleFighterRanged, [
             new BodyPartRequest(TOUGH, 15),
-            new BodyPartRequest(RANGED_ATTACK, 12),
-            new BodyPartRequest(MOVE, 4)]),
+            new BodyPartRequest(RANGED_ATTACK, 10),
+            new BodyPartRequest(MOVE, 10)]),
 
         new BodyPartsReference(Consts.rolefighterHealer, [
             new BodyPartRequest(TOUGH, 20),
             new BodyPartRequest(HEAL, 10),
-            new BodyPartRequest(MOVE, 6)])
+            new BodyPartRequest(MOVE, 10)])
     ];
 
 

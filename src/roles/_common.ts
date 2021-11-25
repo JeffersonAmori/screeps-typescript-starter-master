@@ -56,26 +56,26 @@ export class RoleCommon {
                     if (!RoleCommon.findContainer(creep)) {
                         // If did not find a container...
                         // ...try to find an energy source
-                        RoleCommon.FindEnergySource(creep)
+                        RoleCommon.findEnergySource(creep)
                     }
                 }
             }
         }
     }
 
-    private static FindEnergySource(creep: Creep): boolean {
+    public static findEnergySource(creep: Creep): Source | undefined {
         var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
         if (source) {
             creep.memory.targetEnergySourceId = source.id;
 
-            return true;
+            return source;
         }
 
-        return false;
+        return undefined;
     }
 
-    private static findContainer(creep: Creep): boolean {
-        let container: StructureStorage | StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+    public static findContainer(creep: Creep): StructureContainer | undefined {
+        let container: StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_CONTAINER &&
                         (structure.store.getUsedCapacity(RESOURCE_ENERGY) > structure.store.getCapacity(RESOURCE_ENERGY) / 2) &&
@@ -90,14 +90,14 @@ export class RoleCommon {
                 creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
             }
 
-            return true;
+            return container;
         }
 
-        return false;
+        return undefined;
     }
 
 
-    private static findStorage(creep: Creep): boolean {
+    public static findStorage(creep: Creep): StructureStorage | undefined {
         let storage: StructureStorage | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
                 return ((structure.structureType == STRUCTURE_STORAGE) &&
@@ -112,15 +112,15 @@ export class RoleCommon {
             if (creep.store.getFreeCapacity() >= storage.store.getUsedCapacity()) {
                 creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
             }
-            return true;
+            return storage;
         }
 
-        return false;
+        return undefined;
     }
 
-    private static findDroppedEnery(creep: Creep): boolean {
+    public static findDroppedEnery(creep: Creep): Resource<ResourceConstant> | undefined {
         // Find all energies
-        let dropedEnergies = creep.room.find(FIND_DROPPED_RESOURCES);
+        let dropedEnergies : Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
         // Find the energies allowed to be picked-up
         let allowedDropedEnergy = _.filter(dropedEnergies, e => RoleCommon._prohibitedIds.indexOf(e.id) == -1);
         // Find the closest one
@@ -133,13 +133,13 @@ export class RoleCommon {
                 creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
             }
 
-            return true;
+            return closestEnergy;
         }
 
-        return false;
+        return undefined;
     }
 
-    private static deleteGetEnergyRelatedMemory(creep: Creep) {
+    public static deleteGetEnergyRelatedMemory(creep: Creep) {
         delete creep.memory.targetEnergySourceId;
         delete creep.memory.targetEnergySourceNeedsOnlyOneHarvester;
     }
