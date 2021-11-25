@@ -1,6 +1,4 @@
 export class RoleCommon {
-    private static _prohibitedIds: string[] = [];
-
     /** @param {Creep} creep **/
     public static getEnergy(creep: Creep): void {
         if (creep.memory.targetEnergySourceId) {
@@ -43,13 +41,9 @@ export class RoleCommon {
             }
         }
         else {
-            let creepsWorkingSolo = _.filter(creep.room.find(FIND_MY_CREEPS), c => c.memory.targetEnergySourceId && c.memory.targetEnergySourceNeedsOnlyOneHarvester);
-            if (creepsWorkingSolo && creepsWorkingSolo.length > 0)
-                _.forEach(creepsWorkingSolo, c => RoleCommon._prohibitedIds.push(c.memory.targetEnergySourceId!));
-
             let storage = RoleCommon.findStorage(creep);
-            let droppedEnergy = RoleCommon.findDroppedEnergy(creep)
-            let container = RoleCommon.findContainer(creep)
+            let droppedEnergy = RoleCommon.findDroppedEnergy(creep);
+            let container = RoleCommon.findContainer(creep);
 
             // Find the closest one
             let closestEnergySource = Number.MAX_VALUE;
@@ -64,7 +58,6 @@ export class RoleCommon {
 
             if (droppedEnergy) {
                 closestEnergySource = Math.min(closestEnergySource, PathFinder.search(creep.pos, droppedEnergy.pos).cost);
-
                 if (closestEnergySource < closestLastKnownDistance) {
                     closestLastKnownDistance = closestEnergySource;
                     creep.memory.targetEnergySourceId = droppedEnergy.id;
@@ -101,8 +94,7 @@ export class RoleCommon {
     public static findContainer(creep: Creep): StructureContainer | undefined {
         let container: StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER &&
-                    (RoleCommon._prohibitedIds.indexOf(structure.id) == -1));
+                return (structure.structureType == STRUCTURE_CONTAINER);
             }
         })
 
@@ -119,15 +111,14 @@ export class RoleCommon {
         return undefined;
     }
 
-
     public static findStorage(creep: Creep): StructureStorage | undefined {
         let storage: StructureStorage | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
                 return ((structure.structureType == STRUCTURE_STORAGE) &&
-                        (structure.store.getUsedCapacity(RESOURCE_ENERGY) > creep.store.getCapacity() &&
-                        RoleCommon._prohibitedIds.indexOf(structure.id) == -1));
+                    (structure.store.getUsedCapacity(RESOURCE_ENERGY) > creep.store.getFreeCapacity()));
             }
         });
+
         if (storage) {
             creep.memory.targetEnergySourceId = storage.id;
 
@@ -143,10 +134,8 @@ export class RoleCommon {
     public static findDroppedEnergy(creep: Creep): Resource<ResourceConstant> | undefined {
         // Find all energies
         let dropedEnergies: Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
-        // Find the energies allowed to be picked-up
-        let allowedDropedEnergy = _.filter(dropedEnergies, e => RoleCommon._prohibitedIds.indexOf(e.id) == -1);
         // Find the closest one
-        let closestEnergy = creep.pos.findClosestByPath(allowedDropedEnergy);
+        let closestEnergy = creep.pos.findClosestByPath(dropedEnergies);
         // If found something...
         if (closestEnergy && !creep.memory.forceMoveToTargetContainer) {
             creep.memory.targetEnergySourceId = closestEnergy.id;

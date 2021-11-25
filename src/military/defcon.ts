@@ -25,6 +25,6 @@ export class Defcon {
             }
         }
 
-        MyStructureTower.run(spawn.room);
+        // MyStructureTower.run(spawn.room);
     }
 }
