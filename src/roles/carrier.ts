@@ -1,5 +1,3 @@
-import { Consts } from "consts";
-import { filter } from "lodash";
 import { RoleCommon } from "./_common";
 
 export class RoleCarrier {
@@ -7,28 +5,54 @@ export class RoleCarrier {
         /** @param {Creep} creep **/
         if (creep.memory.working) {
             if (!creep.memory.targetEnergySourceId) {
-                if (!RoleCommon.findContainer(creep)) {
-                    // If did not find a container...
-                    if (!RoleCommon.findDroppedEnery(creep)) {
+                let containers: StructureContainer[] | null = creep.room.find(FIND_STRUCTURES, {
+                    filter: (structure) => {
+                        return (structure.structureType == STRUCTURE_CONTAINER);
+                    }
+                })
+
+                if (containers && containers.length > 0) {
+                    let container = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
+
+                    if (container) {
+                        creep.memory.targetEnergySourceId = container.id;
+
+                        if (creep.store.getFreeCapacity() >= container.store.getUsedCapacity()) {
+                            creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
+                        }
                     }
                 }
-
-                if (creep.memory.targetEnergySourceId) {
-                    let targetContainer: StructureContainer = (<StructureContainer>Game.getObjectById(creep.memory.targetEnergySourceId));
-                    creep.memory.forceMoveToTargetContainer = targetContainer.store.getFreeCapacity() === 0;
+                else {
+                    RoleCommon.findDroppedEnery(creep);
                 }
             }
             else {
-                let targetContainer = Game.getObjectById<StructureContainer>(creep.memory.targetEnergySourceId);
-                if (!targetContainer)
-                    return;
+                let targetEnergySource: Resource | Structure | null = Game.getObjectById(creep.memory.targetEnergySourceId);
+                let ret = undefined;
 
-                let ret = creep.withdraw(targetContainer, RESOURCE_ENERGY, creep.store.getFreeCapacity());
-                if (ret === ERR_NOT_IN_RANGE) {
-                    creep.moveTo(targetContainer);
-                } else if (ret === ERR_NOT_ENOUGH_ENERGY) {
+                if (!targetEnergySource) {
+                    RoleCommon.deleteGetEnergyRelatedMemory(creep);
+                    return;
+                }
+
+                if (targetEnergySource instanceof Resource) {
+                    ret = creep.pickup(targetEnergySource);
+                }
+                else if (targetEnergySource instanceof Structure) {
+                    ret = creep.withdraw(targetEnergySource, RESOURCE_ENERGY, creep.store.getFreeCapacity());
+                }
+
+                if (ret == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(targetEnergySource);
+                }
+                else {
                     RoleCommon.deleteGetEnergyRelatedMemory(creep);
                 }
+
+                if (creep.store.getFreeCapacity() == 0) {
+                    RoleCommon.deleteGetEnergyRelatedMemory(creep);
+                }
+
             }
 
             if (creep.store.getFreeCapacity() == 0) {
@@ -98,7 +122,6 @@ export class RoleCarrier {
                     creep.memory.working = true;
                 }
             }
-
         }
     }
 };

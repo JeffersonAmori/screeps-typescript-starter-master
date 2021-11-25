@@ -49,16 +49,42 @@ export class RoleCommon {
             if (creepsWorkingSolo && creepsWorkingSolo.length > 0)
                 _.forEach(creepsWorkingSolo, c => RoleCommon._prohibitedIds.push(c.memory.targetEnergySourceId!));
 
-            if (!RoleCommon.findStorage(creep)) {
-                // If did not find energy...
-                if (!RoleCommon.findDroppedEnery(creep)) {
-                    // ...try to find a container
-                    if (!RoleCommon.findContainer(creep)) {
-                        // If did not find a container...
-                        // ...try to find an energy source
-                        RoleCommon.findEnergySource(creep)
-                    }
+            let storage = RoleCommon.findStorage(creep);
+            let droppedEnergy = RoleCommon.findDroppedEnery(creep)
+            let container = RoleCommon.findContainer(creep)
+
+            // Find the closest one
+            let closestEnergySource = Number.MAX_VALUE;
+            let closestLastKnownDistance = Number.MAX_VALUE;
+            if (storage) {
+                closestEnergySource = PathFinder.search(creep.pos, storage.pos).cost;
+                if (closestEnergySource < closestLastKnownDistance) {
+                    closestLastKnownDistance = closestEnergySource;
+                    creep.memory.targetEnergySourceId = storage.id;
                 }
+            }
+
+            if (droppedEnergy) {
+                closestEnergySource = Math.min(closestEnergySource, PathFinder.search(creep.pos, droppedEnergy.pos).cost);
+
+                if (closestEnergySource < closestLastKnownDistance) {
+                    closestLastKnownDistance = closestEnergySource;
+                    creep.memory.targetEnergySourceId = droppedEnergy.id;
+                }
+            }
+
+            if (container) {
+                closestEnergySource = Math.min(closestEnergySource, PathFinder.search(creep.pos, container.pos).cost);
+                if (closestEnergySource < closestLastKnownDistance) {
+                    closestLastKnownDistance = closestEnergySource;
+                    creep.memory.targetEnergySourceId = container.id;
+                }
+            }
+
+            if (closestEnergySource == Number.MAX_VALUE) {
+                // If did not find a container...
+                // ...try to find an energy source
+                RoleCommon.findEnergySource(creep)
             }
         }
     }
@@ -78,8 +104,7 @@ export class RoleCommon {
         let container: StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_CONTAINER &&
-                        (structure.store.getUsedCapacity(RESOURCE_ENERGY) > structure.store.getCapacity(RESOURCE_ENERGY) / 2) &&
-                        (RoleCommon._prohibitedIds.indexOf(structure.id) == -1));
+                    (RoleCommon._prohibitedIds.indexOf(structure.id) == -1));
             }
         })
 
@@ -104,8 +129,7 @@ export class RoleCommon {
                         (structure.store.getUsedCapacity(RESOURCE_ENERGY) > creep.store.getCapacity() &&
                         RoleCommon._prohibitedIds.indexOf(structure.id) == -1));
             }
-        })
-
+        });
         if (storage) {
             creep.memory.targetEnergySourceId = storage.id;
 
@@ -120,7 +144,7 @@ export class RoleCommon {
 
     public static findDroppedEnery(creep: Creep): Resource<ResourceConstant> | undefined {
         // Find all energies
-        let dropedEnergies : Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
+        let dropedEnergies: Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
         // Find the energies allowed to be picked-up
         let allowedDropedEnergy = _.filter(dropedEnergies, e => RoleCommon._prohibitedIds.indexOf(e.id) == -1);
         // Find the closest one
