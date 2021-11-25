@@ -1,5 +1,3 @@
-import { RoleUpgrader } from "./upgrader";
-
 export class RoleCommon {
     private static _prohibitedIds: string[] = [];
 
@@ -50,7 +48,7 @@ export class RoleCommon {
                 _.forEach(creepsWorkingSolo, c => RoleCommon._prohibitedIds.push(c.memory.targetEnergySourceId!));
 
             let storage = RoleCommon.findStorage(creep);
-            let droppedEnergy = RoleCommon.findDroppedEnery(creep)
+            let droppedEnergy = RoleCommon.findDroppedEnergy(creep)
             let container = RoleCommon.findContainer(creep)
 
             // Find the closest one
@@ -142,7 +140,7 @@ export class RoleCommon {
         return undefined;
     }
 
-    public static findDroppedEnery(creep: Creep): Resource<ResourceConstant> | undefined {
+    public static findDroppedEnergy(creep: Creep): Resource<ResourceConstant> | undefined {
         // Find all energies
         let dropedEnergies: Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
         // Find the energies allowed to be picked-up

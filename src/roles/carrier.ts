@@ -14,16 +14,30 @@ export class RoleCarrier {
                 if (containers && containers.length > 0) {
                     let container = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
 
-                    if (container) {
+                    const droppedEnergy = RoleCommon.findDroppedEnergy(creep);
+                    // Find the closest one
+                    if (droppedEnergy) {
+                        if (container.store.getUsedCapacity() > droppedEnergy?.amount) {
+                            creep.memory.targetEnergySourceId = container.id;
+
+                            if (creep.store.getFreeCapacity() >= container.store.getUsedCapacity()) {
+                                creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
+                            }
+                        } else {
+                            creep.memory.targetEnergySourceId = droppedEnergy.id;
+
+                            if (creep.store.getFreeCapacity() >= droppedEnergy.amount) {
+                                creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
+                            }
+                        }
+                    }
+                    else {
                         creep.memory.targetEnergySourceId = container.id;
 
                         if (creep.store.getFreeCapacity() >= container.store.getUsedCapacity()) {
                             creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
                         }
                     }
-                }
-                else {
-                    RoleCommon.findDroppedEnery(creep);
                 }
             }
             else {
