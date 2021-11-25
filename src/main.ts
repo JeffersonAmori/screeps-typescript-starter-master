@@ -254,7 +254,14 @@ function CreateCreeps(spawn: StructureSpawn) {
     }
 
     const upgraders = _.filter(spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleUpgrader);
-    if (upgraders.length < Consts.maxNumberUpgrader) {
+    let additionalUpgrader = 0;
+    let roomStorage = spawn.room.storage;
+    let roomController = spawn.room.controller;
+    if (roomStorage && roomController) {
+        const energyStoredInRoom = roomStorage.store.getUsedCapacity();
+        additionalUpgrader = energyStoredInRoom > roomController.level * 20000 ? 1 : 0;
+    }
+    if (upgraders.length < (Consts.maxNumberUpgrader + additionalUpgrader)) {
         creepFactory.CreateCreep(Consts.roleUpgrader, { role: Consts.roleUpgrader, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
     }
 
