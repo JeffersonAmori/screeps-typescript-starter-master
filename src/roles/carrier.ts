@@ -1,4 +1,5 @@
 import { RoleCommon } from "./_common";
+import { Traveler } from "../libs/Traveler/Traveler";
 
 export class RoleCarrier {
     public static run(creep: Creep): void {
@@ -118,6 +119,7 @@ export class RoleCarrier {
 
             if (target) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    //Traveler.travelTo(creep, target);
                     creep.moveTo(target);
                 }
 

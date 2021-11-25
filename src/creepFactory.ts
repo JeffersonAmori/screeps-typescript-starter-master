@@ -59,11 +59,11 @@ export class CreepFactory {
 
         new BodyPartsReference(Consts.roleMiner, [
             new BodyPartRequest(WORK, 5),
-            new BodyPartRequest(MOVE, 5)]),
+            new BodyPartRequest(MOVE, 3)]),
 
         new BodyPartsReference(Consts.roleCarrier, [
-            new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 8)]),
+            new BodyPartRequest(CARRY, 10),
+            new BodyPartRequest(MOVE, 5)]),
 
         new BodyPartsReference(Consts.roleUpgrader, [
             new BodyPartRequest(WORK, 12),
@@ -83,7 +83,7 @@ export class CreepFactory {
         new BodyPartsReference(Consts.roleBuilder, [
             new BodyPartRequest(WORK, 10),
             new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 14)]),
+            new BodyPartRequest(MOVE, 18)]),
 
         new BodyPartsReference(Consts.roleBuilderForAnotherRoom, [
             new BodyPartRequest(WORK, 8),
@@ -93,27 +93,27 @@ export class CreepFactory {
         new BodyPartsReference(Consts.rolePioneer, [
             new BodyPartRequest(WORK, 8),
             new BodyPartRequest(CARRY, 10),
-            new BodyPartRequest(MOVE, 10)]),
+            new BodyPartRequest(MOVE, 18)]),
 
         new BodyPartsReference(Consts.roleFighterMelee, [
-            new BodyPartRequest(TOUGH, 20),
+            new BodyPartRequest(TOUGH, 10),
             new BodyPartRequest(ATTACK, 10),
-            new BodyPartRequest(MOVE, 10)]),
+            new BodyPartRequest(MOVE, 20)]),
 
         new BodyPartsReference(Consts.roleFighterMeleeForAnotherRoom, [
-            new BodyPartRequest(TOUGH, 20),
+            new BodyPartRequest(TOUGH, 10),
             new BodyPartRequest(ATTACK, 10),
-            new BodyPartRequest(MOVE, 10)]),
+            new BodyPartRequest(MOVE, 20)]),
 
         new BodyPartsReference(Consts.roleFighterRanged, [
             new BodyPartRequest(TOUGH, 15),
             new BodyPartRequest(RANGED_ATTACK, 10),
-            new BodyPartRequest(MOVE, 10)]),
+            new BodyPartRequest(MOVE, 25)]),
 
         new BodyPartsReference(Consts.rolefighterHealer, [
-            new BodyPartRequest(TOUGH, 20),
+            new BodyPartRequest(TOUGH, 10),
             new BodyPartRequest(HEAL, 10),
-            new BodyPartRequest(MOVE, 10)])
+            new BodyPartRequest(MOVE, 20)])
     ];
 
 

@@ -37,7 +37,7 @@ export class Mother {
             else {
                 let sumOfDistancesToSourcesFromSpawn: number = 0;
                 sources.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(this._spawn.pos, s.pos).cost);
-                sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20);
+                sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 50) + 1;
                 let roomData: RoomData = { sumOfDistancesToSourcesFromSpawnHeuristic: sumOfDistancesToSourcesFromSpawnHeuristic }
                 GlobalMemory.RoomInfo[this._spawn.name] = roomData;
             }
