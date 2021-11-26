@@ -1,9 +1,7 @@
 export class Consts {
     public static maxNumberHarvester = 0;
     public static maxNumberUpgrader = 1;
-    public static maxNumberUpgradersForAnotherRoom = 1;
     public static maxNumberBuilder = 2;
-    public static maxNumberBuilderForAnotherRoom = 2;
     public static maxNumberRepairer = 1;
     public static maxNumberCarrier = 2;
     public static maxNumberPioneer = 3;
@@ -23,21 +21,6 @@ export class Consts {
     public static roleFighterMelee = 'meleeFighter';
     public static roleFighterMeleeForAnotherRoom = 'meleeFighterForAnotherRoom';
     public static roleFighterRanged = 'rangedFighter';
-
-    public static bodyLevel1 = [WORK, CARRY, MOVE, MOVE];
-    public static bodyLevel2 = [WORK, WORK, CARRY, CARRY, MOVE, MOVE];
-    public static bodyLevel3 = [WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE];
-    public static meleeFighterBody = [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, ATTACK, ATTACK, ATTACK, ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    public static rangedFighterBody = [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, RANGED_ATTACK, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    public static healerFighterBody = [TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, TOUGH, HEAL, HEAL, HEAL, HEAL, HEAL, HEAL, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    public static harvesterStandStillBody = [WORK, WORK, WORK, WORK, WORK, MOVE, MOVE, MOVE];
-    public static carrierBody = [CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE, MOVE];
-    //public static carrierBody = [CARRY, CARRY, MOVE, MOVE];
-    public static upgraderBody = [WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, CARRY, MOVE, MOVE];
-
-    public static topContainerId = '619411f334dca3036bdc435f';
-    public static bottomContainerId = '6193f73d27ccd4567c91516f';
-    public static emergencyState : boolean;
 
     public static minTicksBeforeRepairing = 50;
 };

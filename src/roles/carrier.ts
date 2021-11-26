@@ -68,7 +68,7 @@ export class RoleCarrier {
             if (creep.store.getFreeCapacity() == 0) {
                 creep.say('delivering');
                 creep.memory.working = false;
-                delete creep.memory.targetEnergySourceId;
+                RoleCommon.deleteGetEnergyRelatedMemory(creep);
             }
         }
         else {

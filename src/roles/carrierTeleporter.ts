@@ -7,6 +7,8 @@ export class RoleCarrier {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
 
+        if (creep.memory.working && creep.store.getFreeCapacity() == 0) {
 
-     }
+        }
+    }
 };

@@ -15,6 +15,7 @@ import { FighterMelee } from "roles/fighterMelee";
 import { FighterRanged } from "roles/fighterRanged";
 import { RoleHarvester } from "roles/harvester";
 import { RoleMiner } from "roles/miner";
+import { RoleMinerTeleporter } from "roles/minerTeleporter";
 import { RolePioneer } from "roles/pioneer";
 import { RoleRepairer } from "roles/repairer";
 import { RoleUpgrader } from "roles/upgrader";
@@ -158,6 +159,10 @@ function CreepsAct() {
                 RoleMiner.run(creep);
                 break;
             }
+            case Consts.roleMinerTeleporter: {
+                RoleMinerTeleporter.run(creep);
+                break;
+            }
             case Consts.roleCarrier: {
                 RoleCarrier.run(creep);
                 break;
@@ -166,16 +171,8 @@ function CreepsAct() {
                 RoleUpgrader.run(creep);
                 break;
             }
-            case Consts.roleUpgraderForAnotherRoom: {
-                RoleUpgraderForAnotherRoom.run(creep);
-                break;
-            }
             case Consts.roleBuilder: {
                 RoleBuilder.run(creep);
-                break;
-            }
-            case Consts.roleBuilderForAnotherRoom: {
-                RoleBuilderForAnotherRoom.run(creep);
                 break;
             }
             case Consts.roleRepairer: {
