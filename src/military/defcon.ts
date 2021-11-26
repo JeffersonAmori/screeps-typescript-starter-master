@@ -1,6 +1,5 @@
 import { Consts } from "consts";
 import { CreepFactory } from "creepFactory";
-import { MyStructureSpawn } from "structure/spawn";
 import { MyStructureTower } from "structure/tower";
 
 export class Defcon {
