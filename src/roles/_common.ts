@@ -3,7 +3,7 @@ import { Consts } from "consts";
 export class RoleCommon {
     /** @param {Creep} creep **/
     public static getEnergy(creep: Creep): void {
-        if (Consts.shouldRenewCreeps && creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing  || creep.memory.isRenewing)) {
+        if (Consts.shouldRenewCreeps && creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing || creep.memory.isRenewing)) {
             this.renew(creep);
             return;
         }
@@ -48,9 +48,9 @@ export class RoleCommon {
             }
         }
         else {
-            let storage = RoleCommon.findStorage(creep);
-            let droppedEnergy = RoleCommon.findDroppedEnergy(creep);
-            let container = RoleCommon.findContainer(creep);
+            const storage = RoleCommon.findStorage(creep);
+            const droppedEnergy = RoleCommon.findDroppedEnergy(creep);
+            const container = RoleCommon.findContainer(creep);
 
             // Find the closest one
             let closestEnergySource = Number.MAX_VALUE;
@@ -88,10 +88,9 @@ export class RoleCommon {
     }
 
     public static findEnergySource(creep: Creep): Source | undefined {
-        var source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
+        const source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
         if (source) {
             creep.memory.targetEnergySourceId = source.id;
-
             return source;
         }
 
@@ -99,16 +98,15 @@ export class RoleCommon {
     }
 
     public static findContainer(creep: Creep): StructureContainer | undefined {
-        let container: StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        const container: StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
                 return (structure.structureType == STRUCTURE_CONTAINER &&
-                        structure.store.getUsedCapacity() >= creep.store.getFreeCapacity());
+                    structure.store.getUsedCapacity() >= creep.store.getFreeCapacity());
             }
         })
 
         if (container) {
             creep.memory.targetEnergySourceId = container.id;
-
             return container;
         }
 
@@ -116,7 +114,7 @@ export class RoleCommon {
     }
 
     public static findStorage(creep: Creep): StructureStorage | undefined {
-        let storage: StructureStorage | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        const storage: StructureStorage | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
                 return ((structure.structureType == STRUCTURE_STORAGE) &&
                     (structure.store.getUsedCapacity(RESOURCE_ENERGY) > creep.store.getFreeCapacity()));
@@ -125,7 +123,6 @@ export class RoleCommon {
 
         if (storage) {
             creep.memory.targetEnergySourceId = storage.id;
-
             return storage;
         }
 
@@ -134,14 +131,28 @@ export class RoleCommon {
 
     public static findDroppedEnergy(creep: Creep): Resource<ResourceConstant> | undefined {
         // Find all energies
-        let dropedEnergies: Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
+        const dropedEnergies: Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
         // Find the closest one
-        let closestEnergy = creep.pos.findClosestByPath(dropedEnergies);
+        const closestEnergy = creep.pos.findClosestByPath(dropedEnergies);
         // If found something...
         if (closestEnergy && !creep.memory.forceMoveToTargetContainer) {
             creep.memory.targetEnergySourceId = closestEnergy.id;
-
             return closestEnergy;
+        }
+
+        return undefined;
+    }
+
+    public static findTombstone(creep: Creep): Tombstone | undefined {
+        // Find all tombstones
+        const tombstones: Tombstone[] = creep.room.find(FIND_TOMBSTONES);
+        // Find the closest one
+        const tombstone: Tombstone | null = creep.pos.findClosestByPath(tombstones);
+
+        if(tombstone)
+        {
+            creep.memory.targetEnergySourceId = tombstone.id;
+            return tombstone;
         }
 
         return undefined;

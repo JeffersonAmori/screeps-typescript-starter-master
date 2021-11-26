@@ -14,20 +14,20 @@ export class Mother {
         let creepFactory: CreepFactory = new CreepFactory(this._spawn);
         let containers = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
         let links = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
-
         let sources: Source[] | null = this._spawn.room.find(FIND_SOURCES);
 
         const roomsCreeps = this._spawn.room.find(FIND_MY_CREEPS);
+
         const carriers = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleCarrier);
         const miners = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleMiner);
         const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleCarrierTeleporter);
         const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleMinerTeleporter);
 
-        if (carriers.length == 0 || miners.length == 0)
+        if ((carriers.length + carriersTeleporters.length) == 0 || (miners.length + minersTeleporters.length) == 0)
             creepFactory.isEmergencyState = true;
 
         if (links.length > 0) {
-            GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_LINK})?.id;
+            GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType == STRUCTURE_LINK })?.id;
 
             if (minersTeleporters.length < links.length - 1) {
                 creepFactory.CreateCreep(Consts.roleMinerTeleporter, { role: Consts.roleMinerTeleporter, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
@@ -47,8 +47,9 @@ export class Mother {
             }
             else {
                 let sumOfDistancesToSourcesFromSpawn: number = 0;
-                sources.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(this._spawn.pos, s.pos).cost);
-                sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20);
+                const sourcesWithoutLink = _.filter(sources, source => PathFinder.search(source.pos, source.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK, ignoreCreeps: true })!.pos).path.length > 3);
+                sourcesWithoutLink.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(this._spawn.pos, s.pos).cost);
+                sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20) + 1;
                 GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
             }
 
@@ -56,7 +57,7 @@ export class Mother {
                 creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
             }
 
-            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic -minersTeleporters.length)) {
+            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic - minersTeleporters.length)) {
                 creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
             }
         } else {
@@ -78,13 +79,13 @@ export class Mother {
             creepFactory.CreateCreep(Consts.roleUpgrader, { role: Consts.roleUpgrader, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
         }
 
-        const repairer = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleRepairer);
+        const repairer = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleRepairer);
         if (repairer.length < Consts.maxNumberRepairer) {
             creepFactory.CreateCreep(Consts.roleRepairer, { role: Consts.roleRepairer, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
         }
 
         if (this._spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-            const builders = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleBuilder);
+            const builders = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleBuilder);
             if (builders.length < Consts.maxNumberBuilder) {
                 creepFactory.CreateCreep(Consts.roleBuilder, { role: Consts.roleBuilder, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
             }

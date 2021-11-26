@@ -13,31 +13,39 @@ export class RoleCarrier {
 
         if (creep.memory.working) {
             if (!creep.memory.targetEnergySourceId) {
-                let containers: StructureContainer[] | null = creep.room.find(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (structure.structureType == STRUCTURE_CONTAINER);
-                    }
-                });
+                const tombstone: Tombstone | undefined = RoleCommon.findTombstone(creep);
+                if (tombstone) {
+                    creep.memory.targetEnergySourceId = tombstone.id;
+                }
+                else {
 
-                if (containers && containers.length > 0) {
-                    let container = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
-
-                    const droppedEnergy = RoleCommon.findDroppedEnergy(creep);
-                    // Find the closest one
-                    if (droppedEnergy) {
-                        if (container.store.getUsedCapacity() > droppedEnergy?.amount) {
-                            creep.memory.targetEnergySourceId = container.id;
-                        } else {
-                            creep.memory.targetEnergySourceId = droppedEnergy.id;
+                    const containers: StructureContainer[] | null = creep.room.find(FIND_STRUCTURES, {
+                        filter: (structure) => {
+                            return (structure.structureType == STRUCTURE_CONTAINER &&
+                                structure.store.getUsedCapacity() > 0);
                         }
-                    }
-                    else {
-                        creep.memory.targetEnergySourceId = container.id;
+                    });
+
+                    if (containers && containers.length > 0) {
+                        const closestContainer = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
+
+                        const droppedEnergy = RoleCommon.findDroppedEnergy(creep);
+                        // Find the bigger one
+                        if (droppedEnergy) {
+                            if (closestContainer.store.getUsedCapacity() > droppedEnergy?.amount) {
+                                creep.memory.targetEnergySourceId = closestContainer.id;
+                            } else {
+                                creep.memory.targetEnergySourceId = droppedEnergy.id;
+                            }
+                        }
+                        else {
+                            creep.memory.targetEnergySourceId = closestContainer.id;
+                        }
                     }
                 }
             }
             else {
-                let targetEnergySource: Resource | Structure | null = Game.getObjectById(creep.memory.targetEnergySourceId);
+                let targetEnergySource: Resource | StructureContainer | Tombstone | null = Game.getObjectById(creep.memory.targetEnergySourceId);
                 let ret = undefined;
 
                 if (!targetEnergySource) {
@@ -48,8 +56,8 @@ export class RoleCarrier {
                 if (targetEnergySource instanceof Resource) {
                     ret = creep.pickup(targetEnergySource);
                 }
-                else if (targetEnergySource instanceof Structure) {
-                    ret = creep.withdraw(targetEnergySource, RESOURCE_ENERGY, creep.store.getFreeCapacity());
+                else if (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone) {
+                    ret = creep.withdraw(targetEnergySource, RESOURCE_ENERGY, Math.min(targetEnergySource.store.getUsedCapacity(), creep.store.getFreeCapacity()));
                 }
 
                 if (ret == ERR_NOT_IN_RANGE) {
