@@ -1,14 +1,12 @@
-import { Console } from "console";
 import { Consts } from "consts";
-import { CreepFactory } from "creepFactory";
 import { GlobalMemory } from "GlobalMemory";
 import { filter, initial } from "lodash";
 import { Defcon } from "military/defcon";
 import { Mother } from "Mother";
 import { getMaxListeners } from "process";
 import { RoleBuilder } from "roles/builder";
-import { RoleBuilderForAnotherRoom } from "roles/builderForAnotherRoom";
 import { RoleCarrier } from "roles/carrier";
+import { RoleCarrierTeleporter } from "roles/carrierTeleporter";
 import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
 import { FighterHealer } from "roles/fighterHealer";
 import { FighterMelee } from "roles/fighterMelee";
@@ -19,9 +17,7 @@ import { RoleMinerTeleporter } from "roles/minerTeleporter";
 import { RolePioneer } from "roles/pioneer";
 import { RoleRepairer } from "roles/repairer";
 import { RoleUpgrader } from "roles/upgrader";
-import { RoleUpgraderForAnotherRoom } from "roles/upgraderForAnotherRoom";
 import { RoomData, RoomInfo } from "roomInfo";
-import { MyStructureSpawn } from "structure/spawn";
 import { ErrorMapper } from "utils/ErrorMapper";
 
 declare global {
@@ -165,6 +161,10 @@ function CreepsAct() {
             }
             case Consts.roleCarrier: {
                 RoleCarrier.run(creep);
+                break;
+            }
+            case Consts.roleCarrierTeleporter: {
+                RoleCarrierTeleporter.run(creep);
                 break;
             }
             case Consts.roleUpgrader: {

@@ -8,14 +8,13 @@ export class Consts {
     public static maxNumberMeleeFightersForAnotherRoom = 1;
 
     public static roleBuilder = 'builder';
-    public static roleBuilderForAnotherRoom = 'builderForAnotherRoom';
     public static roleCarrier = 'carrier';
+    public static roleCarrierTeleporter = 'carrierTeleporter';
     public static roleHarvester = 'harvester';
     public static roleMiner = 'miner';
     public static roleMinerTeleporter = 'minerTeleporter';
     public static roleRepairer = 'repairer';
     public static roleUpgrader = 'upgrader';
-    public static roleUpgraderForAnotherRoom = 'upgraderForAnotherRoom';
     public static rolePioneer = 'pioneer';
     public static rolefighterHealer = 'harvester';
     public static roleFighterMelee = 'meleeFighter';
@@ -23,4 +22,5 @@ export class Consts {
     public static roleFighterRanged = 'rangedFighter';
 
     public static minTicksBeforeRepairing = 50;
+    public static shouldRenewCreeps = false;
 };

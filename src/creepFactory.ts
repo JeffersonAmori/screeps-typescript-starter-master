@@ -70,15 +70,14 @@ export class CreepFactory {
             new BodyPartRequest(CARRY, 10),
             new BodyPartRequest(MOVE, 5)]),
 
+            new BodyPartsReference(Consts.roleCarrier, [
+                new BodyPartRequest(CARRY, 8),
+                new BodyPartRequest(MOVE, 1)]),
+
         new BodyPartsReference(Consts.roleUpgrader, [
             new BodyPartRequest(WORK, 12),
             new BodyPartRequest(CARRY, 8),
             new BodyPartRequest(MOVE, 2)]),
-
-        new BodyPartsReference(Consts.roleUpgraderForAnotherRoom, [
-            new BodyPartRequest(WORK, 8),
-            new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 10)]),
 
         new BodyPartsReference(Consts.roleRepairer, [
             new BodyPartRequest(WORK, 8),
@@ -89,11 +88,6 @@ export class CreepFactory {
             new BodyPartRequest(WORK, 10),
             new BodyPartRequest(CARRY, 8),
             new BodyPartRequest(MOVE, 18)]),
-
-        new BodyPartsReference(Consts.roleBuilderForAnotherRoom, [
-            new BodyPartRequest(WORK, 8),
-            new BodyPartRequest(CARRY, 10),
-            new BodyPartRequest(MOVE, 10)]),
 
         new BodyPartsReference(Consts.rolePioneer, [
             new BodyPartRequest(WORK, 8),

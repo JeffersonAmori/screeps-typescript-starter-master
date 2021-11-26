@@ -3,7 +3,7 @@ import { Consts } from "consts";
 export class RoleCommon {
     /** @param {Creep} creep **/
     public static getEnergy(creep: Creep): void {
-        if (creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing  || creep.memory.isRenewing)) {
+        if (Consts.shouldRenewCreeps && creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing  || creep.memory.isRenewing)) {
             this.renew(creep);
             return;
         }
