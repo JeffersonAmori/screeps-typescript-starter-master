@@ -46,7 +46,7 @@ declare global {
         targetEnemyId?: string;
         targetEnergySourceId?: string;
         targetStructureLinkId?: string
-        working: boolean;
+        working?: boolean;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")

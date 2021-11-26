@@ -161,9 +161,13 @@ export class CreepFactory {
         return bodyParts;
     }
 
-    public CreateCreep(role: string, memory: CreepMemory) {
+    public CreateCreep(role: string, memory?: CreepMemory) {
         if (this._isBuilding)
             return;
+
+        if (!memory) {
+            memory = { role: role, room: this._spawn.room.name }
+        }
 
         this._isBuilding = true;
         let bodyPartsReference: BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, bp => bp.role === role);
