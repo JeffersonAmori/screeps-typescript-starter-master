@@ -39,5 +39,5 @@ export class Consts {
     public static bottomContainerId = '6193f73d27ccd4567c91516f';
     public static emergencyState : boolean;
 
-    public static minTicksBeforeRepairing = 200;
+    public static minTicksBeforeRepairing = 50;
 };

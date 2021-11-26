@@ -49,7 +49,6 @@ declare global {
         targetContainerId?: string;
         targetEnemyId?: string;
         targetEnergySourceId?: string;
-        targetSourceId?: string;
         targetStructureLinkId?: string
         working: boolean;
     }

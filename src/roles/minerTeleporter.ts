@@ -12,7 +12,7 @@ class ResourceDistanceMap {
 }
 
 export class RoleMinerTeleporter {
-    public static Run(creep: Creep) {
+    public static run(creep: Creep) {
         if (creep.memory.working && creep.store.getFreeCapacity() === 0) {
             creep.memory.working = false;
             creep.say('linking');

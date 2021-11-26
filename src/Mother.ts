@@ -4,13 +4,13 @@ import { GlobalMemory } from "GlobalMemory";
 import { RoomData, RoomInfo } from "roomInfo";
 
 export class Mother {
-    private _spawn : StructureSpawn;
+    private _spawn: StructureSpawn;
 
     constructor(spawn: StructureSpawn) {
         this._spawn = spawn;
     }
 
-    public CreateCreeps() : void {
+    public CreateCreeps(): void {
         let creepFactory: CreepFactory = new CreepFactory(this._spawn);
         let containers = this._spawn.room.find(FIND_STRUCTURES, {
             filter: (structure) => {
