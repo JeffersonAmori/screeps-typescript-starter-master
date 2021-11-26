@@ -38,8 +38,7 @@ declare global {
     interface CreepMemory {
         forceMoveToTargetContainer?: boolean;
         isRenewing?: boolean;
-        myContainerId: string;
-        otherResources: ResourceConstant[];
+        otherResources?: ResourceConstant[];
         role: string;
         room: string;
         structureToRepairId?: string;
@@ -68,7 +67,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
     LoadMemory();
     CleanMemory();
 
-    // Automatically delete memory of missing creeps
     try {
         // if (Game.creeps.Jeff.room != Game.flags.attackFlag.room) {
         //     Game.creeps.Jeff.moveTo(Game.flags.attackFlag);
@@ -127,13 +125,6 @@ export const loop = ErrorMapper.wrapLoop(() => {
     }
 
     SaveMemory();
-
-    // structureSpawn.tryCreateCreep('harvester',  Consts.maxNumberHarvester);
-    //MyStructureSpawn.tryCreateCreep('upgrader', Consts.maxNumberUpgrader);
-    // if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-    //     MyStructureSpawn.tryCreateCreep(Consts.roleBuilder, Consts.maxNumberBuilder);
-    // }
-    // MyStructureSpawn.tryCreateCreep(Consts.roleRepairer, Consts.maxNumberRepairer);
 });
 
 function checkForHostiles(spawn: StructureSpawn) {

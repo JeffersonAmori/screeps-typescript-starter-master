@@ -30,11 +30,11 @@ export class Mother {
             GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType == STRUCTURE_LINK })?.id;
 
             if (minersTeleporters.length < links.length - 1) {
-                creepFactory.CreateCreep(Consts.roleMinerTeleporter, { role: Consts.roleMinerTeleporter, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+                creepFactory.CreateCreep(Consts.roleMinerTeleporter)
             }
 
             if (carriersTeleporters.length < Consts.maxNumberCarrierTeleporter) {
-                creepFactory.CreateCreep(Consts.roleCarrierTeleporter, { role: Consts.roleCarrierTeleporter, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+                creepFactory.CreateCreep(Consts.roleCarrierTeleporter)
             }
         }
 
@@ -54,16 +54,16 @@ export class Mother {
             }
 
             if (miners.length < (Math.min(sources.length, containers.length) - minersTeleporters.length)) {
-                creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+                creepFactory.CreateCreep(Consts.roleMiner)
             }
 
             if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic - minersTeleporters.length)) {
-                creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+                creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else {
             const harvesters = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvester);
             if (harvesters.length == 0) {
-                creepFactory.CreateCreep(Consts.roleHarvester, { role: Consts.roleHarvester, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+                creepFactory.CreateCreep(Consts.roleHarvester)
             }
         }
 
@@ -76,18 +76,18 @@ export class Mother {
             additionalUpgrader = energyStoredInRoom > roomController.level * 20000 ? 1 : 0;
         }
         if (upgraders.length < (Consts.maxNumberUpgrader + additionalUpgrader)) {
-            creepFactory.CreateCreep(Consts.roleUpgrader, { role: Consts.roleUpgrader, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+            creepFactory.CreateCreep(Consts.roleUpgrader)
         }
 
         const repairer = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleRepairer);
         if (repairer.length < Consts.maxNumberRepairer) {
-            creepFactory.CreateCreep(Consts.roleRepairer, { role: Consts.roleRepairer, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+            creepFactory.CreateCreep(Consts.roleRepairer)
         }
 
         if (this._spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
             const builders = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleBuilder);
             if (builders.length < Consts.maxNumberBuilder) {
-                creepFactory.CreateCreep(Consts.roleBuilder, { role: Consts.roleBuilder, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+                creepFactory.CreateCreep(Consts.roleBuilder)
             }
         }
 
@@ -98,7 +98,7 @@ export class Mother {
                 if (controller.level >= 4 && minLevelController < 4) {
                     const pioneers = _.filter(Game.creeps, (c) => c.memory.role == Consts.rolePioneer);
                     if (pioneers.length < Consts.maxNumberPioneer) {
-                        creepFactory.CreateCreep(Consts.rolePioneer, { role: Consts.rolePioneer, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+                        creepFactory.CreateCreep(Consts.rolePioneer)
                     }
 
                     // const meleeFighterForAnotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleFighterMeleeForAnotherRoom);

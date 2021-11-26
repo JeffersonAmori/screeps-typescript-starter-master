@@ -12,16 +12,16 @@ export class Defcon {
             let factory: CreepFactory = new CreepFactory(spawn);
 
             const fighterCount = _.filter(Game.creeps, (c: Creep) => c.memory.role === Consts.roleFighterMelee);
-            const rangedCounter = _.filter(Game.creeps, (c: Creep) => c.memory.role ===  Consts.roleFighterRanged);
-            const healerCounter = _.filter(Game.creeps, (c: Creep) => c.memory.role ===  Consts.rolefighterHealer);
+            const rangedCounter = _.filter(Game.creeps, (c: Creep) => c.memory.role === Consts.roleFighterRanged);
+            const healerCounter = _.filter(Game.creeps, (c: Creep) => c.memory.role === Consts.rolefighterHealer);
 
             if (rangedCounter.length < fighterCount.length / 2) {
-                factory.CreateCreep(Consts.roleFighterRanged, { role: Consts.roleFighterRanged, working: false, room: spawn.room, otherResources: [], myContainerId: '' })
+                factory.CreateCreep(Consts.roleFighterRanged, { role: Consts.roleFighterRanged, working: false, room: spawn.room, otherResources: [] })
             } else if (healerCounter < rangedCounter) {
-                factory.CreateCreep(Consts.rolefighterHealer, { role: Consts.rolefighterHealer, working: false, room: spawn.room, otherResources: [], myContainerId: '' })
+                factory.CreateCreep(Consts.rolefighterHealer, { role: Consts.rolefighterHealer, working: false, room: spawn.room, otherResources: [] })
             }
             else {
-                factory.CreateCreep(Consts.roleFighterMelee, { role: Consts.roleFighterMelee, working: false, room: spawn.room, otherResources: [], myContainerId: '' })
+                factory.CreateCreep(Consts.roleFighterMelee, { role: Consts.roleFighterMelee, working: false, room: spawn.room, otherResources: [] })
             }
         }
 
