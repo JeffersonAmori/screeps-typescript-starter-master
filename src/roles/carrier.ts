@@ -1,16 +1,23 @@
 import { RoleCommon } from "./_common";
 import { Traveler } from "../libs/Traveler/Traveler";
+import { Consts } from "consts";
 
 export class RoleCarrier {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
+
+        if (creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing || creep.memory.isRenewing)) {
+            RoleCommon.renew(creep);
+            return;
+        }
+
         if (creep.memory.working) {
             if (!creep.memory.targetEnergySourceId) {
                 let containers: StructureContainer[] | null = creep.room.find(FIND_STRUCTURES, {
                     filter: (structure) => {
                         return (structure.structureType == STRUCTURE_CONTAINER);
                     }
-                })
+                });
 
                 if (containers && containers.length > 0) {
                     let container = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
@@ -20,24 +27,12 @@ export class RoleCarrier {
                     if (droppedEnergy) {
                         if (container.store.getUsedCapacity() > droppedEnergy?.amount) {
                             creep.memory.targetEnergySourceId = container.id;
-
-                            if (creep.store.getFreeCapacity() >= container.store.getUsedCapacity()) {
-                                creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
-                            }
                         } else {
                             creep.memory.targetEnergySourceId = droppedEnergy.id;
-
-                            if (creep.store.getFreeCapacity() >= droppedEnergy.amount) {
-                                creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
-                            }
                         }
                     }
                     else {
                         creep.memory.targetEnergySourceId = container.id;
-
-                        if (creep.store.getFreeCapacity() >= container.store.getUsedCapacity()) {
-                            creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
-                        }
                     }
                 }
             }

@@ -39,18 +39,19 @@ declare global {
     }
 
     interface CreepMemory {
+        forceMoveToTargetContainer?: boolean;
+        isRenewing?: boolean;
+        myContainerId: string;
+        otherResources: ResourceConstant[];
         role: string;
         room: string;
-        working: boolean;
-        otherResources: ResourceConstant[];
-        myContainerId: string;
-        targetContainerId?: string;
-        targetSourceId?: string;
-        forceMoveToTargetContainer?: boolean;
-        targetEnemyId?: string;
         structureToRepairId?: string;
+        targetContainerId?: string;
+        targetEnemyId?: string;
         targetEnergySourceId?: string;
-        targetEnergySourceNeedsOnlyOneHarvester?: boolean;
+        targetSourceId?: string;
+        targetStructureLinkId?: string
+        working: boolean;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")
@@ -212,7 +213,9 @@ function CreepsAct() {
 
 
 function Init() {
-    Memory.RoomsInfo = JSON.stringify({});
+    let roomInfo: RoomInfo = {}
+    _.forEach(Game.rooms, room => roomInfo[room.name] = {})
+    Memory.RoomsInfo = JSON.stringify(roomInfo);
     Memory.Started = true;
 }
 

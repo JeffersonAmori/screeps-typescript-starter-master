@@ -1,6 +1,13 @@
+import { Consts } from "consts";
+
 export class RoleCommon {
     /** @param {Creep} creep **/
     public static getEnergy(creep: Creep): void {
+        if (creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing  || creep.memory.isRenewing)) {
+            this.renew(creep);
+            return;
+        }
+
         if (creep.memory.targetEnergySourceId) {
             let targetEnergySource: Resource | Structure | Source | null = null;
             try {
@@ -101,10 +108,6 @@ export class RoleCommon {
         if (container) {
             creep.memory.targetEnergySourceId = container.id;
 
-            if (creep.store.getFreeCapacity() >= container.store.getUsedCapacity()) {
-                creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
-            }
-
             return container;
         }
 
@@ -122,9 +125,6 @@ export class RoleCommon {
         if (storage) {
             creep.memory.targetEnergySourceId = storage.id;
 
-            if (creep.store.getFreeCapacity() >= storage.store.getUsedCapacity()) {
-                creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
-            }
             return storage;
         }
 
@@ -140,18 +140,31 @@ export class RoleCommon {
         if (closestEnergy && !creep.memory.forceMoveToTargetContainer) {
             creep.memory.targetEnergySourceId = closestEnergy.id;
 
-            if (creep.store.getFreeCapacity() >= closestEnergy.amount) {
-                creep.memory.targetEnergySourceNeedsOnlyOneHarvester = true;
-            }
-
             return closestEnergy;
         }
 
         return undefined;
     }
 
+    public static renew(creep: Creep) {
+        if (!creep.ticksToLive)
+            return;
+
+        const spawn = creep.pos.findClosestByPath(FIND_MY_SPAWNS);
+        if (spawn) {
+            creep.memory.isRenewing = true;
+            if (spawn.renewCreep(creep) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(spawn);
+            }
+            else {
+                if (creep.ticksToLive > 1400) {
+                    delete creep.memory.isRenewing;
+                }
+            }
+        }
+    }
+
     public static deleteGetEnergyRelatedMemory(creep: Creep) {
         delete creep.memory.targetEnergySourceId;
-        delete creep.memory.targetEnergySourceNeedsOnlyOneHarvester;
     }
 }

@@ -14,6 +14,7 @@ export class Consts {
     public static roleCarrier = 'carrier';
     public static roleHarvester = 'harvester';
     public static roleMiner = 'miner';
+    public static roleMinerTeleporter = 'minerTeleporter';
     public static roleRepairer = 'repairer';
     public static roleUpgrader = 'upgrader';
     public static roleUpgraderForAnotherRoom = 'upgraderForAnotherRoom';
@@ -37,4 +38,6 @@ export class Consts {
     public static topContainerId = '619411f334dca3036bdc435f';
     public static bottomContainerId = '6193f73d27ccd4567c91516f';
     public static emergencyState : boolean;
+
+    public static minTicksBeforeRepairing = 200;
 };
