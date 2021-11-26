@@ -45,14 +45,6 @@ export class RoleCarrierTeleporter {
             }
 
         } else {
-            // const storage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_STORAGE });
-
-            // if (!storage)
-            //     return;
-
-            // if (creep.transfer(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            //     creep.moveTo(storage);
-            // }
             RoleCarrier.run(creep);
         }
     }
