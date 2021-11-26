@@ -15,7 +15,9 @@ export class RoleMinerTeleporter {
         if (creep.memory.working && creep.store.getFreeCapacity() === 0) {
             creep.memory.working = false;
             creep.say('linking');
-        } else {
+        }
+
+        if (!creep.memory.working && creep.store.getUsedCapacity() === 0) {
             creep.memory.working = true;
             creep.say('harvesting');
         }
@@ -42,7 +44,7 @@ export class RoleMinerTeleporter {
             }
         }
 
-        if(creep.memory.targetStructureLinkId){
+        if (creep.memory.targetStructureLinkId) {
             const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[creep.room.name].baseStructureLinkId;
             if (!inMemoryBaseStructureLinkId)
                 return;
