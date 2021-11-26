@@ -72,7 +72,7 @@ export class RoleHarvester {
 
                 if (creep.memory.otherResources) {
                     creep.memory.otherResources.forEach(oR => {
-                        if (!target)
+                        if (!target || !creep.memory.otherResources)
                             return;
 
                         creep.transfer(target, oR);

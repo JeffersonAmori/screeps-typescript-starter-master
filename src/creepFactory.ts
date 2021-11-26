@@ -169,10 +169,18 @@ export class CreepFactory {
             memory = { role: role, room: this._spawn.room.name }
         }
 
+        if (!memory.role) {
+            memory.role = role;
+        }
+
+        if (!memory.room) {
+            memory.room = this._spawn.room.name;
+        }
+
         this._isBuilding = true;
         let bodyPartsReference: BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, bp => bp.role === role);
         if (!bodyPartsReference)
-            throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole');
+            throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole - role: ' + role);
 
         let ret = this._spawn.spawnCreep(this.GetBodyPartsByRole(role), this._spawn.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
     }
