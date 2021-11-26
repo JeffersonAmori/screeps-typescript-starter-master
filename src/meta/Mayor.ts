@@ -18,16 +18,17 @@ import { RoleRepairer } from "roles/repairer";
 import { RoleUpgrader } from "roles/upgrader";
 import { RoomData, RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
+import { Sheriff } from "./Sheriff";
 
 
 export class Mayor {
-    private _spawn : StructureSpawn;
+    private _spawn: StructureSpawn;
 
     constructor(spawn: StructureSpawn) {
         this._spawn = spawn;
     }
 
-    public govern(){
+    public govern() {
         checkForHostiles(this._spawn);
         CreepsAct(this._spawn);
         let mother = new Mother(this._spawn);
@@ -38,11 +39,12 @@ export class Mayor {
 function checkForHostiles(spawn: StructureSpawn) {
     var hostiles = spawn.room.find(FIND_HOSTILE_CREEPS);
     if (hostiles.length > 0) {
+        const sheriff = new Sheriff(spawn);
         Defcon.run(spawn);
     }
 }
 
-function CreepsAct(spawn : StructureSpawn) {
+function CreepsAct(spawn: StructureSpawn) {
     const creeps = spawn.room.find(FIND_MY_CREEPS)
     for (var name in creeps) {
         var creep = creeps[name];
