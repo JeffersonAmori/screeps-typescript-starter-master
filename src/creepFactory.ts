@@ -44,10 +44,10 @@ export class CreepFactory {
         TOUGH,
         WORK,
         CARRY,
-        MOVE,
         ATTACK,
         RANGED_ATTACK,
         HEAL,
+        MOVE,
         CLAIM
     ]
 
@@ -145,8 +145,21 @@ export class CreepFactory {
             }
         }
 
-        if (sortBody)
-            bodyParts = bodyParts.sort((a, b) => bodyParts.indexOf(a) - this.bodyPartsOrder.indexOf(b));
+        if (sortBody) {
+            let finalBody: BodyPartConstant[] = [];
+            for (let i = 0; i < this.bodyPartsOrder.length;) {
+                let ret = bodyParts.indexOf(this.bodyPartsOrder[i]);
+                if (ret > -1) {
+                    finalBody.push(this.bodyPartsOrder[i]);
+                    delete bodyParts[ret];
+                }
+                else{
+                    i++;
+                }
+            }
+
+            bodyParts = finalBody;
+        }
 
         return bodyParts;
     }
