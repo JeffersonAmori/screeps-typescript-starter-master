@@ -1,4 +1,3 @@
-import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
 
 class ResourceDistanceMap {
@@ -22,7 +21,11 @@ export class RoleMinerTeleporter {
         }
 
         if (!creep.memory.targetEnergySourceId) {
-            let links: StructureLink[] = creep.room.find(FIND_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK });
+            const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[creep.room.name].baseStructureLinkId;
+            if (!baseStructureLinkId)
+                return;
+
+            let links: StructureLink[] = creep.room.find(FIND_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK && s.id !== baseStructureLinkId });
             let sources: Source[] = creep.room.find(FIND_SOURCES);
             let minerals: Mineral[] = creep.room.find(FIND_MINERALS);
 
@@ -36,6 +39,29 @@ export class RoleMinerTeleporter {
 
                 let targetSourceId = sortedDistancesMap[0].id;
                 creep.memory.targetEnergySourceId = targetSourceId;
+            }
+        }
+
+        if(creep.memory.targetStructureLinkId){
+            const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[creep.room.name].baseStructureLinkId;
+            if (!inMemoryBaseStructureLinkId)
+                return;
+
+            const targetStructureLinkId: string | undefined = creep.memory.targetStructureLinkId;
+            const baseStructureLinkId: string | null = inMemoryBaseStructureLinkId;
+
+            if (!targetStructureLinkId || !baseStructureLinkId)
+                return;
+
+            const structureTargetStructureLink: StructureLink | null = Game.getObjectById(targetStructureLinkId);
+            const structureBaseStructureLink: StructureLink | null = Game.getObjectById(baseStructureLinkId);
+
+            if (!structureTargetStructureLink || !structureBaseStructureLink)
+                return;
+
+            if (structureTargetStructureLink.store.getUsedCapacity(RESOURCE_ENERGY)! > 0) {
+                structureTargetStructureLink.transferEnergy(structureBaseStructureLink);
+                return;
             }
         }
 
@@ -57,6 +83,9 @@ export class RoleMinerTeleporter {
 
                 creep.memory.targetStructureLinkId = closestStructureLink.id;
             }
+
+            if (creep.store.getFreeCapacity() === 0)
+                creep.memory.working = false;
         } else {
             const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[creep.room.name].baseStructureLinkId;
             if (!inMemoryBaseStructureLinkId)
@@ -76,10 +105,6 @@ export class RoleMinerTeleporter {
 
             if (creep.transfer(structureTargetStructureLink, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(structureTargetStructureLink);
-            }
-
-            if (structureTargetStructureLink.store.getUsedCapacity()! > 0) {
-                structureTargetStructureLink.transferEnergy(structureBaseStructureLink);
             }
         }
     }

@@ -2,19 +2,20 @@ import { RoleCommon } from "./_common";
 import { Traveler } from "../libs/Traveler/Traveler";
 import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
+import { RoleCarrier } from "./carrier";
 
 export class RoleCarrierTeleporter {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
 
-        if (creep.memory.working && creep.store.getUsedCapacity() === 0) {
+        if (creep.memory.working && creep.store.getUsedCapacity() === creep.store.getCapacity()) {
             creep.memory.working = false;
-            creep.say('getting');
+            creep.say('delivering');
         }
 
-        if (!creep.memory.working && creep.store.getUsedCapacity() === creep.store.getCapacity()) {
+        if (!creep.memory.working && creep.store.getUsedCapacity() === 0) {
             creep.memory.working = true;
-            creep.say('delivering');
+            creep.say('getting');
         }
 
         if (!creep.memory.targetEnergySourceId) {
@@ -27,7 +28,7 @@ export class RoleCarrierTeleporter {
             if (!structureBaseStructureLinkId)
                 return;
 
-            creep.memory.targetEnergySourceId = baseStructureLinkId;
+            creep.memory.targetEnergySourceId = structureBaseStructureLinkId.id;
         }
 
         if (creep.memory.working) {
@@ -42,15 +43,17 @@ export class RoleCarrierTeleporter {
             if (creep.withdraw(structureTargetEnergySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(structureTargetEnergySource);
             }
+
         } else {
-            const storage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_STORAGE });
+            // const storage = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_STORAGE });
 
-            if (!storage)
-                return;
+            // if (!storage)
+            //     return;
 
-            if(creep.transfer(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE){
-                creep.moveTo(storage);
-            }
+            // if (creep.transfer(storage, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            //     creep.moveTo(storage);
+            // }
+            RoleCarrier.run(creep);
         }
     }
 };

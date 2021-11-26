@@ -12,19 +12,31 @@ export class Mother {
 
     public CreateCreeps(): void {
         let creepFactory: CreepFactory = new CreepFactory(this._spawn);
-        let containers = this._spawn.room.find(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER);
-            }
-        });
+        let containers = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
+        let links = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
 
         let sources: Source[] | null = this._spawn.room.find(FIND_SOURCES);
 
-        const carriers = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleCarrier);
-        const miners = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleMiner);
+        const roomsCreeps = this._spawn.room.find(FIND_MY_CREEPS);
+        const carriers = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleCarrier);
+        const miners = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleMiner);
+        const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleCarrierTeleporter);
+        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleMinerTeleporter);
 
         if (carriers.length == 0 || miners.length == 0)
             creepFactory.isEmergencyState = true;
+
+        if (links.length > 0) {
+            GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_LINK})?.id;
+
+            if (minersTeleporters.length < links.length - 1) {
+                creepFactory.CreateCreep(Consts.roleMinerTeleporter, { role: Consts.roleMinerTeleporter, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+            }
+
+            if (carriersTeleporters.length < Consts.maxNumberCarrierTeleporter) {
+                creepFactory.CreateCreep(Consts.roleCarrierTeleporter, { role: Consts.roleCarrierTeleporter, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
+            }
+        }
 
         if (containers.length > 0) {
 
@@ -40,11 +52,11 @@ export class Mother {
                 GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
             }
 
-            if (miners.length < Math.min(sources.length, containers.length)) {
+            if (miners.length < (Math.min(sources.length, containers.length) - minersTeleporters.length)) {
                 creepFactory.CreateCreep(Consts.roleMiner, { role: Consts.roleMiner, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
             }
 
-            if (carriers.length < sumOfDistancesToSourcesFromSpawnHeuristic) {
+            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic -minersTeleporters.length)) {
                 creepFactory.CreateCreep(Consts.roleCarrier, { role: Consts.roleCarrier, working: false, room: this._spawn.room.name, otherResources: [], myContainerId: '' })
             }
         } else {

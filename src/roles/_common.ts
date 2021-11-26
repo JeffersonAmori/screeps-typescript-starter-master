@@ -101,7 +101,8 @@ export class RoleCommon {
     public static findContainer(creep: Creep): StructureContainer | undefined {
         let container: StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER);
+                return (structure.structureType == STRUCTURE_CONTAINER &&
+                        structure.store.getUsedCapacity() >= creep.store.getFreeCapacity());
             }
         })
 
