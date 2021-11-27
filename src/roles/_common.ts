@@ -99,10 +99,7 @@ export class RoleCommon {
 
     public static findContainer(creep: Creep): StructureContainer | undefined {
         const container: StructureContainer | null = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER &&
-                    structure.store.getUsedCapacity() >= creep.store.getFreeCapacity());
-            }
+            filter: structure => (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity(RESOURCE_ENERGY) >= creep.store.getFreeCapacity())
         })
 
         if (container) {
@@ -149,8 +146,7 @@ export class RoleCommon {
         // Find the closest one
         const tombstone: Tombstone | null = creep.pos.findClosestByPath(tombstones);
 
-        if(tombstone)
-        {
+        if (tombstone) {
             creep.memory.targetEnergySourceId = tombstone.id;
             return tombstone;
         }

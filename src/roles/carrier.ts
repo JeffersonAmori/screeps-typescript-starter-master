@@ -44,6 +44,7 @@ export class RoleCarrier {
             if (creep.memory.targetEnergySourceId) {
                 let targetEnergySource: Resource | StructureContainer | Tombstone | null = Game.getObjectById(creep.memory.targetEnergySourceId);
                 let ret = undefined;
+                let energyRemaining: number = Number.MAX_VALUE;
 
                 if (!targetEnergySource) {
                     RoleCommon.deleteGetEnergyRelatedMemory(creep);
@@ -52,19 +53,25 @@ export class RoleCarrier {
 
                 if (targetEnergySource instanceof Resource) {
                     ret = creep.pickup(targetEnergySource);
+                    energyRemaining = targetEnergySource.amount;
                 }
                 else if (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone) {
                     ret = creep.withdraw(targetEnergySource, RESOURCE_ENERGY, Math.min(targetEnergySource.store.getUsedCapacity(RESOURCE_ENERGY), creep.store.getFreeCapacity()));
+                    energyRemaining = targetEnergySource.store.getUsedCapacity();
+                    if (ret === ERR_NOT_ENOUGH_ENERGY) {
+                        RESOURCES_ALL.forEach(r => {
+                            if (targetEnergySource && (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone)) {
+                                creep.withdraw(targetEnergySource, r);
+                            }
+                        });
+                    }
                 }
 
-                if (ret == ERR_NOT_IN_RANGE) {
+                if (ret === ERR_NOT_IN_RANGE) {
                     creep.moveTo(targetEnergySource);
                 }
-                else {
-                    RoleCommon.deleteGetEnergyRelatedMemory(creep);
-                }
 
-                if (creep.store.getFreeCapacity() == 0) {
+                if (creep.store.getFreeCapacity() === 0 && energyRemaining === 0) {
                     RoleCommon.deleteGetEnergyRelatedMemory(creep);
                 }
             }
@@ -77,10 +84,8 @@ export class RoleCarrier {
         }
         else {
             let target: Structure | null = null;
-            if (!creep.memory.otherResources) {
-                let otherResources = _.filter(RESOURCES_ALL, r => r != RESOURCE_ENERGY && creep.store.getUsedCapacity(r) > 0);
-                creep.memory.otherResources = otherResources;
-            }
+            let otherResources = _.filter(RESOURCES_ALL, r => r !== RESOURCE_ENERGY && creep.store.getUsedCapacity(r) > 0);
+            creep.memory.otherResources = otherResources;
 
             if (creep.memory.otherResources.length > 0) {
                 target = creep.pos.findClosestByPath(FIND_STRUCTURES, {

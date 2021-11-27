@@ -1,5 +1,6 @@
 import { Consts } from "consts";
 import { CreepFactory } from "creepFactory";
+import { link } from "fs";
 import { GlobalMemory } from "GlobalMemory";
 import { RoomData, RoomInfo } from "roomInfo";
 
@@ -53,15 +54,14 @@ export class Mother {
                 GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
             }
 
-            console.log('Count miners: ' + miners.length);
-            if (miners.length < (sources.length + minerals.length) - (links.length - 1)) {
+            if (miners.length < (sources.length + extractors.length) - (links.length - 1)) {
                 creepFactory.CreateCreep(Consts.roleMiner)
             }
 
-            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic + minerals.length - (links.length - 1))) {
+            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic + extractors.length - (links.length - 1))) {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
-        } else {
+        } else if (links.length === 0) {
             const harvesters = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role === Consts.roleHarvester);
             if (harvesters.length === 0) {
                 creepFactory.CreateCreep(Consts.roleHarvester)

@@ -1,14 +1,5 @@
 import { GlobalMemory } from "GlobalMemory";
-
-class ResourceDistanceMap {
-    public id: string;
-    public cost: number;
-
-    constructor(id: string, cost: number) {
-        this.id = id;
-        this.cost = cost;
-    }
-}
+import { ResourceDistanceMap } from "models/ResourceDistanceMap";
 
 export class RoleMinerTeleporter {
     public static run(creep: Creep) {
@@ -29,20 +20,25 @@ export class RoleMinerTeleporter {
 
             let links: StructureLink[] = creep.room.find(FIND_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK && s.id !== baseStructureLinkId });
             let sources: Source[] = creep.room.find(FIND_SOURCES);
-            let minerals: Mineral[] = creep.room.find(FIND_MINERALS);
 
             let distancesMap: ResourceDistanceMap[] = [];
             let sortedDistancesMap: ResourceDistanceMap[] = [];
-            links.forEach(link => sources.forEach(source => distancesMap.push(new ResourceDistanceMap(source.id, PathFinder.search(link.pos, source.pos).cost))));
-            links.forEach(link => minerals.forEach(mineral => distancesMap.push(new ResourceDistanceMap(mineral.id, PathFinder.search(link.pos, mineral.pos).cost))));
+            links.forEach(link => sources.forEach(source => distancesMap.push(new ResourceDistanceMap(source.id, PathFinder.search(link.pos, source.pos).path.length))));
 
             if (distancesMap.length > 0) {
                 _.forEach(Game.creeps, creep => {
-                    const entry = _.find(distancesMap, dist => dist.id === creep.memory.targetEnergySourceId);
+                    const entry = _.find(distancesMap, dist => {
+                        if (!dist)
+                            return false;
+
+                        return dist.id === creep.memory.targetEnergySourceId;
+                    });
+
                     if (entry)
-                        delete distancesMap[distancesMap.indexOf(entry)];
+                        distancesMap.splice(distancesMap.indexOf(entry), 1);
                 });
 
+                console.log(JSON.stringify(distancesMap));
                 sortedDistancesMap = _.sortBy(distancesMap, x => x.cost);
                 _.filter(sortedDistancesMap, x => x.id)
 
@@ -112,7 +108,7 @@ export class RoleMinerTeleporter {
             if (!structureTargetStructureLink || !structureBaseStructureLink)
                 return;
 
-            if (creep.transfer(structureTargetStructureLink, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            if (creep.transfer(structureTargetStructureLink, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
                 creep.moveTo(structureTargetStructureLink);
             }
         }
