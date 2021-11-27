@@ -16,19 +16,14 @@ export class Mother {
         const links = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
         const sources: Source[] | null = this._spawn.room.find(FIND_SOURCES);
         const extractors: StructureExtractor[] | null = this._spawn.room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_EXTRACTOR });
+        const minerals: Mineral[] = this._spawn.room.find(FIND_MINERALS);
 
         const roomsCreeps = this._spawn.room.find(FIND_MY_CREEPS);
 
         const carriers = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrier);
         const miners = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMiner);
-        const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrierTeleporter && c.ticksToLive && c.ticksToLive > 100);
-        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerTeleporter);
-
-        let extraMinerTeleporter: number = 0;
-
-        if (extractors && extractors.length > 0) {
-            extraMinerTeleporter += extractors.length;
-        }
+        const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrierTeleporter && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
+        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerTeleporter && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
 
         if ((carriers.length + carriersTeleporters.length) === 0 || (miners.length + minersTeleporters.length) === 0)
             creepFactory.isEmergencyState = true;
@@ -36,7 +31,7 @@ export class Mother {
         if (links.length > 0) {
             GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK })?.id;
 
-            if (minersTeleporters.length < (links.length - 1 + extraMinerTeleporter)) {
+            if (minersTeleporters.length < (links.length - 1)) {
                 creepFactory.CreateCreep(Consts.roleMinerTeleporter)
             }
 
@@ -58,11 +53,12 @@ export class Mother {
                 GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
             }
 
-            if (miners.length < (Math.min(sources.length, containers.length) - minersTeleporters.length)) {
+            console.log('Count miners: ' + miners.length);
+            if (miners.length < (sources.length + minerals.length) - (links.length - 1)) {
                 creepFactory.CreateCreep(Consts.roleMiner)
             }
 
-            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic - minersTeleporters.length)) {
+            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic + minerals.length - (links.length - 1))) {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else {

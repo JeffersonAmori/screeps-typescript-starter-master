@@ -1,5 +1,4 @@
 import { RoleCommon } from "./_common";
-import { Traveler } from "../libs/Traveler/Traveler";
 import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
 import { RoleCarrier } from "./carrier";

@@ -64,9 +64,7 @@ export class RoleHarvester {
                     }
                 });
             }
-            console.log(JSON.stringify(target));
             if (target) {
-                console.log(JSON.stringify(target));
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     creep.moveTo(target);
                 }

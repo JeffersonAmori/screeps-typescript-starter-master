@@ -24,7 +24,7 @@ export class RolePillager {
             if (creep.room === Game.flags.pillageFlag.room) {
                 if (Game.flags.depositFlag) {
 
-                    creep.moveTo(Game.flags.depositFlag)
+                    creep.moveTo(Game.flags.depositFlag);
                 }
             }
             else {

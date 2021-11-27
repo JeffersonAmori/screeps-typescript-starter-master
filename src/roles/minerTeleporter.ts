@@ -37,7 +37,14 @@ export class RoleMinerTeleporter {
             links.forEach(link => minerals.forEach(mineral => distancesMap.push(new ResourceDistanceMap(mineral.id, PathFinder.search(link.pos, mineral.pos).cost))));
 
             if (distancesMap.length > 0) {
-                sortedDistancesMap = _.sortBy(distancesMap, x => x.cost)
+                _.forEach(Game.creeps, creep => {
+                    const entry = _.find(distancesMap, dist => dist.id === creep.memory.targetEnergySourceId);
+                    if (entry)
+                        delete distancesMap[distancesMap.indexOf(entry)];
+                });
+
+                sortedDistancesMap = _.sortBy(distancesMap, x => x.cost);
+                _.filter(sortedDistancesMap, x => x.id)
 
                 let targetSourceId = sortedDistancesMap[0].id;
                 creep.memory.targetEnergySourceId = targetSourceId;
