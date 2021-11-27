@@ -3,7 +3,7 @@ import { GlobalMemory } from "GlobalMemory";
 import { filter, initial } from "lodash";
 import { Overlord } from "meta/Overlord";
 import { Defcon } from "military/defcon";
-import { Mother } from "Mother";
+import { Mother } from "meta/Mother";
 import { getMaxListeners } from "process";
 import { RoleBuilder } from "roles/builder";
 import { RoleCarrier } from "roles/carrier";
@@ -60,7 +60,7 @@ declare global {
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
-export const loop = ErrorMapper.wrapLoop(() => {
+    export const loop = ErrorMapper.wrapLoop(() => {
     console.log(`Current game tick is ${Game.time}`);
     if (!Memory.Started)
         Init();

@@ -43,7 +43,6 @@ export class RoleCarrierTeleporter {
             if (creep.withdraw(structureTargetEnergySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(structureTargetEnergySource);
             }
-
         } else {
             RoleCarrier.run(creep);
         }

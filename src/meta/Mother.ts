@@ -11,10 +11,11 @@ export class Mother {
     }
 
     public CreateCreeps(): void {
-        let creepFactory: CreepFactory = new CreepFactory(this._spawn);
-        let containers = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
-        let links = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
-        let sources: Source[] | null = this._spawn.room.find(FIND_SOURCES);
+        const creepFactory: CreepFactory = new CreepFactory(this._spawn);
+        const containers = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
+        const links = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
+        const sources: Source[] | null = this._spawn.room.find(FIND_SOURCES);
+        const extractors: StructureExtractor[] | null = this._spawn.room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_EXTRACTOR });
 
         const roomsCreeps = this._spawn.room.find(FIND_MY_CREEPS);
 
@@ -23,13 +24,19 @@ export class Mother {
         const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleCarrierTeleporter);
         const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleMinerTeleporter);
 
+        let extraMinerTeleporter: number = 0;
+
+        if (extractors && extractors.length > 0) {
+            extraMinerTeleporter += extractors.length;
+        }
+
         if ((carriers.length + carriersTeleporters.length) == 0 || (miners.length + minersTeleporters.length) == 0)
             creepFactory.isEmergencyState = true;
 
         if (links.length > 0) {
             GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType == STRUCTURE_LINK })?.id;
 
-            if (minersTeleporters.length < links.length - 1) {
+            if (minersTeleporters.length < (links.length - 1 + extraMinerTeleporter)) {
                 creepFactory.CreateCreep(Consts.roleMinerTeleporter)
             }
 
@@ -37,9 +44,7 @@ export class Mother {
                 creepFactory.CreateCreep(Consts.roleCarrierTeleporter)
             }
         }
-
         if (containers.length > 0) {
-
             let sumOfDistancesToSourcesFromSpawnHeuristic = 0;
             let currentRoomData = GlobalMemory.RoomInfo[this._spawn.room.name];
             if (currentRoomData && currentRoomData.sumOfDistancesToSourcesFromSpawnHeuristic) {
