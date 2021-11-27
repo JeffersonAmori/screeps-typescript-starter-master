@@ -49,7 +49,7 @@ export class RoleCommon {
         }
         else {
             const storage = RoleCommon.findStorage(creep);
-            const droppedEnergy = RoleCommon.findDroppedEnergy(creep);
+            const droppedEnergy = RoleCommon.findDroppedResource(creep);
             const container = RoleCommon.findContainer(creep);
 
             // Find the closest one
@@ -129,7 +129,7 @@ export class RoleCommon {
         return undefined;
     }
 
-    public static findDroppedEnergy(creep: Creep): Resource<ResourceConstant> | undefined {
+    public static findDroppedResource(creep: Creep): Resource<ResourceConstant> | undefined {
         // Find all energies
         const dropedEnergies: Resource<ResourceConstant>[] = creep.room.find(FIND_DROPPED_RESOURCES);
         // Find the closest one

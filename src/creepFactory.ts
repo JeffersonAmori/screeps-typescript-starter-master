@@ -94,6 +94,11 @@ export class CreepFactory {
             new BodyPartRequest(CARRY, 10),
             new BodyPartRequest(MOVE, 18)]),
 
+        new BodyPartsReference(Consts.rolePillager, [
+            new BodyPartRequest(WORK, 8),
+            new BodyPartRequest(CARRY, 10),
+            new BodyPartRequest(MOVE, 18)]),
+
         new BodyPartsReference(Consts.roleFighterMelee, [
             new BodyPartRequest(TOUGH, 10),
             new BodyPartRequest(ATTACK, 10),
@@ -114,7 +119,6 @@ export class CreepFactory {
             new BodyPartRequest(HEAL, 10),
             new BodyPartRequest(MOVE, 20)])
     ];
-
 
     private _spawn: StructureSpawn;
 
@@ -153,7 +157,7 @@ export class CreepFactory {
                     finalBody.push(this.bodyPartsOrder[i]);
                     delete bodyParts[ret];
                 }
-                else{
+                else {
                     i++;
                 }
             }
@@ -188,6 +192,10 @@ export class CreepFactory {
 
         if (!memory.room) {
             memory.room = this._spawn.room.name;
+        }
+
+        if (!memory.otherResources) {
+            memory.otherResources = [];
         }
 
         this._isBuilding = true;

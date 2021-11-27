@@ -40,8 +40,13 @@ export class RoleCarrierTeleporter {
             if (!structureTargetEnergySource)
                 return;
 
-            if (creep.withdraw(structureTargetEnergySource, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            const ret = creep.withdraw(structureTargetEnergySource, RESOURCE_ENERGY);
+            if (ret === ERR_NOT_IN_RANGE) {
                 creep.moveTo(structureTargetEnergySource);
+            } else if (ret === ERR_NOT_ENOUGH_ENERGY) {
+                if(creep.withdraw(structureTargetEnergySource, RESOURCE_UTRIUM) === OK){
+                    creep.memory.otherResources?.push(RESOURCE_UTRIUM);
+                }
             }
         } else {
             RoleCarrier.run(creep);

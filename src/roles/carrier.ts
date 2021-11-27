@@ -6,7 +6,7 @@ export class RoleCarrier {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
 
-        if (creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing || creep.memory.isRenewing)) {
+        if (Consts.shouldRenewCreeps && creep.ticksToLive && (creep.ticksToLive < Consts.minTicksBeforeRepairing || creep.memory.isRenewing)) {
             RoleCommon.renew(creep);
             return;
         }
@@ -14,25 +14,22 @@ export class RoleCarrier {
         if (creep.memory.working) {
             if (!creep.memory.targetEnergySourceId) {
                 const tombstone: Tombstone | undefined = RoleCommon.findTombstone(creep);
-                if (tombstone) {
+                if (tombstone && tombstone.store.getUsedCapacity(RESOURCE_ENERGY) > 0) {
                     creep.memory.targetEnergySourceId = tombstone.id;
                 }
                 else {
-
-                    const containers: StructureContainer[] | null = creep.room.find(FIND_STRUCTURES, {
-                        filter: (structure) => {
-                            return (structure.structureType == STRUCTURE_CONTAINER &&
-                                structure.store.getUsedCapacity() > 0);
-                        }
-                    });
+                    const containers: StructureContainer[] | null = creep.room.find(FIND_STRUCTURES,
+                        { filter: structure => (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 0) });
 
                     if (containers && containers.length > 0) {
                         const closestContainer = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
 
-                        const droppedEnergy = RoleCommon.findDroppedEnergy(creep);
+                        const droppedEnergy = RoleCommon.findDroppedResource(creep);
                         // Find the bigger one
                         if (droppedEnergy) {
-                            if (closestContainer.store.getUsedCapacity() > droppedEnergy?.amount) {
+                            if (droppedEnergy.resourceType !== RESOURCE_ENERGY) {
+                                creep.memory.targetEnergySourceId = droppedEnergy.id;
+                            } else if (closestContainer.store.getUsedCapacity() > droppedEnergy?.amount) {
                                 creep.memory.targetEnergySourceId = closestContainer.id;
                             } else {
                                 creep.memory.targetEnergySourceId = droppedEnergy.id;
@@ -44,7 +41,8 @@ export class RoleCarrier {
                     }
                 }
             }
-            else {
+
+            if (creep.memory.targetEnergySourceId) {
                 let targetEnergySource: Resource | StructureContainer | Tombstone | null = Game.getObjectById(creep.memory.targetEnergySourceId);
                 let ret = undefined;
 
@@ -57,7 +55,7 @@ export class RoleCarrier {
                     ret = creep.pickup(targetEnergySource);
                 }
                 else if (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone) {
-                    ret = creep.withdraw(targetEnergySource, RESOURCE_ENERGY, Math.min(targetEnergySource.store.getUsedCapacity(), creep.store.getFreeCapacity()));
+                    ret = creep.withdraw(targetEnergySource, RESOURCE_ENERGY, Math.min(targetEnergySource.store.getUsedCapacity(RESOURCE_ENERGY), creep.store.getFreeCapacity()));
                 }
 
                 if (ret == ERR_NOT_IN_RANGE) {
@@ -70,7 +68,6 @@ export class RoleCarrier {
                 if (creep.store.getFreeCapacity() == 0) {
                     RoleCommon.deleteGetEnergyRelatedMemory(creep);
                 }
-
             }
 
             if (creep.store.getFreeCapacity() == 0) {
@@ -112,17 +109,11 @@ export class RoleCarrier {
             }
 
             if (!target) {
-                target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                    filter: (structure) => {
-                        return (//structure.structureType == STRUCTURE_CONTAINER ||
-                            structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                    }
-                });
+                target = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
             }
 
             if (target) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    //Traveler.travelTo(creep, target);
                     creep.moveTo(target);
                 }
 

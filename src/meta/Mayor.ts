@@ -19,6 +19,7 @@ import { RoleUpgrader } from "roles/upgrader";
 import { RoomData, RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { Sheriff } from "./Sheriff";
+import { RolePillager } from "roles/pillager";
 
 
 export class Mayor {
@@ -30,7 +31,7 @@ export class Mayor {
 
     public govern() {
         checkForHostiles(this._spawn);
-        CreepsAct(this._spawn);
+        //CreepsAct(this._spawn);
         let mother = new Mother(this._spawn);
         mother.CreateCreeps();
     }
@@ -83,6 +84,10 @@ function CreepsAct(spawn: StructureSpawn) {
             }
             case Consts.rolePioneer: {
                 RolePioneer.run(creep);
+                break;
+            }
+            case Consts.rolePillager: {
+                RolePillager.run(creep);
                 break;
             }
             case Consts.roleFighterMelee: {

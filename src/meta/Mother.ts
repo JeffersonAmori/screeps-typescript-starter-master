@@ -19,10 +19,10 @@ export class Mother {
 
         const roomsCreeps = this._spawn.room.find(FIND_MY_CREEPS);
 
-        const carriers = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleCarrier);
-        const miners = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleMiner);
-        const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleCarrierTeleporter);
-        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleMinerTeleporter);
+        const carriers = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrier);
+        const miners = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMiner);
+        const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrierTeleporter && c.ticksToLive && c.ticksToLive > 100);
+        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerTeleporter);
 
         let extraMinerTeleporter: number = 0;
 
@@ -30,11 +30,11 @@ export class Mother {
             extraMinerTeleporter += extractors.length;
         }
 
-        if ((carriers.length + carriersTeleporters.length) == 0 || (miners.length + minersTeleporters.length) == 0)
+        if ((carriers.length + carriersTeleporters.length) === 0 || (miners.length + minersTeleporters.length) === 0)
             creepFactory.isEmergencyState = true;
 
         if (links.length > 0) {
-            GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType == STRUCTURE_LINK })?.id;
+            GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK })?.id;
 
             if (minersTeleporters.length < (links.length - 1 + extraMinerTeleporter)) {
                 creepFactory.CreateCreep(Consts.roleMinerTeleporter)
@@ -66,13 +66,13 @@ export class Mother {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else {
-            const harvesters = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleHarvester);
-            if (harvesters.length == 0) {
+            const harvesters = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role === Consts.roleHarvester);
+            if (harvesters.length === 0) {
                 creepFactory.CreateCreep(Consts.roleHarvester)
             }
         }
 
-        const upgraders = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role == Consts.roleUpgrader);
+        const upgraders = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role === Consts.roleUpgrader);
         let additionalUpgrader = 0;
         let roomStorage = this._spawn.room.storage;
         let roomController = this._spawn.room.controller;
@@ -84,13 +84,13 @@ export class Mother {
             creepFactory.CreateCreep(Consts.roleUpgrader)
         }
 
-        const repairer = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleRepairer);
+        const repairer = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleRepairer);
         if (repairer.length < Consts.maxNumberRepairer) {
             creepFactory.CreateCreep(Consts.roleRepairer)
         }
 
         if (this._spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-            const builders = _.filter(roomsCreeps, (c) => c.memory.role == Consts.roleBuilder);
+            const builders = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleBuilder);
             if (builders.length < Consts.maxNumberBuilder) {
                 creepFactory.CreateCreep(Consts.roleBuilder)
             }
@@ -100,17 +100,24 @@ export class Mother {
         if (controller) {
             let minLevelController = _.sortBy(Game.spawns, s => s.room.controller?.level)[0].room.controller?.level;
             if (minLevelController) {
-                if (controller.level >= 4 && minLevelController < 4) {
-                    const pioneers = _.filter(Game.creeps, (c) => c.memory.role == Consts.rolePioneer);
+                if (controller.level >= Consts.roomLevelCanCreatePioneers && minLevelController <= Consts.roomLevelCanReceivePioneers) {
+                    const pioneers = _.filter(Game.creeps, (c) => c.memory.role === Consts.rolePioneer);
                     if (pioneers.length < Consts.maxNumberPioneer) {
                         creepFactory.CreateCreep(Consts.rolePioneer)
                     }
 
-                    // const meleeFighterForAnotherRoom = _.filter(Game.creeps, (c) => c.memory.role == Consts.roleFighterMeleeForAnotherRoom);
+                    // const meleeFighterForAnotherRoom = _.filter(Game.creeps, (c) => c.memory.role === Consts.roleFighterMeleeForAnotherRoom);
                     // if (meleeFighterForAnotherRoom.length < Consts.maxNumberMeleeFightersForAnotherRoom) {
                     //     creepFactory.CreateCreep(Consts.roleFighterMeleeForAnotherRoom, { role: Consts.roleFighterMeleeForAnotherRoom, working: false, room: spawn.room.name, otherResources: [], myContainerId: '' })
                     // }
                 }
+            }
+        }
+
+        if (Game.flags.pillageFlag) {
+            const pillagers = _.filter(Game.creeps, (c) => c.memory.role === Consts.rolePillager);
+            if (pillagers.length < Consts.maxNumberPillager) {
+                creepFactory.CreateCreep(Consts.rolePillager);
             }
         }
     }
