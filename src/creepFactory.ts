@@ -203,6 +203,6 @@ export class CreepFactory {
         if (!bodyPartsReference)
             throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole - role: ' + role);
 
-        let ret = this._spawn.spawnCreep(this.GetBodyPartsByRole(role), this._spawn.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
+        let ret = this._spawn.spawnCreep(this.GetBodyPartsByRole(role), this._spawn.room.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
     }
 }

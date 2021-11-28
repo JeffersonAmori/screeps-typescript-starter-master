@@ -110,10 +110,12 @@ export class Mother {
             }
         }
 
-        if (Game.flags.pillageFlag) {
-            const pillagers = _.filter(Game.creeps, (c) => c.memory.role === Consts.rolePillager);
-            if (pillagers.length < Consts.maxNumberPillager) {
-                creepFactory.CreateCreep(Consts.rolePillager);
+        if (Game.flags.pillageFlag && Game.flags.depositFlag) {
+            if (this._spawn.room === Game.flags.depositFlag.room) {
+                const pillagers = _.filter(Game.creeps, (c) => c.memory.role === Consts.rolePillager);
+                if (pillagers.length < Consts.maxNumberPillager) {
+                    creepFactory.CreateCreep(Consts.rolePillager);
+                }
             }
         }
     }

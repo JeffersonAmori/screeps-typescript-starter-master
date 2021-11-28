@@ -1,3 +1,5 @@
+import { Console } from "console";
+import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
 import { ResourceDistanceMap } from "models/ResourceDistanceMap";
 
@@ -26,19 +28,20 @@ export class RoleMinerTeleporter {
             links.forEach(link => sources.forEach(source => distancesMap.push(new ResourceDistanceMap(source.id, PathFinder.search(link.pos, source.pos).path.length))));
 
             if (distancesMap.length > 0) {
-                _.forEach(Game.creeps, creep => {
-                    const entry = _.find(distancesMap, dist => {
+                _.forEach(creep.room.find(FIND_MY_CREEPS), creep => {
+                    const entries = _.filter(distancesMap, dist => {
                         if (!dist)
                             return false;
 
-                        return dist.id === creep.memory.targetEnergySourceId;
+                        return dist.id === creep.memory.targetEnergySourceId && (creep.memory.role === Consts.roleMiner || creep.memory.role === Consts.roleMinerTeleporter);
                     });
 
-                    if (entry)
-                        distancesMap.splice(distancesMap.indexOf(entry), 1);
+                    if (entries && entries.length > 0) {
+                        entries.forEach(entry => distancesMap.splice(distancesMap.indexOf(entry), 1));
+                    }
+
                 });
 
-                console.log(JSON.stringify(distancesMap));
                 sortedDistancesMap = _.sortBy(distancesMap, x => x.cost);
                 _.filter(sortedDistancesMap, x => x.id)
 
