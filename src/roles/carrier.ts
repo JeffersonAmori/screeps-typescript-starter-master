@@ -71,7 +71,7 @@ export class RoleCarrier {
                     creep.moveTo(targetEnergySource);
                 }
 
-                if (creep.store.getFreeCapacity() === 0 && energyRemaining === 0) {
+                if (creep.store.getFreeCapacity() === 0 || energyRemaining === 0) {
                     RoleCommon.deleteGetEnergyRelatedMemory(creep);
                 }
             }

@@ -1,24 +1,6 @@
-import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
-import { filter, initial } from "lodash";
 import { Overlord } from "meta/Overlord";
-import { Defcon } from "military/defcon";
-import { Mother } from "meta/Mother";
-import { getMaxListeners } from "process";
-import { RoleBuilder } from "roles/builder";
-import { RoleCarrier } from "roles/carrier";
-import { RoleCarrierTeleporter } from "roles/carrierTeleporter";
-import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
-import { FighterHealer } from "roles/fighterHealer";
-import { FighterMelee } from "roles/fighterMelee";
-import { FighterRanged } from "roles/fighterRanged";
-import { RoleHarvester } from "roles/harvester";
-import { RoleMiner } from "roles/miner";
-import { RoleMinerTeleporter } from "roles/minerTeleporter";
-import { RolePioneer } from "roles/pioneer";
-import { RoleRepairer } from "roles/repairer";
-import { RoleUpgrader } from "roles/upgrader";
-import { RoomData, RoomInfo } from "roomInfo";
+import { RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
 //var Traveler = require("libs/Traveler/Traveler");
 
@@ -44,6 +26,7 @@ declare global {
         role?: string;
         room?: string;
         structureToRepairId?: string;
+        targetConstructionSiteId?: string;
         targetContainerId?: string;
         targetEnemyId?: string;
         targetEnergySourceId?: string;

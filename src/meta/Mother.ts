@@ -58,7 +58,7 @@ export class Mother {
                 creepFactory.CreateCreep(Consts.roleMiner)
             }
 
-            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic + extractors.length - (links.length - 1))) {
+            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic - (links.length - 1))) {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else if (links.length === 0) {

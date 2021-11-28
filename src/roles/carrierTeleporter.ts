@@ -7,7 +7,7 @@ export class RoleCarrierTeleporter {
     public static run(creep: Creep): void {
         /** @param {Creep} creep **/
 
-        if (creep.memory.working && creep.store.getUsedCapacity() === creep.store.getCapacity()) {
+        if (creep.memory.working && creep.store.getUsedCapacity() > 0) {
             creep.memory.working = false;
             creep.say('delivering');
         }
