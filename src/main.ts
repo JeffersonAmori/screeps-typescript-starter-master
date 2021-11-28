@@ -1,4 +1,5 @@
 import { GlobalMemory } from "GlobalMemory";
+import { Architect } from "meta/architect";
 import { Overlord } from "meta/Overlord";
 import { RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
@@ -17,6 +18,7 @@ declare global {
     interface Memory {
         RoomsInfo: string;
         Started: boolean;
+        RunArchitect: boolean;
     }
 
     interface CreepMemory {
@@ -51,6 +53,12 @@ export const loop = ErrorMapper.wrapLoop(() => {
     console.log(`Current game tick is ${Game.time}`);
     if (!Memory.Started)
         Init();
+
+    if(Memory.RunArchitect)
+    {
+        console.log(Architect.RoomCanFitBase(Game.rooms['E31S54']));
+        Memory.RunArchitect = false;
+    }
 
     LoadMemory();
     CleanMemory();

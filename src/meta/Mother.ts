@@ -21,10 +21,10 @@ export class Mother {
 
         const roomsCreeps = this._spawn.room.find(FIND_MY_CREEPS);
 
-        const carriers = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrier);
+        const carriers = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrier && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
         const miners = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMiner);
         const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrierTeleporter && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
-        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerTeleporter && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
+        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerTeleporter);
 
         if ((carriers.length + carriersTeleporters.length) === 0 || (miners.length + minersTeleporters.length) === 0)
             creepFactory.isEmergencyState = true;
@@ -40,6 +40,7 @@ export class Mother {
                 creepFactory.CreateCreep(Consts.roleCarrierTeleporter)
             }
         }
+
         if (containers.length > 0) {
             let sumOfDistancesToSourcesFromSpawnHeuristic = 0;
             let currentRoomData = GlobalMemory.RoomInfo[this._spawn.room.name];
@@ -62,13 +63,13 @@ export class Mother {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else if (links.length === 0) {
-            const harvesters = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role === Consts.roleHarvester);
+            const harvesters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleHarvester);
             if (harvesters.length === 0) {
                 creepFactory.CreateCreep(Consts.roleHarvester)
             }
         }
 
-        const upgraders = _.filter(this._spawn.room.find(FIND_MY_CREEPS), (c) => c.memory.role === Consts.roleUpgrader);
+        const upgraders = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleUpgrader && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
         let additionalUpgrader = 0;
         let roomStorage = this._spawn.room.storage;
         let roomController = this._spawn.room.controller;
