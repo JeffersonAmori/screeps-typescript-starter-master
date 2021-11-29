@@ -45,7 +45,9 @@ function CreepsAct() {
                 break;
             }
             case Consts.roleMinerTeleporter: {
-                RoleMinerTeleporter.run(creep);
+                const roleMinerTeleporter = new RoleMinerTeleporter(creep);
+                roleMinerTeleporter.run();
+                //RoleMinerTeleporter.run(creep);
                 break;
             }
             case Consts.roleCarrier: {

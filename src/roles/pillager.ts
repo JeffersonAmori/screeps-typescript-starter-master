@@ -3,57 +3,48 @@ import { StateMachine, when } from 'when-ts';
 import "libs/Traveler/Traveler";
 
 export class RolePillager extends StateMachine<CreepState> {
-    private _creep: Creep;
-
     constructor(creep: Creep) {
-        super({ creep: creep, ranToCompletion: false });
-        this._creep = creep;
+        super({ creep: creep});
     }
 
     @when<CreepState>(c => c.creep.memory.working && c.creep.store.getFreeCapacity() === 0)
     finishedWorking(s: CreepState, m: RolePillager) {
-        this._creep.memory.working = false;
-        this._creep.say('delivering');
+        s.creep.memory.working = false;
+        s.creep.say('delivering');
     }
 
-    @when<CreepState>(c => c.creep.memory.working && c.creep.store.getUsedCapacity() === 0)
+    @when<CreepState>(c => !c.creep.memory.working && c.creep.store.getUsedCapacity() === 0)
     startedWorking(s: CreepState, m: RolePillager) {
-        this._creep.memory.working = true;
-        this._creep.say('pillaging');
+        s.creep.memory.working = true;
+        s.creep.say('pillaging');
     }
 
-    @when<CreepState>(c => c.creep.memory.working && !c.ranToCompletion)
+    @when<CreepState>(c => c.creep.memory.working )
     working(s: CreepState, m: RolePillager) {
-        console.log('Working ' + this._creep.name);
-        if (this._creep.room !== Game.flags.pillageFlag.room) {
-            this._creep.travelTo(Game.flags.pillageFlag);
+        if (s.creep.room !== Game.flags.pillageFlag.room) {
+            s.creep.travelTo(Game.flags.pillageFlag);
         }
         else {
-            RoleHarvester.run(this._creep);
+            RoleHarvester.run(s.creep);
         }
 
+        m.exit();
         return { creep: s.creep, ranToCompletion: true };
     }
 
-    @when<CreepState>(c => !c.creep.memory.working && !c.ranToCompletion)
+    @when<CreepState>(c => !c.creep.memory.working)
     delivering(s: CreepState, m: RolePillager) {
-        console.log('Delivering ' + this._creep.name);
-        if (this._creep.room === Game.flags.pillageFlag.room) {
+        if (s.creep.room === Game.flags.pillageFlag.room) {
             if (Game.flags.depositFlag) {
-                this._creep.travelTo(Game.flags.depositFlag);
+                s.creep.travelTo(Game.flags.depositFlag);
             }
         }
         else {
-            RoleHarvester.run(this._creep);
+            RoleHarvester.run(s.creep);
         }
 
+        m.exit();
         return { creep: s.creep, ranToCompletion: true };
-    }
-
-    @when<CreepState>(c => c.ranToCompletion)
-    finish(s: CreepState, m: RolePillager) {
-        console.log('Finishing ' + this._creep.name);
-        m.exit(s);
     }
 
     // @when<State>(state => state.value >= 5)

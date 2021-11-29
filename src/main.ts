@@ -38,7 +38,6 @@ declare global {
 
     interface CreepState extends MachineState {
         creep: Creep;
-        ranToCompletion: boolean;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")
