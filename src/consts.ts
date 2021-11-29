@@ -5,7 +5,7 @@ export class Consts {
     public static maxNumberRepairer = 1;
     public static maxNumberCarrier = 2;
     public static maxNumberPioneer = 3;
-    public static maxNumberPillager = 1;
+    public static maxNumberPillager = 0;
     public static maxNumberCarrierTeleporter = 1;
     public static maxNumberMeleeFightersForAnotherRoom = 3;
 

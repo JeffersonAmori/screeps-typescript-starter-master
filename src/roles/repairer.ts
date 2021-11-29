@@ -25,7 +25,6 @@ export class RoleRepairer {
             creep.say('repairing');
         }
 
-
         // if creep is supposed to repair something
         if (creep.memory.working == true) {
             if (!creep.memory.structureToRepairId) {

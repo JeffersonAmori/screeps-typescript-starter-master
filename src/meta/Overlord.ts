@@ -28,8 +28,8 @@ export class Overlord {
             const spawn: StructureSpawn = Game.spawns[s]; 0
             const mayor = new Mayor(spawn);
             mayor.govern();
-            CreepsAct();
         }
+        CreepsAct();
     }
 }
 
@@ -73,7 +73,11 @@ function CreepsAct() {
                 break;
             }
             case Consts.rolePillager: {
-                RolePillager.run(creep);
+                console.log('Running pillager role');
+                const rolePillager = new RolePillager(creep);
+                let result = rolePillager.run();
+                //console.log(JSON.stringify(result));
+                //RolePillager.run(creep);
                 break;
             }
             case Consts.roleFighterMelee: {

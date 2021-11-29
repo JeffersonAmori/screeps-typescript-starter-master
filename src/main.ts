@@ -3,9 +3,7 @@ import { Architect } from "meta/architect";
 import { Overlord } from "meta/Overlord";
 import { RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
-//var Traveler = require("libs/Traveler/Traveler");
-
-
+import { MachineState } from "when-ts";
 
 declare global {
     /*
@@ -38,15 +36,17 @@ declare global {
         working?: boolean;
     }
 
+    interface CreepState extends MachineState {
+        creep: Creep;
+        ranToCompletion: boolean;
+    }
+
     // Syntax for adding proprties to `global` (ex "global.log")
     namespace NodeJS {
         interface Global {
             log: any;
         }
     }
-
-
-
 }
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
@@ -56,8 +56,7 @@ export const loop = ErrorMapper.wrapLoop(() => {
     if (!Memory.Started)
         Init();
 
-    if(Memory.RunArchitect)
-    {
+    if (Memory.RunArchitect) {
         Memory.RunArchitect = false;
         console.log(Architect.RoomCanFitBunker(Game.rooms['E31S54']));
     }
