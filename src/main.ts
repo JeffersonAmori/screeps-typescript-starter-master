@@ -3,7 +3,6 @@ import { Architect } from "meta/architect";
 import { Overlord } from "meta/Overlord";
 import { RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
-import { Traveler } from "libs/Traveler/Traveler";
 //var Traveler = require("libs/Traveler/Traveler");
 
 
