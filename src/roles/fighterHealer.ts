@@ -1,3 +1,5 @@
+import "libs/Traveler/Traveler";
+
 export class FighterHealer {
     /** @param {Creep} creep **/
     public static run(creep: Creep): void {
@@ -20,7 +22,7 @@ export class FighterHealer {
                 return;
 
             if (creep.heal(closestDamagedFriend) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(closestDamagedFriend);
+                creep.travelTo(closestDamagedFriend);
             }
         }
     }

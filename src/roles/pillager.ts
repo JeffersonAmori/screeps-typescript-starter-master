@@ -1,4 +1,5 @@
 import { RoleHarvester } from "./harvester";
+import "libs/Traveler/Traveler";
 
 export class RolePillager {
     public static run(creep: Creep) {
@@ -14,7 +15,7 @@ export class RolePillager {
 
         if (creep.memory.working) {
             if (creep.room !== Game.flags.pillageFlag.room) {
-                creep.moveTo(Game.flags.pillageFlag);
+                creep.travelTo(Game.flags.pillageFlag);
             }
             else {
                 RoleHarvester.run(creep);
@@ -23,8 +24,7 @@ export class RolePillager {
         else {
             if (creep.room === Game.flags.pillageFlag.room) {
                 if (Game.flags.depositFlag) {
-
-                    creep.moveTo(Game.flags.depositFlag);
+                    creep.travelTo(Game.flags.depositFlag);
                 }
             }
             else {

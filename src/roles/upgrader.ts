@@ -1,4 +1,5 @@
 import { RoleCommon } from "./_common";
+import "libs/Traveler/Traveler";
 
 export class RoleUpgrader {
 
@@ -20,7 +21,7 @@ export class RoleUpgrader {
                 return;
 
             if (creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(controller);
+                creep.travelTo(controller);
             }
         }
         else {

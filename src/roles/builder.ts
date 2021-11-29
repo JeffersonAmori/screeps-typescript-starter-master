@@ -1,5 +1,6 @@
 import { RoleUpgrader } from "./upgrader";
 import { RoleCommon } from "./_common";
+import "libs/Traveler/Traveler";
 
 export class RoleBuilder extends RoleCommon {
 
@@ -29,7 +30,7 @@ export class RoleBuilder extends RoleCommon {
                 let target = Game.getObjectById<ConstructionSite>(creep.memory.targetConstructionSiteId);
                 if (target) {
                     if (creep.build(target) == ERR_NOT_IN_RANGE) {
-                        creep.moveTo(target);
+                        creep.travelTo(target);
                     }
                 }
             }

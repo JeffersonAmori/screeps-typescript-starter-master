@@ -1,12 +1,11 @@
-import { filter } from "lodash";
-import { moveMessagePortToContext } from "worker_threads";
 import { FighterMelee } from "./fighterMelee";
+import "libs/Traveler/Traveler";
 
 export class FighterMeleeForAnotherRoom {
     /** @param {Creep} creep **/
     public static run(creep: Creep): void {
         if(creep.room != Game.flags.attackFlag.room){
-            creep.moveTo(Game.flags.attackFlag);
+            creep.travelTo(Game.flags.attackFlag);
         } else {
             FighterMelee.run(creep);
         }

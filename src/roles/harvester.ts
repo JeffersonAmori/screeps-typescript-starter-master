@@ -1,3 +1,5 @@
+import "libs/Traveler/Traveler";
+
 export class RoleHarvester {
 
     /** @param {Creep} creep **/
@@ -11,7 +13,7 @@ export class RoleHarvester {
             let dropedEnergy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
             if (dropedEnergy) {
                 if (creep.pickup(dropedEnergy) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(dropedEnergy);
+                    creep.travelTo(dropedEnergy);
                 }
             } else {
                 let source = creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
@@ -20,7 +22,7 @@ export class RoleHarvester {
                 }
 
                 if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source);
+                    creep.travelTo(source);
                 }
             }
         }
@@ -66,7 +68,7 @@ export class RoleHarvester {
             }
             if (target) {
                 if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(target);
+                    creep.travelTo(target);
                 }
 
                 if (creep.memory.otherResources) {

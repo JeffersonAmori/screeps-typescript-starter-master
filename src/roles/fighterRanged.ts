@@ -1,5 +1,4 @@
-import { range } from "lodash";
-import path from "path";
+import "libs/Traveler/Traveler";
 
 export class FighterRanged {
     /** @param {Creep} creep **/
@@ -14,7 +13,7 @@ export class FighterRanged {
 
             if (creep.rangedAttack(closestEnemy) == ERR_NOT_IN_RANGE) {
                 console.log('moving closer... ' + closestEnemy.name)
-                creep.moveTo(closestEnemy);
+                creep.travelTo(closestEnemy);
             }
             else {
                 if (creep.pos.inRangeTo(closestEnemy.pos.x, closestEnemy.pos.y, 3)) {

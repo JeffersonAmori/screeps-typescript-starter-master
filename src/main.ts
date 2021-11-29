@@ -3,7 +3,10 @@ import { Architect } from "meta/architect";
 import { Overlord } from "meta/Overlord";
 import { RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
+import { Traveler } from "libs/Traveler/Traveler";
 //var Traveler = require("libs/Traveler/Traveler");
+
+
 
 declare global {
     /*
@@ -56,8 +59,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
     if(Memory.RunArchitect)
     {
-        console.log(Architect.RoomCanFitBase(Game.rooms['E31S54']));
         Memory.RunArchitect = false;
+        console.log(Architect.RoomCanFitBunker(Game.rooms['E31S54']));
     }
 
     LoadMemory();

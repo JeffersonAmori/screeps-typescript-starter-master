@@ -1,7 +1,6 @@
-import { RoleCommon } from "./_common";
-import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
 import { RoleCarrier } from "./carrier";
+import "libs/Traveler/Traveler";
 
 export class RoleCarrierTeleporter {
     public static run(creep: Creep): void {
@@ -41,7 +40,7 @@ export class RoleCarrierTeleporter {
 
             const ret = creep.withdraw(structureTargetEnergySource, RESOURCE_ENERGY);
             if (ret === ERR_NOT_IN_RANGE) {
-                creep.moveTo(structureTargetEnergySource);
+                creep.travelTo(structureTargetEnergySource);
             } else if (ret === ERR_NOT_ENOUGH_ENERGY) {
                 if(creep.withdraw(structureTargetEnergySource, RESOURCE_UTRIUM) === OK){
                     creep.memory.otherResources?.push(RESOURCE_UTRIUM);

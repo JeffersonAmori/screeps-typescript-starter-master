@@ -1,5 +1,6 @@
 import { RoleBuilder } from "./builder";
 import { RoleCommon } from "./_common";
+import "libs/Traveler/Traveler";
 
 export class RoleRepairer {
     // a function to run the logic for this role
@@ -50,7 +51,7 @@ export class RoleRepairer {
                 }
 
                 if (creep.repair(structureToRepair) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(structureToRepair);
+                    creep.travelTo(structureToRepair);
                 }
             }
             else {

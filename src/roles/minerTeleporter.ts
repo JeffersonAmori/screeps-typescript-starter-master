@@ -2,6 +2,7 @@ import { Console } from "console";
 import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
 import { ResourceDistanceMap } from "models/ResourceDistanceMap";
+import "libs/Traveler/Traveler";
 
 export class RoleMinerTeleporter {
     public static run(creep: Creep) {
@@ -81,7 +82,7 @@ export class RoleMinerTeleporter {
 
             const ret = creep.harvest(source);
             if (ret === ERR_NOT_IN_RANGE) {
-                creep.moveTo(source)
+                creep.travelTo(source)
             }
 
             if (ret === OK && !creep.memory.targetStructureLinkId) {
@@ -112,7 +113,7 @@ export class RoleMinerTeleporter {
                 return;
 
             if (creep.transfer(structureTargetStructureLink, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
-                creep.moveTo(structureTargetStructureLink);
+                creep.travelTo(structureTargetStructureLink);
             }
         }
     }

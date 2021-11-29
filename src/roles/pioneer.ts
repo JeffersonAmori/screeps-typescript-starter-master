@@ -1,5 +1,5 @@
-import { sortBy } from "lodash";
 import { RoleBuilder } from "./builder";
+import "libs/Traveler/Traveler";
 
 export class RolePioneer {
 
@@ -7,7 +7,7 @@ export class RolePioneer {
     public static run(creep: Creep): void {
         let targetSpawnRoom : StructureSpawn = _.sortBy(Game.spawns, s => s.room.controller?.level)[0];
         if (creep.room != targetSpawnRoom.room)
-            creep.moveTo(targetSpawnRoom);
+            creep.travelTo(targetSpawnRoom);
         else {
             RoleBuilder.run(creep)
         }

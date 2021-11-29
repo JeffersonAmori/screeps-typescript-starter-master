@@ -1,5 +1,4 @@
-import { filter } from "lodash";
-import { moveMessagePortToContext } from "worker_threads";
+import "libs/Traveler/Traveler";
 
 export class FighterMelee {
     /** @param {Creep} creep **/
@@ -13,7 +12,7 @@ export class FighterMelee {
             creep.memory.targetEnemyId = targetEnemy.id;
 
             if (creep.attack(targetEnemy) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targetEnemy);
+                creep.travelTo(targetEnemy);
             }
         }
         else {

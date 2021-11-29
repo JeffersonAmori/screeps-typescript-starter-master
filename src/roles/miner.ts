@@ -1,5 +1,6 @@
 import { Consts } from "consts";
 import { runInThisContext } from "vm";
+import "libs/Traveler/Traveler";
 
 export class RoleMiner {
 
@@ -15,7 +16,7 @@ export class RoleMiner {
             if (creep.pos.x == targetContainer.pos.x && creep.pos.y == targetContainer.pos.y) {
                 creep.harvest(targetSource);
             } else {
-                creep.moveTo(targetContainer);
+                creep.travelTo(targetContainer);
             }
         } else {
             let otherMiner = _.find(creep.room.find(FIND_MY_CREEPS), c => c.memory.role == Consts.roleMiner && c.id != creep.id);
