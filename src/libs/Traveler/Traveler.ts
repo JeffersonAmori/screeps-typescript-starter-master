@@ -632,13 +632,6 @@ export class Traveler {
 
         return stuck;
     }
-
-    public static init() {
-        Object.defineProperty(Creep.prototype, "travelTo", {
-            configurable: true,
-            writable: true,
-        });
-    }
 }
 
 // this might be higher than you wish, setting it lower is a great way to diagnose creep behavior issues. When creeps
