@@ -73,7 +73,6 @@ export class Traveler {
         // handle case where creep is stuck
         if (!options.stuckValue) { options.stuckValue = DEFAULT_STUCK_VALUE; }
         if (state.stuckCount >= options.stuckValue && Math.random() > .5) {
-            console.log('here');
             options.ignoreCreeps = false;
             options.freshMatrix = true;
             delete travelData.path;
@@ -658,6 +657,5 @@ const STATE_DEST_ROOMNAME = 6;
 
 // assigns a function to Creep.prototype: creep.travelTo(destination)
 Creep.prototype.travelTo = function (destination: RoomPosition | { pos: RoomPosition }, options?: TravelToOptions) {
-
     return Traveler.travelTo(this, destination, options);
 };
