@@ -132,7 +132,7 @@ export class RoleCarrier {
                     });
                 }
 
-                if (creep.store.getUsedCapacity(RESOURCE_ENERGY) == 0) {
+                if (creep.store.getUsedCapacity() == 0) {
                     creep.say('getting');
                     creep.memory.working = true;
                 }

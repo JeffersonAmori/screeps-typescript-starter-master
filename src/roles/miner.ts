@@ -54,13 +54,17 @@ export class RoleMiner extends StateMachine<CreepState> {
             }
         }
 
-        if (!s.creep.memory.targetEnergySourceId)
+        if (!s.creep.memory.targetEnergySourceId){
+            m.exit()
             return;
+        }
 
         let targetSource = Game.getObjectById<Source>(s.creep.memory.targetEnergySourceId);
 
-        if (!targetSource)
+        if (!targetSource){
+            m.exit()
             return;
+        }
 
         let targetContainer = targetSource.pos.findClosestByRange(FIND_STRUCTURES, {
             filter: (structure: Structure) => {
@@ -68,8 +72,10 @@ export class RoleMiner extends StateMachine<CreepState> {
             }
         });
 
-        if (!targetContainer)
+        if (!targetContainer){
+            m.exit()
             return;
+        }
 
         s.creep.memory.targetContainerId = targetContainer.id;
     }

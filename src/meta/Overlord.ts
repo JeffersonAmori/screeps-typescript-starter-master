@@ -22,6 +22,8 @@ import { Mayor } from "./Mayor";
 import { RolePillager } from "roles/pillager";
 import { RoleSoldier } from "roles/military/soldier";
 import * as profiler from "libs/profiler/screeps-profiler"
+import * as kernel from "OS/kernel/kernel"
+import { MineProcess } from "OS/processes/process-mine";
 
 export class Overlord {
     public static rule(): void {
@@ -43,8 +45,13 @@ function CreepsAct() {
                 break;
             }
             case Consts.roleMiner: {
-                const roleMiner = new RoleMiner(creep);
-                roleMiner.run();
+                if(!creep.memory.processId || !kernel.getProcessById(creep.memory.processId)){
+                    let mineProcess = kernel.addProcess(new MineProcess(0, 0));
+                    mineProcess.setup(creep.id);
+                    creep.memory.processId = mineProcess.pid;
+                }
+                // const roleMiner = new RoleMiner(creep);
+                // roleMiner.run();
                 //RoleMiner.run(creep);
                 break;
             }

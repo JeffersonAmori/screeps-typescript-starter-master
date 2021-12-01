@@ -1,11 +1,15 @@
+//https://github.com/NhanHo/screeps-kernel
+
 import { ProcessStatus } from "./process-status";
 
 import { ProcessPriority } from "./constants";
 import { Process } from "../typings/process";
 import { Lookup as processLookup } from "./process";
+
 let ticlyQueue: Process[] = [];
 let ticlyLastQueue: Process[] = [];
 let lowPriorityQueue: Process[] = [];
+
 export let processTable: { [pid: string]: Process } = {};
 
 export let reboot = function () {
@@ -89,10 +93,12 @@ let runOneQueue = function (queue: Process[]) {
         let process = queue.pop();
         while (process) {
             try {
-                let parent = getProcessById(process.parentPID);
-                if (!parent) {
-                    killProcess(process.pid);
-                }
+                // let parent = getProcessById(process.parentPID);
+                // if (!parent) {
+                //     console.log('No parenting here');
+                //     console.log(process.pid + ' | ' + process.parentPID);
+                //     killProcess(process.pid);
+                // }
                 if ((process.status === ProcessStatus.SLEEP) &&
                     ((process.sleepInfo!.start + process.sleepInfo!.duration) < Game.time) &&
                     (process.sleepInfo!.duration !== -1)) {
@@ -102,7 +108,7 @@ let runOneQueue = function (queue: Process[]) {
                 if (process.status === ProcessStatus.ALIVE) {
                     process.run();
                 }
-            } catch (e) {
+            } catch (e: any) {
                 console.log("Fail to run process:" + process.pid);
                 console.log(e.message);
                 console.log(e.stack);
@@ -125,13 +131,14 @@ export let loadProcessTable = function () {
     for (let item of storedTable) {
         let [pid, parentPID, classPath, priority, ...remaining] = item;
         try {
-            let processClass = processLookup.getProcess(classPath);
-            if (processClass === null) {
-                console.log("Fail to lookup process: " + classPath);
-                continue;
-            }
+            // let processClass = processLookup.getProcess(classPath);
+            // if (processClass === null) {
+            //     console.log("Fail to lookup process: " + classPath);
+            //     continue;
+            // }
             let memory = getProcessMemory(pid);
-            let p = new processClass(pid, parentPID, priority) as Process;
+            let p = eval(`new ${classPath}(${pid}, ${parentPID}, ${priority})`) as Process
+            //let p = new processClass(pid, parentPID, priority) as Process;
             p.setMemory(memory);
             processTable[p.pid] = p;
             const sleepInfo = remaining.pop();
@@ -151,9 +158,8 @@ export let loadProcessTable = function () {
             if (priority === ProcessPriority.LowPriority) {
                 lowPriorityQueue.push(p);
             }
-        } catch (e) {
-            console.log("Error when loading:" + e.message);
-            console.log(classPath);
+        } catch (e: any) {
+            console.log("Error when loading: "  + classPath + ' | ' + e.message);
         }
     }
 };
