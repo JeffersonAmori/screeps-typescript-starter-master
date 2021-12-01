@@ -4,30 +4,30 @@ import { GlobalMemory } from "GlobalMemory";
 import { ResourceDistanceMap } from "models/ResourceDistanceMap";
 import "libs/Traveler/Traveler";
 
-interface RoleMinerTeleporterCreepStateCreepS extends CreepState {
+interface RoleMinerTeleporterCreepState extends CreepState {
     linkReadyToActivation: boolean;
 }
 
-export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepStateCreepS> {
+export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepState> {
 
     constructor(creep: Creep) {
         super({ creep: creep, linkReadyToActivation: false });
     }
 
-    @when<RoleMinerTeleporterCreepStateCreepS>(s => s.creep.memory.working && s.creep.store.getFreeCapacity() === 0)
-    finishedWorking(s: RoleMinerTeleporterCreepStateCreepS, m: RoleMinerTeleporter) {
+    @when<RoleMinerTeleporterCreepState>(s => s.creep.memory.working && s.creep.store.getFreeCapacity() === 0)
+    finishedWorking(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
         s.creep.memory.working = false;
         s.creep.say('linking');
     }
 
-    @when<RoleMinerTeleporterCreepStateCreepS>(s => !s.creep.memory.working && s.creep.store.getUsedCapacity() === 0)
-    startedWorking(s: RoleMinerTeleporterCreepStateCreepS, m: RoleMinerTeleporter) {
+    @when<RoleMinerTeleporterCreepState>(s => !s.creep.memory.working && s.creep.store.getUsedCapacity() === 0)
+    startedWorking(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
         s.creep.memory.working = true;
         s.creep.say('harvesting');
     }
 
-    @when<RoleMinerTeleporterCreepStateCreepS>(s => !s.creep.memory.targetEnergySourceId)
-    getTargetEnergySourceId(s: RoleMinerTeleporterCreepStateCreepS, m: RoleMinerTeleporter) {
+    @when<RoleMinerTeleporterCreepState>(s => !s.creep.memory.targetEnergySourceId)
+    getTargetEnergySourceId(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
         const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
         if (!baseStructureLinkId)
             return;
@@ -62,8 +62,8 @@ export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepSt
         }
     }
 
-    @when<RoleMinerTeleporterCreepStateCreepS>(s => s.creep.memory.targetEnergySourceId && s.creep.memory.working)
-    harvest(s: RoleMinerTeleporterCreepStateCreepS, m: RoleMinerTeleporter) {
+    @when<RoleMinerTeleporterCreepState>(s => s.creep.memory.targetEnergySourceId && s.creep.memory.working)
+    harvest(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
         if (!s.creep.memory.targetEnergySourceId)
             return;
 
@@ -88,8 +88,8 @@ export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepSt
         m.exit();
     }
 
-    @when<RoleMinerTeleporterCreepStateCreepS>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && !s.linkReadyToActivation)
-    tranferEnergyToClosestLink(s: RoleMinerTeleporterCreepStateCreepS, m: RoleMinerTeleporter) {
+    @when<RoleMinerTeleporterCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && !s.linkReadyToActivation)
+    tranferEnergyToClosestLink(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
         const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
         if (!inMemoryBaseStructureLinkId)
             return;
@@ -114,8 +114,8 @@ export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepSt
         return s;
     }
 
-    @when<RoleMinerTeleporterCreepStateCreepS>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && s.linkReadyToActivation)
-    activateLink(s: RoleMinerTeleporterCreepStateCreepS, m: RoleMinerTeleporter) {
+    @when<RoleMinerTeleporterCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && s.linkReadyToActivation)
+    activateLink(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
         const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
         if (!inMemoryBaseStructureLinkId)
             return;

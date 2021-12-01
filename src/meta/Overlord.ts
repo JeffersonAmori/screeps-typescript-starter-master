@@ -23,7 +23,8 @@ import { RolePillager } from "roles/pillager";
 import { RoleSoldier } from "roles/military/soldier";
 import * as profiler from "libs/profiler/screeps-profiler"
 import * as kernel from "OS/kernel/kernel"
-import { MineProcess } from "OS/processes/process-mine";
+import { MineProcess } from "OS/processes/mine";
+import { UpgradeProcess } from "OS/processes/upgrade";
 
 export class Overlord {
     public static rule(): void {
@@ -70,9 +71,14 @@ function CreepsAct() {
                 break;
             }
             case Consts.roleUpgrader: {
-                const roleUpgrader = new RoleUpgrader(creep);
-                roleUpgrader.run();
-                // RoleUpgrader.run(creep)
+                if(!creep.memory.processId || !kernel.getProcessById(creep.memory.processId)){
+                    let upgradeProcess = kernel.addProcess(new UpgradeProcess(0, 0));
+                    upgradeProcess.setup(creep.id);
+                    creep.memory.processId = upgradeProcess.pid;
+                }
+                // const roleUpgrader = new RoleUpgrader(creep);
+                // roleUpgrader.run();
+                // RoleUpgrader.run(creep);
                 break;
             }
             case Consts.roleBuilder: {
