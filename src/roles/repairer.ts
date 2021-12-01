@@ -1,8 +1,81 @@
 import { RoleBuilder } from "./builder";
 import { RoleCommon } from "./_common";
 import "libs/Traveler/Traveler";
+import { StateMachine, when } from "when-ts";
 
-export class RoleRepairer {
+interface RoleRepairerCreepStateCreep extends CreepState {
+    nothingToUpgrade: boolean;
+}
+
+export class RoleRepairer extends StateMachine<RoleRepairerCreepStateCreep> {
+    constructor(creep: Creep) {
+        super({ creep: creep, nothingToUpgrade: false });
+    }
+
+    @when<RoleRepairerCreepStateCreep>(s => s.creep.memory.working && s.creep.store.getUsedCapacity() === 0)
+    finishedWorking(s: RoleRepairerCreepStateCreep, m: RoleRepairer) {
+        s.creep.memory.working = false;
+        s.creep.say('harvesting');
+    }
+
+    @when<RoleRepairerCreepStateCreep>(s => !s.creep.memory.working && s.creep.store.getUsedCapacity() === s.creep.store.getCapacity())
+    startedWorking(s: RoleRepairerCreepStateCreep, m: RoleRepairer) {
+        s.creep.memory.working = true;
+        s.creep.say('repairing');
+    }
+
+    @when<RoleRepairerCreepStateCreep>(s => s.creep.memory.working && !s.creep.memory.structureToRepairId && !s.nothingToUpgrade)
+    findConstructionSite(s: RoleRepairerCreepStateCreep, m: RoleRepairer) {
+        let structures = s.creep.room.find(FIND_STRUCTURES, {
+            filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL)
+        });
+
+        if (!structures) {
+            s.nothingToUpgrade = true;
+            return s;
+        }
+
+        let targetStructure = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
+
+        s.creep.memory.structureToRepairId = targetStructure.id;
+
+        return s;
+    }
+
+    @when<RoleRepairerCreepStateCreep>(s => s.creep.memory.working && s.creep.memory.structureToRepairId && !s.nothingToUpgrade)
+    repair(s: RoleRepairerCreepStateCreep, m: RoleRepairer) {
+        if (!s.creep.memory.structureToRepairId)
+            return;
+
+        const structureToRepair: Structure | null = Game.getObjectById<Structure>(s.creep.memory.structureToRepairId);
+
+        if (!structureToRepair)
+            return;
+
+        if (structureToRepair.hits === structureToRepair.hitsMax) {
+            delete s.creep.memory.structureToRepairId;
+            return;
+        }
+
+        if (s.creep.repair(structureToRepair) === ERR_NOT_IN_RANGE) {
+            s.creep.travelTo(structureToRepair);
+        }
+
+        m.exit();
+    }
+
+    @when<RoleRepairerCreepStateCreep>(s => s.nothingToUpgrade)
+    build(s: RoleRepairerCreepStateCreep, m: RoleRepairer) {
+        RoleBuilder.run(s.creep);
+        m.exit()
+    }
+
+    @when<RoleRepairerCreepStateCreep>(s => !s.creep.memory.working)
+    getEnergy(s: RoleRepairerCreepStateCreep, m: RoleRepairer) {
+        RoleCommon.getEnergy(s.creep);
+        m.exit();
+    }
+
     // a function to run the logic for this role
     /** @param {Creep} creep */
     public static run(creep: Creep): void {
@@ -40,11 +113,10 @@ export class RoleRepairer {
                 creep.memory.structureToRepairId = targetStructure.id;
             }
 
-            let structureToRepair : Structure | null = Game.getObjectById<Structure>(creep.memory.structureToRepairId);
+            let structureToRepair: Structure | null = Game.getObjectById<Structure>(creep.memory.structureToRepairId);
 
             if (structureToRepair) {
-                if(structureToRepair.hits == structureToRepair.hitsMax)
-                {
+                if (structureToRepair.hits == structureToRepair.hitsMax) {
                     delete creep.memory.structureToRepairId;
                     return;
                 }

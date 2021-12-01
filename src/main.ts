@@ -3,7 +3,12 @@ import { Architect } from "meta/architect";
 import { Overlord } from "meta/Overlord";
 import { RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
-import { MachineState } from "when-ts";
+import { MachineState, StateMachine } from "when-ts";
+import * as profiler from "libs/profiler/screeps-profiler"
+import { RoleMinerTeleporter } from "roles/minerTeleporter";
+import { RoleUpgrader } from "roles/upgrader";
+import { RoleRepairer } from "roles/repairer";
+import { RoleMiner } from "roles/miner";
 
 declare global {
     /*
@@ -50,7 +55,15 @@ declare global {
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
-export const loop = ErrorMapper.wrapLoop(() => {
+
+// profiler.registerClass(RoleMinerTeleporter, 'RoleMinerTeleporter');
+// profiler.registerClass(RoleMiner, 'RoleMiner');
+//profiler.registerClass(StateMachine, 'StateMachine');
+
+profiler.enable();
+
+export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
+
     console.log(`Current game tick is ${Game.time}`);
     if (!Memory.Started)
         Init();
@@ -90,8 +103,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
 
         // Game.creeps.Jeff.moveTo(spawn);
 
-        // if (Game.creeps.Diplo.room != Game.flags.attackFlag.room)
-        //     Game.creeps.Diplo.moveTo(Game.flags.attackFlag);
+        // if (Game.creeps.Diplo.room != Game.flags.claimFlag.room)
+        //     Game.creeps.Diplo.moveTo(Game.flags.claimFlag);
         // else {
         //     const controller = Game.creeps.Diplo.room.controller;
 
@@ -108,7 +121,8 @@ export const loop = ErrorMapper.wrapLoop(() => {
     Overlord.rule();
 
     SaveMemory();
-});
+})
+);
 
 function Init() {
     let roomInfo: RoomInfo = {}

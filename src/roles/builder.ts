@@ -9,6 +9,7 @@ export class RoleBuilder extends RoleCommon {
 
         if (creep.memory.working && creep.store.getUsedCapacity() === 0) {
             creep.memory.working = false;
+            delete creep.memory.targetConstructionSiteId;
             creep.say('harvesting');
         }
 
@@ -32,6 +33,9 @@ export class RoleBuilder extends RoleCommon {
                     if (creep.build(target) == ERR_NOT_IN_RANGE) {
                         creep.travelTo(target);
                     }
+                }
+                else{
+                    delete creep.memory.targetConstructionSiteId;
                 }
             }
             else {

@@ -20,6 +20,8 @@ import { RoomData, RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { Mayor } from "./Mayor";
 import { RolePillager } from "roles/pillager";
+import { RoleSoldier } from "roles/military/soldier";
+import * as profiler from "libs/profiler/screeps-profiler"
 
 export class Overlord {
     public static rule(): void {
@@ -41,7 +43,9 @@ function CreepsAct() {
                 break;
             }
             case Consts.roleMiner: {
-                RoleMiner.run(creep);
+                const roleMiner = new RoleMiner(creep);
+                roleMiner.run();
+                //RoleMiner.run(creep);
                 break;
             }
             case Consts.roleMinerTeleporter: {
@@ -59,7 +63,9 @@ function CreepsAct() {
                 break;
             }
             case Consts.roleUpgrader: {
-                RoleUpgrader.run(creep);
+                const roleUpgrader = new RoleUpgrader(creep);
+                roleUpgrader.run();
+                // RoleUpgrader.run(creep)
                 break;
             }
             case Consts.roleBuilder: {
@@ -67,7 +73,9 @@ function CreepsAct() {
                 break;
             }
             case Consts.roleRepairer: {
-                RoleRepairer.run(creep);
+                const roleRepairer = new RoleRepairer(creep);
+                roleRepairer.run();
+                //RoleRepairer.run(creep);
                 break;
             }
             case Consts.rolePioneer: {
@@ -75,9 +83,15 @@ function CreepsAct() {
                 break;
             }
             case Consts.rolePillager: {
-                console.log('Running pillager role');
                 const rolePillager = new RolePillager(creep);
-                let result = rolePillager.run();
+                rolePillager.run();
+                //console.log(JSON.stringify(result));
+                //RolePillager.run(creep);
+                break;
+            }
+            case Consts.roleSoldier: {
+                const roleSoldier = new RoleSoldier(creep);
+                roleSoldier.run();
                 //console.log(JSON.stringify(result));
                 //RolePillager.run(creep);
                 break;

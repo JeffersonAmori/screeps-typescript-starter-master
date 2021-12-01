@@ -12,6 +12,11 @@ export class Mother {
     }
 
     public CreateCreeps(): void {
+        const controller = this._spawn.room.controller;
+        if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
+            return;
+
+
         const creepFactory: CreepFactory = new CreepFactory(this._spawn);
         const containers = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
         const links = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
@@ -49,7 +54,9 @@ export class Mother {
             }
             else {
                 let sumOfDistancesToSourcesFromSpawn: number = 0;
-                const sourcesWithoutLink = _.filter(sources, source => PathFinder.search(source.pos, source.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK, ignoreCreeps: true })!.pos).path.length > 3);
+                let sourcesWithoutLink = sources;
+                if(links && links.length > 0)
+                    sourcesWithoutLink = _.filter(sources, source => PathFinder.search(source.pos, source.pos.findClosestByPath(links)!.pos).path.length > 3);
                 sourcesWithoutLink.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(this._spawn.pos, s.pos).cost);
                 sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20) + 1;
                 GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
@@ -93,11 +100,10 @@ export class Mother {
             }
         }
 
-        let controller = this._spawn.room.controller;
         if (controller) {
             let minLevelController = _.sortBy(Game.spawns, s => s.room.controller?.level)[0].room.controller?.level;
             if (minLevelController) {
-                if (controller.level >= Consts.roomLevelCanCreatePioneers && minLevelController <= Consts.roomLevelCanReceivePioneers) {
+                if (controller.level >= Consts.roomLevelCanCreatePioneers && (minLevelController <= Consts.roomLevelCanReceivePioneers || Game.flags.colonizeFlag)) {
                     const pioneers = _.filter(Game.creeps, (c) => c.memory.role === Consts.rolePioneer);
                     if (pioneers.length < Consts.maxNumberPioneer) {
                         creepFactory.CreateCreep(Consts.rolePioneer)
@@ -117,6 +123,13 @@ export class Mother {
                 if (pillagers.length < Consts.maxNumberPillager) {
                     creepFactory.CreateCreep(Consts.rolePillager);
                 }
+            }
+        }
+
+        if (Game.flags.attackFlag) {
+            const soldiers = _.filter(Game.creeps, (c) => c.memory.role === Consts.roleSoldier);
+            if (soldiers.length < Consts.maxNumberSoldier) {
+                creepFactory.CreateCreep(Consts.roleSoldier);
             }
         }
     }
