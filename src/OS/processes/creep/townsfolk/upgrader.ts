@@ -1,7 +1,7 @@
 import { RoleCommon } from "roles/_common";
 import { when } from "when-ts";
-import { Process } from "../kernel/process";
-import { ProcessStatus } from "../kernel/process-status";
+import { Process } from "../../../kernel/process";
+import { ProcessStatus } from "../../../kernel/process-status";
 
 enum UpgradeProcessStates{
     initial,

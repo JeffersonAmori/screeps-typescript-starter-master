@@ -22,10 +22,11 @@ import { Mayor } from "./Mayor";
 import { RolePillager } from "roles/pillager";
 import { RoleSoldier } from "roles/military/soldier";
 import * as kernel from "OS/kernel/kernel"
-import { MineProcess } from "OS/processes/mine";
-import { UpgradeProcess } from "OS/processes/upgrader";
+import { MineProcess } from "OS/processes/creep/townsfolk/mine";
+import { UpgradeProcess } from "OS/processes/creep/townsfolk/upgrader";
 import { Process } from "OS/kernel/process";
-import { RepairerProcess } from "OS/processes/repairer";
+import { RepairerProcess } from "OS/processes/creep/townsfolk/repairer";
+import { PillagerProcess } from "OS/processes/creep/explorers/pillager";
 
 export class Overlord {
     public static rule(): void {
@@ -79,8 +80,9 @@ export class Overlord {
                     break;
                 }
                 case Consts.rolePillager: {
-                    const rolePillager = new RolePillager(creep);
-                    rolePillager.run();
+                    Overlord.startCreepProcess(creep, new PillagerProcess(0, 0));
+                    // const rolePillager = new RolePillager(creep);
+                    // rolePillager.run();
                     //console.log(JSON.stringify(result));
                     //RolePillager.run(creep);
                     break;
