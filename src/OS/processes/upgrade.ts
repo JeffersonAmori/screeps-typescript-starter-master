@@ -22,6 +22,13 @@ export class UpgradeProcess extends Process<CreepState> {
         this.setInitialState({creep: Game.getObjectById<Creep>(this.memory.creepId)!})
     }
 
+    @when<CreepState>(c => !c.creep)
+    noMoreCreep(s: CreepState, m: UpgradeProcess){
+        this.status = ProcessStatus.DEAD;
+
+        m.exit();
+    }
+
     @when<CreepState>(c => c.creep.memory.working && c.creep.store.getUsedCapacity() === 0)
     finishedWorking(s: CreepState, m: UpgradeProcess) {
         console.log(`${s.creep.name} finishedWorking`);
