@@ -62,7 +62,7 @@ export class CreepFactory {
             new BodyPartRequest(WORK, 5),
             new BodyPartRequest(MOVE, 3)]),
 
-        new BodyPartsReference(Consts.roleMinerTeleporter, [
+        new BodyPartsReference(Consts.roleMinerLinker, [
             new BodyPartRequest(WORK, 5),
             new BodyPartRequest(CARRY, 8),
             new BodyPartRequest(MOVE, 3)]),

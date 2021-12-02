@@ -16,8 +16,6 @@ export class UpgradeProcess extends Process<CreepState> {
 
     // _[0] - creepId
     public setup(..._: any[]) {
-        console.log(`setup`)
-
         this.memory.creepId = _[0];
         this.setInitialState({creep: Game.getObjectById<Creep>(this.memory.creepId)!})
     }

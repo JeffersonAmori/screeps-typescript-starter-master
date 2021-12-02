@@ -10,6 +10,12 @@ interface RepairerProcessCreepStateCreep extends CreepState {
 
 export class RepairerProcess extends Process<CreepState> {
 
+    // _[0] - creepId
+    public setup(..._: any[]) {
+        this.memory.creepId = _[0];
+        this.setInitialState({ creep: Game.getObjectById<Creep>(this.memory.creepId)! })
+    }
+
     @when<CreepState>(c => !c.creep)
     noMoreCreep(s: CreepState, m: RepairerProcess){
         this.status = ProcessStatus.DEAD;
@@ -79,14 +85,6 @@ export class RepairerProcess extends Process<CreepState> {
     getEnergy(s: RepairerProcessCreepStateCreep, m: RepairerProcess) {
         RoleCommon.getEnergy(s.creep);
         m.exit();
-    }
-
-    // _[0] - creepId
-    public setup(..._: any[]) {
-        console.log(`Setup RepairerProcess`);
-
-        this.memory.creepId = _[0];
-        this.setInitialState({ creep: Game.getObjectById<Creep>(this.memory.creepId)! })
     }
 
     // // a function to run the logic for this role

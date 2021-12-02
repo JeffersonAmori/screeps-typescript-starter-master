@@ -15,7 +15,7 @@ export class Consts {
     public static roleCarrierTeleporter = 'carrierTeleporter';
     public static roleHarvester = 'harvester';
     public static roleMiner = 'miner';
-    public static roleMinerTeleporter = 'minerTeleporter';
+    public static roleMinerLinker = 'minerLinker';
     public static roleRepairer = 'repairer';
     public static roleUpgrader = 'upgrader';
     public static rolePioneer = 'pioneer';

@@ -31,7 +31,7 @@ export class Mother {
         const carriers = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrier && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
         const miners = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMiner);
         const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrierTeleporter && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
-        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerTeleporter);
+        const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerLinker);
 
         if (((carriers.length + carriersTeleporters.length) === 0 || (miners.length + minersTeleporters.length) === 0) && (harvesters.length === 0))
             creepFactory.isEmergencyState = true;
@@ -41,7 +41,7 @@ export class Mother {
                 GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK })?.id;
 
             if (minersTeleporters.length < (links.length - 1)) {
-                creepFactory.CreateCreep(Consts.roleMinerTeleporter)
+                creepFactory.CreateCreep(Consts.roleMinerLinker)
             }
 
             if (carriersTeleporters.length < Consts.maxNumberCarrierTeleporter) {

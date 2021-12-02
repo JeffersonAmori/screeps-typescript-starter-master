@@ -45,7 +45,7 @@ export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepSt
                     if (!dist)
                         return false;
 
-                    return dist.id === creep.memory.targetEnergySourceId && (creep.memory.role === Consts.roleMiner || creep.memory.role === Consts.roleMinerTeleporter);
+                    return dist.id === creep.memory.targetEnergySourceId && (creep.memory.role === Consts.roleMiner || creep.memory.role === Consts.roleMinerLinker);
                 });
 
                 if (entries && entries.length > 0) {
