@@ -4,7 +4,7 @@ import { ProcessStatus } from "OS/kernel/process-status";
 import { RoleMiner } from "roles/miner";
 import { when } from "when-ts";
 
-export class MineProcess extends Process<CreepState> {
+export class MinerProcess extends Process<CreepState> {
     public classPath(): string {
         return "MineProcess";
     }
@@ -16,10 +16,17 @@ export class MineProcess extends Process<CreepState> {
     }
 
     @when<CreepState>(c => !c.creep)
-    noMoreCreep(s: CreepState, m: MineProcess){
-        this.status = ProcessStatus.DEAD;
+    noCreepDefined(s: CreepState, m: MinerProcess) {
+        const creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if(creep){
+            s.creep = creep;
+            return s;
+        }else{
+            this.status = ProcessStatus.DEAD;
+            m.exit();
+        }
 
-        m.exit();
+        return;
     }
 
     @when(s => s.creep.memory.targetContainerId && s.creep.memory.targetEnergySourceId)

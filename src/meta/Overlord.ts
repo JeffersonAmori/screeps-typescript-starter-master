@@ -22,7 +22,7 @@ import { Mayor } from "./Mayor";
 import { RolePillager } from "roles/pillager";
 import { RoleSoldier } from "roles/military/soldier";
 import * as kernel from "OS/kernel/kernel"
-import { MineProcess } from "OS/processes/creep/townsfolk/miner";
+import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { UpgradeProcess } from "OS/processes/creep/townsfolk/upgrader";
 import { Process } from "OS/kernel/process";
 import { RepairerProcess } from "OS/processes/creep/townsfolk/repairer";
@@ -47,7 +47,7 @@ export class Overlord {
                     break;
                 }
                 case Consts.roleMiner: {
-                    Overlord.startCreepProcess(creep, new MineProcess(0, 0));
+                    Overlord.startCreepProcess(creep, new MinerProcess(0, 0));
                     break;
                 }
                 case Consts.roleMinerLinker: {

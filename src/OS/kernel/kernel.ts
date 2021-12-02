@@ -140,13 +140,8 @@ export let loadProcessTable = function () {
             let p = eval(`new ${classPath}(${pid}, ${parentPID}, ${priority})`) as Process<MachineState, MachineInputSource>
             //let p = new processClass(pid, parentPID, priority) as Process;
             p.setMemory(memory);
-            console.log(`PID: ${p.pid} | CreepID: ${memory.creepId}`);
-            if (!memory.creepId) {
-                killProcess(p.pid);
-                return;
-            }
 
-            p.setInitialState({ creep: Game.getObjectById<Creep>(memory.creepId) });
+            console.log(`PID: ${p.pid} | Class: ${classPath}\t| Memory: ${JSON.stringify(memory)}`);
             processTable[p.pid] = p;
             const sleepInfo = remaining.pop();
             if (sleepInfo) {

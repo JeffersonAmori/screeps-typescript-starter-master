@@ -19,10 +19,17 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
     }
 
     @when<CreepState>(c => !c.creep)
-    noMoreCreep(s: CreepState, m: MinerLinkerProcess){
-        this.status = ProcessStatus.DEAD;
+    noCreepDefined(s: CreepState, m: MinerLinkerProcess) {
+        const creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if(creep){
+            s.creep = creep;
+            return s;
+        }else{
+            this.status = ProcessStatus.DEAD;
+            m.exit();
+        }
 
-        m.exit();
+        return;
     }
 
     @when<MinerLinkerCreepState>(s => s.creep.memory.working && s.creep.store.getFreeCapacity() === 0)

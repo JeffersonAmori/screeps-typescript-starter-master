@@ -16,10 +16,17 @@ export class PillagerProcess extends Process<CreepState> {
     }
 
     @when<CreepState>(c => !c.creep)
-    noMoreCreep(s: CreepState, m: PillagerProcess) {
-        this.status = ProcessStatus.DEAD;
+    noCreepDefined(s: CreepState, m: PillagerProcess) {
+        const creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if(creep){
+            s.creep = creep;
+            return s;
+        }else{
+            this.status = ProcessStatus.DEAD;
+            m.exit();
+        }
 
-        m.exit();
+        return;
     }
 
     @when<CreepState>(c => c.creep.memory.working && c.creep.store.getFreeCapacity() === 0)

@@ -17,10 +17,17 @@ export class RepairerProcess extends Process<CreepState> {
     }
 
     @when<CreepState>(c => !c.creep)
-    noMoreCreep(s: CreepState, m: RepairerProcess){
-        this.status = ProcessStatus.DEAD;
+    noCreepDefined(s: CreepState, m: RepairerProcess) {
+        const creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if(creep){
+            s.creep = creep;
+            return s;
+        }else{
+            this.status = ProcessStatus.DEAD;
+            m.exit();
+        }
 
-        m.exit();
+        return;
     }
 
     @when<RepairerProcessCreepStateCreep>(s => s.creep.memory.working && s.creep.store.getUsedCapacity() === 0)

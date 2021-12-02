@@ -10,7 +10,7 @@ import { RoleUpgrader } from "roles/upgrader";
 import { RoleRepairer } from "roles/repairer";
 import { RoleMiner } from "roles/miner";
 import * as kernel from "OS/kernel/kernel"
-import { MineProcess } from "OS/processes/creep/townsfolk/miner";
+import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 
 declare global {
     /*
