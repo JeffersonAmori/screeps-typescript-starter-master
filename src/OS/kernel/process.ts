@@ -2,9 +2,10 @@ import * as Kernel from "./kernel";
 import { ProcessPriority } from "./constants";
 import { ProcessStatus } from "./process-status";
 import { ProcessSleep } from "../typings/process-sleep";
-type ConcreteProcess = { new(pid: number, parentPID: number, priority?: ProcessPriority): Process };
-type DependencyInfo = [ConcreteProcess, ProcessSetupCallback];
-type ProcessSetupCallback = (p: Process) => void
+import { MachineInputSource, MachineState, StateMachine } from "when-ts";
+type ConcreteProcess<MachineState, MachineInputSource> = { new(pid: number, parentPID: number, priority?: ProcessPriority): Process<MachineState, MachineInputSource> };
+type DependencyInfo = [ConcreteProcess<MachineState, MachineInputSource>, ProcessSetupCallback];
+type ProcessSetupCallback = (p: Process<MachineState, MachineInputSource>) => void
 
 // export function memory(def?: any) {
 //     return function (target: any, key: string) {
@@ -37,7 +38,7 @@ type ProcessSetupCallback = (p: Process) => void
 // }
 
 
-export abstract class Process {
+export abstract class Process<S extends MachineState, I extends MachineInputSource = MachineInputSource> extends StateMachine<S, I> {
     public status: number;
     public classPath(): string {
         return "None";
@@ -54,11 +55,13 @@ export abstract class Process {
         public parentPID: number,
         priority = ProcessPriority.LowPriority) {
 
+        super(<S>{});
         this.status = ProcessStatus.ALIVE;
         this.priority = priority;
     };
 
-    public abstract run(): number;
+    //public abstract run(): number;
+    //public abstract run(forever?: boolean): Readonly<S & I>;
     public setMemory(memory: any): void {
         this.memory = memory;
     };
@@ -70,7 +73,7 @@ export abstract class Process {
 
     public setup(..._: any[]) { };
 
-    public registerDependency(p: ConcreteProcess, processSetup: ProcessSetupCallback) {
+    public registerDependency(p: ConcreteProcess<MachineState, MachineInputSource>, processSetup: ProcessSetupCallback) {
         let dependencyInfo: DependencyInfo = [p, processSetup];
         this.deps.push(dependencyInfo);
     }
@@ -81,13 +84,11 @@ export abstract class Process {
             let [processClass, callback] = dep;
             let t = new processClass(0, 0, 0);
             let classPath = t.classPath();
-            if ((!deps[classPath]) ||
-                (!Kernel.getProcessById(deps[classPath]))) {
+            if ((!deps[classPath]) || (!Kernel.getProcessById(deps[classPath]))) {
                 let p = new processClass(0, this.pid);
                 this.kernel.addProcess(p);
                 callback.bind(this)(p);
                 deps[classPath] = p.pid;
-
             }
         }
     }

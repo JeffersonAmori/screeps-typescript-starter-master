@@ -46,13 +46,13 @@ function CreepsAct() {
                 break;
             }
             case Consts.roleMiner: {
-                if(!creep.memory.processId || !kernel.getProcessById(creep.memory.processId)){
-                    let mineProcess = kernel.addProcess(new MineProcess(0, 0));
-                    mineProcess.setup(creep.id);
-                    creep.memory.processId = mineProcess.pid;
-                }
-                // const roleMiner = new RoleMiner(creep);
-                // roleMiner.run();
+                // if(!creep.memory.processId || !kernel.getProcessById(creep.memory.processId)){
+                //     let mineProcess = kernel.addProcess(new MineProcess(0, 0));
+                //     mineProcess.setup(creep.id);
+                //     creep.memory.processId = mineProcess.pid;
+                // }
+                const roleMiner = new RoleMiner(creep);
+                roleMiner.run();
                 //RoleMiner.run(creep);
                 break;
             }
@@ -76,8 +76,8 @@ function CreepsAct() {
                     upgradeProcess.setup(creep.id);
                     creep.memory.processId = upgradeProcess.pid;
                 }
-                // const roleUpgrader = new RoleUpgrader(creep);
-                // roleUpgrader.run();
+                //  const roleUpgrader = new RoleUpgrader(creep);
+                //  roleUpgrader.run();
                 // RoleUpgrader.run(creep);
                 break;
             }

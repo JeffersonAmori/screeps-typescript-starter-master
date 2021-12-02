@@ -1,8 +1,8 @@
 import { RoleCommon } from "./_common";
 import "libs/Traveler/Traveler";
-import { StateMachine, when } from "when-ts";
+import { MachineState, StateMachine, when } from "when-ts";
 
-export class RoleUpgrader extends StateMachine<CreepState> {
+export class RoleUpgrader extends StateMachine<MachineState> {
     constructor(creep: Creep) {
         super({ creep: creep });
     }
