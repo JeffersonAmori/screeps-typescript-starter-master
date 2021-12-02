@@ -9,6 +9,12 @@ export class MineProcess extends Process<CreepState> {
         return "MineProcess";
     }
 
+    // _[0] - creepId
+    public setup(..._: any[]) {
+        this.memory.creepId = _[0];
+        this.setInitialState({ creep: Game.getObjectById<Creep>(this.memory.creepId)! })
+    }
+
     @when<CreepState>(c => !c.creep)
     noMoreCreep(s: CreepState, m: MineProcess){
         this.status = ProcessStatus.DEAD;
@@ -18,7 +24,6 @@ export class MineProcess extends Process<CreepState> {
 
     @when(s => s.creep.memory.targetContainerId && s.creep.memory.targetEnergySourceId)
     harvest(s: CreepState, m: RoleMiner) {
-        console.log(`${s.creep.name} harvest`);
         if (!s.creep.memory.targetContainerId || !s.creep.memory.targetEnergySourceId)
             return;
 
@@ -39,7 +44,6 @@ export class MineProcess extends Process<CreepState> {
 
     @when(s => !s.creep.memory.targetContainerId || !s.creep.memory.targetEnergySourceId)
     findTargetEnergySourceAndContainer(s: CreepState, m: RoleMiner) {
-        console.log(`${s.creep.name} findTargetEnergySourceAndContainer `);
         let otherMiner = _.find(s.creep.room.find(FIND_MY_CREEPS), c => c.memory.role == Consts.roleMiner && c.id != s.creep.id);
         if (!otherMiner) {
             const sources: Source[] | null = s.creep.room.find(FIND_SOURCES);
@@ -85,13 +89,5 @@ export class MineProcess extends Process<CreepState> {
         }
 
         s.creep.memory.targetContainerId = targetContainer.id;
-    }
-
-    // _[0] - creepId
-    public setup(..._: any[]) {
-        console.log(`Setup MineProcess`);
-
-        this.memory.creepId = _[0];
-        this.setInitialState({ creep: Game.getObjectById<Creep>(this.memory.creepId)! })
     }
 }

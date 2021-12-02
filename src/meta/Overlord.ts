@@ -52,9 +52,6 @@ export class Overlord {
                 }
                 case Consts.roleMinerLinker: {
                     Overlord.startCreepProcess(creep, new MinerLinkerProcess(0, 0));
-                    // const roleMinerTeleporter = new RoleMinerTeleporter(creep);
-                    // roleMinerTeleporter.run();
-                    //RoleMinerTeleporter.run(creep);
                     break;
                 }
                 case Consts.roleCarrier: {
@@ -83,17 +80,11 @@ export class Overlord {
                 }
                 case Consts.rolePillager: {
                     Overlord.startCreepProcess(creep, new PillagerProcess(0, 0));
-                    // const rolePillager = new RolePillager(creep);
-                    // rolePillager.run();
-                    //console.log(JSON.stringify(result));
-                    //RolePillager.run(creep);
                     break;
                 }
                 case Consts.roleSoldier: {
                     const roleSoldier = new RoleSoldier(creep);
                     roleSoldier.run();
-                    //console.log(JSON.stringify(result));
-                    //RolePillager.run(creep);
                     break;
                 }
                 case Consts.roleFighterMelee: {
