@@ -21,7 +21,7 @@ export class RoleCarrier {
                 }
                 else {
                     const containers: StructureContainer[] | null = creep.room.find(FIND_STRUCTURES,
-                        { filter: structure => (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 0) });
+                        { filter: structure => (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 0) && (structure.id !== GlobalMemory.RoomInfo[creep.room.name].upgraderContainerId) });
 
                     if (containers && containers.length > 0) {
                         const closestContainer = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
@@ -90,7 +90,7 @@ export class RoleCarrier {
 
             if (creep.memory.targetEnergyDepositId) {
                 target = Game.getObjectById<StructureExtension | StructureContainer | StructureTower | StructureStorage>(creep.memory.targetEnergyDepositId);
-                if(target?.store.getFreeCapacity() === 0)
+                if (target?.store.getFreeCapacity() === 0)
                     target = null;
             }
 
@@ -99,11 +99,7 @@ export class RoleCarrier {
                 creep.memory.otherResources = otherResources;
 
                 if (creep.memory.otherResources.length > 0) {
-                    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-                        filter: (structure) => {
-                            return (structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0;
-                        }
-                    })
+                    target = creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 })
                 }
             }
 
