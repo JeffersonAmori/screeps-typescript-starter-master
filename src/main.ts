@@ -10,7 +10,7 @@ import { RoleUpgrader } from "roles/upgrader";
 import { RoleRepairer } from "roles/repairer";
 import { RoleMiner } from "roles/miner";
 import * as kernel from "OS/kernel/kernel"
-import { MineProcess } from "OS/processes/process-mine";
+import { MineProcess } from "OS/processes/mine";
 
 declare global {
     /*
@@ -39,12 +39,18 @@ declare global {
         targetContainerId?: string;
         targetEnemyId?: string;
         targetEnergySourceId?: string;
-        targetStructureLinkId?: string
+        targetEnergyDepositId?: string;
+        targetStructureLinkId?: string;
         working?: boolean;
         processId?: number;
     }
 
     interface CreepState extends MachineState {
+        creep: Creep;
+    }
+
+    interface CreepProcessState extends MachineState {
+        state: number;
         creep: Creep;
     }
 
@@ -68,7 +74,6 @@ profiler.enable();
 export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
     kernel.loadProcessTable();
     kernel.run();
-    kernel.addProcess(new MineProcess(1, 0));
 
     console.log(`Current game tick is ${Game.time}`);
     if (!Memory.Started)
