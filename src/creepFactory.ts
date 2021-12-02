@@ -52,6 +52,7 @@ export class CreepFactory {
     ]
 
     public static BodyPartsReferenceByRole: BodyPartsReference[] = [
+        // TOWNSFOLK
         new BodyPartsReference(Consts.roleHarvester, [
             new BodyPartRequest(WORK, 10),
             new BodyPartRequest(CARRY, 8),
@@ -72,33 +73,35 @@ export class CreepFactory {
 
         new BodyPartsReference(Consts.roleCarrierTeleporter, [
             new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 8)]),
+            new BodyPartRequest(MOVE, 4)]),
 
         new BodyPartsReference(Consts.roleUpgrader, [
             new BodyPartRequest(WORK, 12),
             new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 2)]),
+            new BodyPartRequest(MOVE, 6)]),
 
         new BodyPartsReference(Consts.roleRepairer, [
-            new BodyPartRequest(WORK, 8),
-            new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 8)]),
+            new BodyPartRequest(WORK, 6),
+            new BodyPartRequest(CARRY, 6),
+            new BodyPartRequest(MOVE, 3)]),
 
         new BodyPartsReference(Consts.roleBuilder, [
             new BodyPartRequest(WORK, 10),
             new BodyPartRequest(CARRY, 8),
             new BodyPartRequest(MOVE, 18)]),
 
+        // ADVENTURERS
         new BodyPartsReference(Consts.rolePioneer, [
             new BodyPartRequest(WORK, 8),
-            new BodyPartRequest(CARRY, 10),
-            new BodyPartRequest(MOVE, 18)]),
+            new BodyPartRequest(CARRY, 8),
+            new BodyPartRequest(MOVE, 8)]),
 
         new BodyPartsReference(Consts.rolePillager, [
             new BodyPartRequest(WORK, 8),
             new BodyPartRequest(CARRY, 10),
             new BodyPartRequest(MOVE, 18)]),
 
+        // MILITARY
         new BodyPartsReference(Consts.roleSoldier, [
             new BodyPartRequest(MOVE, 20),
             new BodyPartRequest(TOUGH, 10),
