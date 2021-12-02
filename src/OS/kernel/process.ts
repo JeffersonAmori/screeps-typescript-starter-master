@@ -7,37 +7,6 @@ type ConcreteProcess<MachineState, MachineInputSource> = { new(pid: number, pare
 type DependencyInfo = [ConcreteProcess<MachineState, MachineInputSource>, ProcessSetupCallback];
 type ProcessSetupCallback = (p: Process<MachineState, MachineInputSource>) => void
 
-// export function memory(def?: any) {
-//     return function (target: any, key: string) {
-//         // property getter
-//         var getter = function () {
-//             if (!this.memory[key]) {
-//                 this.memory[key] = def;
-//             }
-//             return this.memory[key];
-//         };
-
-//         // property setter
-//         var setter = function (newVal) {
-//             if (this.memory) {
-//                 this.memory[key] = newVal;
-//             }
-//         };
-
-//         // Delete property.
-//         if (delete (<any>target)[key]) {
-//             // Create new property with getter and setter
-//             Object.defineProperty(target, key, {
-//                 get: getter,
-//                 set: setter,
-//                 enumerable: true,
-//                 configurable: true
-//             });
-//         }
-//     }
-// }
-
-
 export abstract class Process<S extends MachineState, I extends MachineInputSource = MachineInputSource> extends StateMachine<S, I> {
     public status: number;
     public classPath(): string {
@@ -48,9 +17,9 @@ export abstract class Process<S extends MachineState, I extends MachineInputSour
     public memory: any;
     protected deps: DependencyInfo[] = [];
     protected kernel = Kernel;
-    /*public static reloadFromTable(pid: number, parentPID: number, priority = ProcessPriority.LowPriority) {
-        const p = new Process()
-    }*/
+    // public static reloadFromTable(pid: number, parentPID: number, priority = ProcessPriority.LowPriority) {
+    //     const p = new Process<MachineState, MachineInputSource>()
+    // }
     constructor(public pid: number,
         public parentPID: number,
         priority = ProcessPriority.LowPriority) {
@@ -60,8 +29,6 @@ export abstract class Process<S extends MachineState, I extends MachineInputSour
         this.priority = priority;
     };
 
-    //public abstract run(): number;
-    //public abstract run(forever?: boolean): Readonly<S & I>;
     public setMemory(memory: any): void {
         this.memory = memory;
     };
