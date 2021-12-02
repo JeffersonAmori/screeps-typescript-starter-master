@@ -21,10 +21,9 @@ import { ErrorMapper } from "utils/ErrorMapper";
 import { Mayor } from "./Mayor";
 import { RolePillager } from "roles/pillager";
 import { RoleSoldier } from "roles/military/soldier";
-import * as profiler from "libs/profiler/screeps-profiler"
 import * as kernel from "OS/kernel/kernel"
 import { MineProcess } from "OS/processes/mine";
-import { UpgradeProcess } from "OS/processes/upgrade";
+import { UpgradeProcess } from "OS/processes/upgrader";
 import { Process } from "OS/kernel/process";
 import { RepairerProcess } from "OS/processes/repairer";
 

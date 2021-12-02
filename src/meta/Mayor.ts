@@ -19,7 +19,6 @@ import { RoleUpgrader } from "roles/upgrader";
 import { RoomData, RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { Sheriff } from "./Sheriff";
-import { RolePillager } from "roles/pillager";
 
 
 export class Mayor {
