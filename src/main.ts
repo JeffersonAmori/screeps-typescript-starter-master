@@ -74,6 +74,7 @@ declare global {
 profiler.enable();
 
 export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
+    LoadMemory();
     kernel.loadProcessTable();
     kernel.run();
 
@@ -86,7 +87,6 @@ export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
         console.log(Architect.RoomCanFitBunker(Game.rooms['E31S54']));
     }
 
-    LoadMemory();
     CleanMemory();
 
     try {

@@ -152,7 +152,7 @@ export let loadProcessTable = function () {
             //let p = new processClass(pid, parentPID, priority) as Process;
             p.setMemory(memory);
 
-            console.log(`PID: ${p.pid} | Class: ${classPath}\t| Memory: ${JSON.stringify(memory)}`);
+            console.log(`PID: ${p.pid} | ${classPath}\t| (${p.status})\t| Memory: ${JSON.stringify(memory)}`);
             processTable[p.pid] = p;
             const sleepInfo = remaining.pop();
             if (sleepInfo) {

@@ -136,7 +136,7 @@ export class CreepFactory {
 
     private GetBodyPartsInternal(desirableBody: BodyPartRequest[], sortBody: boolean = true): BodyPartConstant[] {
         let bodyParts: BodyPartConstant[] = [];
-        let energyAvailable: number = this.isEmergencyState ? 300 : Math.max(this._spawn.room.energyAvailable, this._spawn.room.energyCapacityAvailable / 2);
+        let energyAvailable: number = this.isEmergencyState ? 300 : Math.max(this._spawn.room.energyAvailable, Math.max(this._spawn.room.energyCapacityAvailable / 2, 300));
         let isBuilding: boolean = true;
 
         while (energyAvailable > 0) {

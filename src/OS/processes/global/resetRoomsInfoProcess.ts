@@ -11,7 +11,7 @@ export class resetRoomsInfoProcess extends Process<MachineState>{
         Memory.RoomsInfo = JSON.stringify(roomInfo);
         Memory.Started = true;
 
-        this.kernel.sleepProcess(this, 150);
+        this.kernel.killProcess(this.pid);
         m.exit();
     }
 }

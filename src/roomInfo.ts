@@ -4,6 +4,6 @@ export interface RoomInfo {
 
 export class RoomData {
     public sumOfDistancesToSourcesFromSpawnHeuristic?: number = 0;
-    public baseStructureLinkId?: string | null = null;
+    public storageLinkId?: string | null = null;
     public upgraderContainerId?: string | null = null;
 }

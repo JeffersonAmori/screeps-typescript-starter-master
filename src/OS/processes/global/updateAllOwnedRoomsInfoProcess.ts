@@ -16,17 +16,16 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process<MachineState>{
 
     @when<MachineState>(true)
     updateAllOwnedRoomsInfo(s: MachineState, m: UpdateAllOwnedRoomsInfoProcess) {
-        console.log('updateAllOwnedRoomsInfo');
         GlobalMemory.RoomInfo = GlobalMemory.RoomInfo || {};
 
         _.forEach(Game.rooms, (room) => {
-            let p = new UpdateOwnedRoomInfo(0, 0)
+            GlobalMemory.RoomInfo[room.name] = GlobalMemory.RoomInfo[room.name] || {};
+            let p = new UpdateOwnedRoomInfo(0, this.pid);
             p = this.kernel.addProcess(p, ProcessPriority.LowPriority);
-            p.setup(room.name)
+            p.setup(room.name);
         });
 
-        // this.kernel.killProcess(this.pid);
-         this.kernel.sleepProcess(this, 10);
+        this.kernel.sleepProcess(this, 200);
         m.exit();
     }
 }

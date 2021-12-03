@@ -28,7 +28,7 @@ export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepSt
 
     @when<RoleMinerTeleporterCreepState>(s => !s.creep.memory.targetEnergySourceId)
     getTargetEnergySourceId(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
-        const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
+        const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[s.creep.room.name].storageLinkId;
         if (!baseStructureLinkId)
             return;
 
@@ -90,7 +90,7 @@ export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepSt
 
     @when<RoleMinerTeleporterCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && !s.linkReadyToActivation)
     tranferEnergyToClosestLink(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
-        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
+        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].storageLinkId;
         if (!inMemoryBaseStructureLinkId)
             return;
 
@@ -116,7 +116,7 @@ export class RoleMinerTeleporter extends StateMachine<RoleMinerTeleporterCreepSt
 
     @when<RoleMinerTeleporterCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && s.linkReadyToActivation)
     activateLink(s: RoleMinerTeleporterCreepState, m: RoleMinerTeleporter) {
-        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
+        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].storageLinkId;
         if (!inMemoryBaseStructureLinkId)
             return;
 

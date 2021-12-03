@@ -45,7 +45,7 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
 
     @when<MinerLinkerCreepState>(s => !s.creep.memory.targetEnergySourceId)
     getTargetEnergySourceId(s: MinerLinkerCreepState, m: MinerLinkerProcess) {
-        const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
+        const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[s.creep.room.name].storageLinkId;
         if (!baseStructureLinkId)
             return;
 
@@ -81,13 +81,17 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
 
     @when<MinerLinkerCreepState>(s => s.creep.memory.targetEnergySourceId && s.creep.memory.working)
     harvest(s: MinerLinkerCreepState, m: MinerLinkerProcess) {
-        if (!s.creep.memory.targetEnergySourceId)
+        if (!s.creep.memory.targetEnergySourceId){
+            m.exit();
             return;
+        }
 
         let source: Source | Mineral | null = Game.getObjectById(s.creep.memory.targetEnergySourceId);
 
-        if (!source)
+        if (!source){
+            m.exit();
             return;
+        }
 
         const ret = s.creep.harvest(source);
         if (ret === ERR_NOT_IN_RANGE) {
@@ -96,8 +100,10 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
 
         if (ret === OK && !s.creep.memory.targetStructureLinkId) {
             const closestStructureLink: StructureLink | null = s.creep.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK });
-            if (!closestStructureLink)
+            if (!closestStructureLink){
+                m.exit();
                 return;
+            }
 
             s.creep.memory.targetStructureLinkId = closestStructureLink.id;
         }
@@ -107,8 +113,7 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
 
     @when<MinerLinkerCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && !s.linkReadyForActivation)
     tranferEnergyToClosestLink(s: MinerLinkerCreepState, m: MinerLinkerProcess) {
-        console.log('tranferEnergyToClosestLink');
-        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
+        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].storageLinkId;
         if (!inMemoryBaseStructureLinkId) {
             m.exit();
             return;
@@ -140,8 +145,7 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
 
     @when<MinerLinkerCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && s.linkReadyForActivation)
     activateLink(s: MinerLinkerCreepState, m: MinerLinkerProcess) {
-        console.log('activateLink');
-        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
+        const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].storageLinkId;
         if (!inMemoryBaseStructureLinkId) {
             m.exit();
             return;

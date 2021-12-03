@@ -17,7 +17,7 @@ export class RoleCarrierTeleporter {
         }
 
         if (!creep.memory.targetEnergySourceId) {
-            const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[creep.room.name].baseStructureLinkId;
+            const baseStructureLinkId: string | null | undefined = GlobalMemory.RoomInfo[creep.room.name].storageLinkId;
             if (!baseStructureLinkId)
                 return;
 

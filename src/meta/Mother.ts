@@ -37,9 +37,6 @@ export class Mother {
             creepFactory.isEmergencyState = true;
 
         if (links.length > 0) {
-            if (!GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId)
-                GlobalMemory.RoomInfo[this._spawn.room.name].baseStructureLinkId = this._spawn.room.storage?.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK })?.id;
-
             if (minersTeleporters.length < (links.length - 1)) {
                 creepFactory.CreateCreep(Consts.roleMinerLinker)
             }
@@ -53,31 +50,16 @@ export class Mother {
             if (!GlobalMemory.RoomInfo[this._spawn.room.name].upgraderContainerId) {
                 if (this._spawn.room.controller) {
                     const possibleContainers = this._spawn.room.controller.pos.findInRange(FIND_STRUCTURES, 5, { filter: c => c.structureType === STRUCTURE_CONTAINER });
-                    if(possibleContainers.length > 0)
-                    GlobalMemory.RoomInfo[this._spawn.room.name].upgraderContainerId = possibleContainers[0].id;
+                    if (possibleContainers.length > 0)
+                        GlobalMemory.RoomInfo[this._spawn.room.name].upgraderContainerId = possibleContainers[0].id;
                 }
-            }
-
-            let sumOfDistancesToSourcesFromSpawnHeuristic = 0;
-            let currentRoomData = GlobalMemory.RoomInfo[this._spawn.room.name];
-            if (currentRoomData && currentRoomData.sumOfDistancesToSourcesFromSpawnHeuristic) {
-                sumOfDistancesToSourcesFromSpawnHeuristic = currentRoomData.sumOfDistancesToSourcesFromSpawnHeuristic;
-            }
-            else {
-                let sumOfDistancesToSourcesFromSpawn: number = 0;
-                let sourcesWithoutLink = sources;
-                if (links && links.length > 0 && sources && sources.length > 0)
-                    sourcesWithoutLink = _.filter(sources, source => PathFinder.search(source.pos, source.pos.findClosestByPath(links)!.pos).path.length > 3);
-                sourcesWithoutLink.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(this._spawn.pos, s.pos).path.length);
-                sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20);
-                GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
             }
 
             if (miners.length < (Math.min(containers.length, sources.length) + extractors.length) - Math.max((links.length - 1), 0)) {
                 creepFactory.CreateCreep(Consts.roleMiner)
             }
 
-            if (carriers.length < (sumOfDistancesToSourcesFromSpawnHeuristic)) {
+            if (carriers.length < (GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic)!) {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else if (links.length === 0) {
