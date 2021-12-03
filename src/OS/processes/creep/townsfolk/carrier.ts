@@ -26,7 +26,8 @@ export class CarrierProcess extends Process<CreepState>{
             m.exit();
         }
 
-        return;
+        m.exit();
+        return s;
     }
 
     @when<CreepState>(c => c.creep.memory.working && !c.creep.memory.targetEnergySourceId)
@@ -58,6 +59,8 @@ export class CarrierProcess extends Process<CreepState>{
                 }
             }
         }
+
+        m.exit();
     }
 
     @when<CreepState>(c => c.creep.memory.working && c.creep.memory.targetEnergySourceId)
@@ -69,6 +72,7 @@ export class CarrierProcess extends Process<CreepState>{
 
             if (!targetEnergySource) {
                 RoleCommon.deleteGetEnergyRelatedMemory(c.creep);
+                m.exit();
                 return;
             }
 
@@ -98,7 +102,7 @@ export class CarrierProcess extends Process<CreepState>{
         }
 
         if (c.creep.store.getFreeCapacity() == 0) {
-            c.creep.say('delivering');
+            c.creep.say('delivering ' + c.creep.name);
             c.creep.memory.working = false;
             RoleCommon.deleteGetEnergyRelatedMemory(c.creep);
         }
@@ -140,7 +144,6 @@ export class CarrierProcess extends Process<CreepState>{
                 if (upgraderContainer && storage)
                     target = <StructureExtension | StructureContainer | StructureTower | StructureStorage>c.creep.pos.findClosestByPath([upgraderContainer, storage]);
             } else {
-
                 target = c.creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType == STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
             }
         }
@@ -155,8 +158,10 @@ export class CarrierProcess extends Process<CreepState>{
 
             if (c.creep.memory.otherResources) {
                 c.creep.memory.otherResources.forEach(oR => {
-                    if (!target || !c.creep.memory.otherResources)
+                    if (!target || !c.creep.memory.otherResources) {
+                        m.exit();
                         return;
+                    }
 
                     c.creep.transfer(target, oR);
                     _.pull(c.creep.memory.otherResources, oR);

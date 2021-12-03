@@ -18,15 +18,15 @@ export class RepairerProcess extends Process<CreepState> {
     @when<CreepState>(c => !c.creep)
     noCreepDefined(s: CreepState, m: RepairerProcess) {
         const creep = Game.getObjectById<Creep>(this.memory.creepId);
-        if(creep){
+        if (creep) {
             s.creep = creep;
             return s;
-        }else{
+        } else {
             this.kernel.killProcess(this.pid);
-            m.exit();
         }
 
-        return;
+        m.exit();
+        return s;
     }
 
     @when<RepairerProcessCreepStateCreep>(s => s.creep.memory.working && s.creep.store.getUsedCapacity() === 0)
@@ -49,6 +49,7 @@ export class RepairerProcess extends Process<CreepState> {
 
         if (!structures) {
             s.nothingToUpgrade = true;
+            m.exit();
             return s;
         }
 
@@ -56,22 +57,29 @@ export class RepairerProcess extends Process<CreepState> {
 
         s.creep.memory.structureToRepairId = targetStructure.id;
 
+        m.exit();
         return s;
     }
 
     @when<RepairerProcessCreepStateCreep>(s => s.creep.memory.working && s.creep.memory.structureToRepairId && !s.nothingToUpgrade)
     repair(s: RepairerProcessCreepStateCreep, m: RepairerProcess) {
-        if (!s.creep.memory.structureToRepairId)
+        if (!s.creep.memory.structureToRepairId) {
+            m.exit();
             return;
+        }
 
         const structureToRepair: Structure | null = Game.getObjectById<Structure>(s.creep.memory.structureToRepairId);
 
-        if (!structureToRepair)
+        if (!structureToRepair) {
+            m.exit();
             return;
+        }
 
         if (structureToRepair.hits === structureToRepair.hitsMax) {
-            delete s.creep.memory.structureToRepairId;
-            return;
+            delete s.creep.memory.structureToRepairId; {
+                m.exit();
+                return;
+            }
         }
 
         if (s.creep.repair(structureToRepair) === ERR_NOT_IN_RANGE) {
@@ -84,7 +92,7 @@ export class RepairerProcess extends Process<CreepState> {
     @when<RepairerProcessCreepStateCreep>(s => s.nothingToUpgrade)
     build(s: RepairerProcessCreepStateCreep, m: RepairerProcess) {
         RoleBuilder.run(s.creep);
-        m.exit()
+        m.exit();
     }
 
     @when<RepairerProcessCreepStateCreep>(s => !s.creep.memory.working)

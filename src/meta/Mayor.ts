@@ -32,13 +32,12 @@ export class Mayor {
 
     public govern() {
         checkForHostiles(this._spawn);
-        //CreepsAct(this._spawn);
         let mother = new Mother(this._spawn);
         mother.CreateCreeps();
 
-        let towerRepairProcess = new RepairViaTowerProcess(0, 0);
-        towerRepairProcess = (<RepairViaTowerProcess>kernel.AddProcessIfNoExists(towerRepairProcess));
-        towerRepairProcess.setup(this._spawn.room.name);
+        // let towerRepairProcess = new RepairViaTowerProcess(0, 0);
+        // towerRepairProcess = (<RepairViaTowerProcess>kernel.AddProcessIfNoExists(towerRepairProcess));
+        // towerRepairProcess.setup(this._spawn.room.name);
     }
 }
 

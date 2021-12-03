@@ -20,7 +20,11 @@ export class UpdateOwnedRoomInfo extends Process<MachineState>{
     storages: StructureStorage[] = []
 
     @when<MachineState>(true)
-    resetRoomInfo(s: MachineState, m: UpdateOwnedRoomInfo) {
+    updateRoomInfo(s: MachineState, m: UpdateOwnedRoomInfo) {
+        if(!this.memory.roomName){
+            this.kernel.killProcess(this.pid);
+        }
+
         const room = Game.rooms[this.memory.roomName];
 
         // Setup

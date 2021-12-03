@@ -30,14 +30,18 @@ export class MinerProcess extends Process<CreepState> {
 
     @when(s => s.creep.memory.targetContainerId && s.creep.memory.targetEnergySourceId)
     harvest(s: CreepState, m: RoleMiner) {
-        if (!s.creep.memory.targetContainerId || !s.creep.memory.targetEnergySourceId)
+        if (!s.creep.memory.targetContainerId || !s.creep.memory.targetEnergySourceId){
+            m.exit();
             return;
+        }
 
         let targetContainer = Game.getObjectById<StructureContainer>(s.creep.memory.targetContainerId)
         let targetSource = Game.getObjectById<Source>(s.creep.memory.targetEnergySourceId)
 
-        if (!targetContainer || !targetSource)
+        if (!targetContainer || !targetSource){
+            m.exit();
             return;
+        }
 
         if (s.creep.pos.x == targetContainer.pos.x && s.creep.pos.y == targetContainer.pos.y) {
             s.creep.harvest(targetSource);

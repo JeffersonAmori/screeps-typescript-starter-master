@@ -38,7 +38,7 @@ export class RepairViaTowerProcess extends Process<MachineState>{
         }
 
         towers.forEach(t => t.repair(targetStructure));
-        this.kernel.sleepProcess(this, 50);
+        this.kernel.killProcess(this.pid);
         m.exit();
     }
 }

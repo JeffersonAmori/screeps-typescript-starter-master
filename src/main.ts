@@ -1,19 +1,12 @@
 import { GlobalMemory } from "GlobalMemory";
 import { Architect } from "meta/architect";
 import { Overlord } from "meta/Overlord";
-import { RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { MachineState, StateMachine } from "when-ts";
-import * as profiler from "libs/profiler/screeps-profiler"
-import { RoleMinerTeleporter } from "roles/minerTeleporter";
-import { RoleUpgrader } from "roles/upgrader";
-import { RoleRepairer } from "roles/repairer";
-import { RoleMiner } from "roles/miner";
-import * as kernel from "OS/kernel/kernel"
-import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { resetRoomsInfoProcess } from "OS/processes/global/resetRoomsInfoProcess";
 import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
-import { RepairViaTowerProcess as RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
+import * as profiler from "libs/profiler/screeps-profiler"
+import * as kernel from "OS/kernel/kernel"
 
 declare global {
     /*

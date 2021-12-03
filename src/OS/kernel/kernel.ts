@@ -6,6 +6,7 @@ import { ProcessPriority } from "./constants";
 import { Process } from "../typings/process";
 import { Lookup as processLookup } from "./process";
 import { MachineInputSource, MachineState } from "when-ts";
+import { parseIsolatedEntityName } from "typescript";
 
 let ticlyQueue: Process<MachineState, MachineInputSource>[] = [];
 let ticlyLastQueue: Process<MachineState, MachineInputSource>[] = [];
@@ -47,7 +48,7 @@ export let AddProcessIfNoExists = function <T extends Process<MachineState, Mach
     let storedTable = Memory.processTable;
     for (let item of storedTable) {
         let [pid, parentPID, classPath, priority, ...remaining] = item;
-        if(p.classPath() === classPath){
+        if (p.classPath() === classPath) {
             return processTable[pid];
         }
     }
@@ -60,6 +61,10 @@ export let killProcess = function (pid: number) {
         console.log("ABORT! ABORT! Why are you trying to kill init?!");
         return -1;
     }
+
+    if (!processTable[pid])
+        return;
+
     processTable[pid].status = ProcessStatus.DEAD;
     Memory.processMemory[pid] = undefined;
 
@@ -68,8 +73,7 @@ export let killProcess = function (pid: number) {
     for (let otherPid in processTable) {
         const process = processTable[pid];
 
-        if ((process.parentPID === parseInt(otherPid, 10)) &&
-            (process.status !== ProcessStatus.DEAD)) {
+        if ((process.parentPID === parseInt(otherPid, 10)) && (process.status !== ProcessStatus.DEAD)) {
             killProcess(process.pid);
         }
     }
