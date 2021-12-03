@@ -43,6 +43,17 @@ export let addProcess = function <T extends Process<MachineState, MachineInputSo
     return p;
 };
 
+export let AddProcessIfNoExists = function <T extends Process<MachineState, MachineInputSource>>(p: T, priority = ProcessPriority.LowPriority) {
+    let storedTable = Memory.processTable;
+    for (let item of storedTable) {
+        let [pid, parentPID, classPath, priority, ...remaining] = item;
+        if(p.classPath() === classPath)
+            return;
+    }
+
+    addProcess(p, priority);
+}
+
 export let killProcess = function (pid: number) {
     if (pid === 0) {
         console.log("ABORT! ABORT! Why are you trying to kill init?!");

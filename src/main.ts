@@ -12,6 +12,7 @@ import { RoleMiner } from "roles/miner";
 import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { resetRoomsInfoProcess } from "OS/processes/global/resetRoomsInfoProcess";
+import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
 
 declare global {
     /*
@@ -129,6 +130,8 @@ export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
         // }
     }
     catch { }
+
+     kernel.AddProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
 
     Overlord.rule();
 
