@@ -15,16 +15,16 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
     // _[0] - creepId
     public setup(..._: any[]) {
         this.memory.creepId = _[0];
-        this.setInitialState({creep: Game.getObjectById<Creep>(this.memory.creepId)!, linkReadyForActivation: false})
+        this.setInitialState({ creep: Game.getObjectById<Creep>(this.memory.creepId)!, linkReadyForActivation: false })
     }
 
     @when<CreepState>(c => !c.creep)
     noCreepDefined(s: CreepState, m: MinerLinkerProcess) {
         const creep = Game.getObjectById<Creep>(this.memory.creepId);
-        if(creep){
+        if (creep) {
             s.creep = creep;
             return s;
-        }else{
+        } else {
             this.status = ProcessStatus.DEAD;
             m.exit();
         }
@@ -108,21 +108,28 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
 
     @when<MinerLinkerCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && !s.linkReadyForActivation)
     tranferEnergyToClosestLink(s: MinerLinkerCreepState, m: MinerLinkerProcess) {
+        console.log('tranferEnergyToClosestLink');
         const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
-        if (!inMemoryBaseStructureLinkId)
+        if (!inMemoryBaseStructureLinkId) {
+            m.exit();
             return;
+        }
 
         const targetStructureLinkId: string | undefined = s.creep.memory.targetStructureLinkId;
         const baseStructureLinkId: string | null = inMemoryBaseStructureLinkId;
 
-        if (!targetStructureLinkId || !baseStructureLinkId)
+        if (!targetStructureLinkId || !baseStructureLinkId) {
+            m.exit();
             return;
+        }
 
         const structureTargetStructureLink: StructureLink | null = Game.getObjectById(targetStructureLinkId);
         const structureBaseStructureLink: StructureLink | null = Game.getObjectById(baseStructureLinkId);
 
-        if (!structureTargetStructureLink || !structureBaseStructureLink)
+        if (!structureTargetStructureLink || !structureBaseStructureLink) {
+            m.exit();
             return;
+        }
 
         if (s.creep.transfer(structureTargetStructureLink, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
             s.creep.travelTo(structureTargetStructureLink);
@@ -134,21 +141,28 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
 
     @when<MinerLinkerCreepState>(s => s.creep.memory.targetEnergySourceId && !s.creep.memory.working && s.linkReadyForActivation)
     activateLink(s: MinerLinkerCreepState, m: MinerLinkerProcess) {
+        console.log('activateLink');
         const inMemoryBaseStructureLinkId = GlobalMemory.RoomInfo[s.creep.room.name].baseStructureLinkId;
-        if (!inMemoryBaseStructureLinkId)
+        if (!inMemoryBaseStructureLinkId) {
+            m.exit();
             return;
+        }
 
         const targetStructureLinkId: string | undefined = s.creep.memory.targetStructureLinkId;
         const baseStructureLinkId: string | null = inMemoryBaseStructureLinkId;
 
-        if (!targetStructureLinkId || !baseStructureLinkId)
+        if (!targetStructureLinkId || !baseStructureLinkId) {
+            m.exit();
             return;
+        }
 
         const structureTargetStructureLink: StructureLink | null = Game.getObjectById(targetStructureLinkId);
         const structureBaseStructureLink: StructureLink | null = Game.getObjectById(baseStructureLinkId);
 
-        if (!structureTargetStructureLink || !structureBaseStructureLink)
+        if (!structureTargetStructureLink || !structureBaseStructureLink) {
+            m.exit();
             return;
+        }
 
         if (structureTargetStructureLink.store.getUsedCapacity(RESOURCE_ENERGY)! > 0) {
             structureTargetStructureLink.transferEnergy(structureBaseStructureLink);
