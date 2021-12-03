@@ -37,7 +37,7 @@ export class Mayor {
         mother.CreateCreeps();
 
         let towerRepairProcess = new RepairViaTowerProcess(0, 0);
-        towerRepairProcess = kernel.AddProcessIfNoExists(towerRepairProcess);
+        towerRepairProcess = (<RepairViaTowerProcess>kernel.AddProcessIfNoExists(towerRepairProcess));
         towerRepairProcess.setup(this._spawn.room.name);
     }
 }

@@ -28,6 +28,7 @@ import { Process } from "OS/kernel/process";
 import { RepairerProcess } from "OS/processes/creep/townsfolk/repairer";
 import { PillagerProcess } from "OS/processes/creep/explorers/pillager";
 import { MinerLinkerProcess } from "OS/processes/creep/townsfolk/minerLinker";
+import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
 
 export class Overlord {
     public static rule(): void {
@@ -55,7 +56,7 @@ export class Overlord {
                     break;
                 }
                 case Consts.roleCarrier: {
-                    RoleCarrier.run(creep);
+                    Overlord.startCreepProcess(creep, new CarrierProcess(0, 0));
                     break;
                 }
                 case Consts.roleCarrierTeleporter: {

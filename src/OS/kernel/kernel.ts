@@ -47,8 +47,9 @@ export let AddProcessIfNoExists = function <T extends Process<MachineState, Mach
     let storedTable = Memory.processTable;
     for (let item of storedTable) {
         let [pid, parentPID, classPath, priority, ...remaining] = item;
-        if(p.classPath() === classPath)
-            return p;
+        if(p.classPath() === classPath){
+            return processTable[pid];
+        }
     }
 
     return addProcess(p, priority);

@@ -3,6 +3,10 @@ import { MachineState, when } from "when-ts";
 
 export class RepairViaTowerProcess extends Process<MachineState>{
 
+    public classPath(): string {
+        return "RepairViaTowerProcess";
+    }
+
     // _[0] - roomName
     setup(..._: any) {
         this.memory.roomName = _[0];
