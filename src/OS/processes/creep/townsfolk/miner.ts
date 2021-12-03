@@ -1,6 +1,5 @@
 import { Consts } from "consts";
 import { Process } from "OS/kernel/process";
-import { ProcessStatus } from "OS/kernel/process-status";
 import { RoleMiner } from "roles/miner";
 import { when } from "when-ts";
 
@@ -22,7 +21,7 @@ export class MinerProcess extends Process<CreepState> {
             s.creep = creep;
             return s;
         }else{
-            this.status = ProcessStatus.DEAD;
+            this.kernel.killProcess(this.pid);
             m.exit();
         }
 

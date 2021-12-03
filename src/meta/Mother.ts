@@ -66,7 +66,7 @@ export class Mother {
             else {
                 let sumOfDistancesToSourcesFromSpawn: number = 0;
                 let sourcesWithoutLink = sources;
-                if (links && links.length > 0)
+                if (links && links.length > 0 && sources && sources.length > 0)
                     sourcesWithoutLink = _.filter(sources, source => PathFinder.search(source.pos, source.pos.findClosestByPath(links)!.pos).path.length > 3);
                 sourcesWithoutLink.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(this._spawn.pos, s.pos).path.length);
                 sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20);

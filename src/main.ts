@@ -11,6 +11,7 @@ import { RoleRepairer } from "roles/repairer";
 import { RoleMiner } from "roles/miner";
 import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
+import { resetRoomsInfoProcess } from "OS/processes/global/resetRoomsInfoProcess";
 
 declare global {
     /*
@@ -137,10 +138,7 @@ export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
 );
 
 function Init() {
-    let roomInfo: RoomInfo = {}
-    _.forEach(Game.rooms, room => roomInfo[room.name] = {})
-    Memory.RoomsInfo = JSON.stringify(roomInfo);
-    Memory.Started = true;
+    kernel.addProcess(new resetRoomsInfoProcess(0, 0));
 }
 
 function LoadMemory() {

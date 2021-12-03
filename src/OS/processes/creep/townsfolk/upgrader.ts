@@ -1,7 +1,6 @@
 import { RoleCommon } from "roles/_common";
 import { when } from "when-ts";
 import { Process } from "../../../kernel/process";
-import { ProcessStatus } from "../../../kernel/process-status";
 
 export class UpgradeProcess extends Process<CreepState> {
     public classPath(): string {
@@ -21,7 +20,7 @@ export class UpgradeProcess extends Process<CreepState> {
             s.creep = creep;
             return s;
         }else{
-            this.status = ProcessStatus.DEAD;
+            this.kernel.killProcess(this.pid);
             m.exit();
         }
 

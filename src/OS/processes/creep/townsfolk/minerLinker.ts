@@ -4,7 +4,6 @@ import { GlobalMemory } from "GlobalMemory";
 import { ResourceDistanceMap } from "models/ResourceDistanceMap";
 import "libs/Traveler/Traveler";
 import { Process } from 'OS/kernel/process';
-import { ProcessStatus } from 'OS/kernel/process-status';
 
 interface MinerLinkerCreepState extends CreepState {
     linkReadyForActivation: boolean;
@@ -25,7 +24,7 @@ export class MinerLinkerProcess extends Process<MinerLinkerCreepState> {
             s.creep = creep;
             return s;
         } else {
-            this.status = ProcessStatus.DEAD;
+            this.kernel.killProcess(this.pid);
             m.exit();
         }
 

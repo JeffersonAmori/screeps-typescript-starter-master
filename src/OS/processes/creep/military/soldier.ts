@@ -1,7 +1,6 @@
 import { StateMachine, when } from "when-ts";
 import "libs/Traveler/Traveler";
 import { Process } from "OS/kernel/process";
-import { ProcessStatus } from "OS/kernel/process-status";
 
 export class SolderProcess extends Process<CreepState> {
 
@@ -12,7 +11,7 @@ export class SolderProcess extends Process<CreepState> {
             s.creep = creep;
             return s;
         }else{
-            this.status = ProcessStatus.DEAD;
+            this.kernel.killProcess(this.pid);
             m.exit();
         }
 

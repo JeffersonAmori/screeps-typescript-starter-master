@@ -22,7 +22,7 @@ export class PillagerProcess extends Process<CreepState> {
             s.creep = creep;
             return s;
         }else{
-            this.status = ProcessStatus.DEAD;
+            this.kernel.killProcess(this.pid);
             m.exit();
         }
 

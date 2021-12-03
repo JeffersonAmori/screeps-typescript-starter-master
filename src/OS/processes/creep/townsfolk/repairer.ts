@@ -1,5 +1,4 @@
 import { Process } from "OS/kernel/process";
-import { ProcessStatus } from "OS/kernel/process-status";
 import { RoleBuilder } from "roles/builder";
 import { RoleCommon } from "roles/_common";
 import { when } from "when-ts";
@@ -23,7 +22,7 @@ export class RepairerProcess extends Process<CreepState> {
             s.creep = creep;
             return s;
         }else{
-            this.status = ProcessStatus.DEAD;
+            this.kernel.killProcess(this.pid);
             m.exit();
         }
 
