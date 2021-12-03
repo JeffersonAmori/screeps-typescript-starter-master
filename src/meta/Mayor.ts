@@ -19,6 +19,8 @@ import { RoleUpgrader } from "roles/upgrader";
 import { RoomData, RoomInfo } from "roomInfo";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { Sheriff } from "./Sheriff";
+import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
+import * as kernel from "OS/kernel/kernel"
 
 
 export class Mayor {
@@ -33,6 +35,10 @@ export class Mayor {
         //CreepsAct(this._spawn);
         let mother = new Mother(this._spawn);
         mother.CreateCreeps();
+
+        let towerRepairProcess = new RepairViaTowerProcess(0, 0);
+        towerRepairProcess = kernel.AddProcessIfNoExists(towerRepairProcess);
+        towerRepairProcess.setup(this._spawn.room.name);
     }
 }
 

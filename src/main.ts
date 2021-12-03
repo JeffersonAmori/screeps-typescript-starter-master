@@ -13,6 +13,7 @@ import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { resetRoomsInfoProcess } from "OS/processes/global/resetRoomsInfoProcess";
 import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
+import { RepairViaTowerProcess as RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 
 declare global {
     /*
