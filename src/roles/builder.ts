@@ -1,5 +1,6 @@
 import { RoleUpgrader } from "./upgrader";
 import { RoleCommon } from "./_common";
+import { RoleRepairer } from "./repairer";
 import "libs/Traveler/Traveler";
 
 export class RoleBuilder extends RoleCommon {
@@ -39,7 +40,7 @@ export class RoleBuilder extends RoleCommon {
                 }
             }
             else {
-                RoleUpgrader.run(creep);
+                RoleRepairer.run(creep);
             }
         }
         else {

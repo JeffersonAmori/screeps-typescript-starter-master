@@ -7,6 +7,7 @@ import { resetRoomsInfoProcess } from "OS/processes/global/resetRoomsInfoProcess
 import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
 import * as profiler from "libs/profiler/screeps-profiler"
 import * as kernel from "OS/kernel/kernel"
+import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 
 declare global {
     /*

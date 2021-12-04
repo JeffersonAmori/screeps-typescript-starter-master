@@ -98,6 +98,7 @@ export class RepairerProcess extends Process<CreepState> {
     @when<RepairerProcessCreepStateCreep>(s => !s.creep.memory.working)
     getEnergy(s: RepairerProcessCreepStateCreep, m: RepairerProcess) {
         RoleCommon.getEnergy(s.creep);
+        delete s.creep.memory.structureToRepairId;
         m.exit();
     }
 };
