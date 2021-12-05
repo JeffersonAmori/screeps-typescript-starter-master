@@ -85,28 +85,30 @@ export class CarrierProcess extends Process {
                 return;
             }
 
-            if (targetEnergySource instanceof Resource) {
-                ret = this._creep.pickup(targetEnergySource);
-                energyRemaining = targetEnergySource.amount;
-            }
-            else if (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone) {
-                ret = this._creep.withdraw(targetEnergySource, RESOURCE_ENERGY, Math.min(targetEnergySource.store.getUsedCapacity(RESOURCE_ENERGY), this._creep.store.getFreeCapacity()));
-                energyRemaining = targetEnergySource.store.getUsedCapacity();
-                if (ret === ERR_NOT_ENOUGH_ENERGY) {
-                    RESOURCES_ALL.forEach(r => {
-                        if (this._creep && targetEnergySource && (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone)) {
-                            this._creep.withdraw(targetEnergySource, r);
-                        }
-                    });
+            if (targetEnergySource.pos.inRangeTo(this._creep, 1)) {
+                if (targetEnergySource instanceof Resource) {
+                    ret = this._creep.pickup(targetEnergySource);
+                    energyRemaining = targetEnergySource.amount;
                 }
-            }
+                else if (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone) {
+                    ret = this._creep.withdraw(targetEnergySource, RESOURCE_ENERGY, Math.min(targetEnergySource.store.getUsedCapacity(RESOURCE_ENERGY), this._creep.store.getFreeCapacity()));
+                    energyRemaining = targetEnergySource.store.getUsedCapacity();
+                    if (ret === ERR_NOT_ENOUGH_ENERGY) {
+                        RESOURCES_ALL.forEach(r => {
+                            if (this._creep && targetEnergySource && (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone)) {
+                                this._creep.withdraw(targetEnergySource, r);
+                            }
+                        });
+                    }
+                }
 
-            if (ret === ERR_NOT_IN_RANGE) {
-                this._creep.travelTo(targetEnergySource);
-            }
+                if (ret === ERR_NOT_IN_RANGE) {
+                    this._creep.travelTo(targetEnergySource);
+                }
 
-            if (this._creep.store.getFreeCapacity() === 0 || energyRemaining === 0) {
-                RoleCommon.deleteGetEnergyRelatedMemory(this._creep);
+                if (this._creep.store.getFreeCapacity() === 0 || energyRemaining === 0) {
+                    RoleCommon.deleteGetEnergyRelatedMemory(this._creep);
+                }
             }
         }
 
