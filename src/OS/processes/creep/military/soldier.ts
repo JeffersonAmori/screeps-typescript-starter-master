@@ -1,72 +1,86 @@
-import { StateMachine, when } from "when-ts";
 import "libs/Traveler/Traveler";
 import { Process } from "OS/kernel/process";
 
-export class SolderProcess extends Process<CreepState> {
+export class SolderProcess extends Process {
+    private _creep: Creep | null = null;
 
-    @when<CreepState>(c => !c.creep)
-    noCreepDefined(s: CreepState, m: SolderProcess) {
-        const creep = Game.getObjectById<Creep>(this.memory.creepId);
-        if(creep){
-            s.creep = creep;
-            return s;
-        }else{
+    public classPath(): string {
+        return "SolderProcess";
+    }
+
+    // _[0] - creepId
+    public setup(..._: any[]) {
+        this.memory.creepId = _[0];
+    }
+
+    public run(): number {
+        this._creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if (!this._creep) {
             this.kernel.killProcess(this.pid);
-            m.exit();
+            return -1;
         }
 
-        return;
+        if (Game.flags.attackFlag && this._creep.room !== Game.flags.attackFlag.room)
+            this.moveTowardsFlag();
+        else if (Game.flags.attackFlag && this._creep.room === Game.flags.attackFlag.room) {
+            this.attack();
+        }
+
+        return 0;
     }
 
-    @when(s => Game.flags.attackFlag && s.creep.room !== Game.flags.attackFlag.room)
-    moveTowardsFlag(s: CreepState, m: SolderProcess) {
-        s.creep.travelTo(Game.flags.attackFlag);
 
-        m.exit();
+    moveTowardsFlag() {
+        if (!this._creep)
+            return;
+        this._creep.travelTo(Game.flags.attackFlag);
     }
 
-    @when(s => Game.flags.attackFlag && s.creep.room === Game.flags.attackFlag.room)
-    attack(s: CreepState, m: SolderProcess) {
-        var hostiles = s.creep.room.find(FIND_HOSTILE_CREEPS);
+    attack() {
+        if (!this._creep)
+            return;
+
+        var hostiles = this._creep.room.find(FIND_HOSTILE_CREEPS);
         if (hostiles.length > 0) {
-            let targetEnemy = s.creep.pos.findClosestByPath(hostiles);
+            let targetEnemy = this._creep.pos.findClosestByPath(hostiles);
             if (!targetEnemy)
                 return;
 
-            s.creep.memory.targetEnemyId = targetEnemy.id;
+            this._creep.memory.targetEnemyId = targetEnemy.id;
 
-            if (s.creep.attack(targetEnemy) == ERR_NOT_IN_RANGE) {
-                s.creep.travelTo(targetEnemy);
+            if (this._creep.attack(targetEnemy) == ERR_NOT_IN_RANGE) {
+                this._creep.travelTo(targetEnemy);
             }
         }
         else {
-            //const hostileBuildings = s.creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: (s) => s.structureType == STRUCTURE_INVADER_CORE});
-            const hostileBuildings = s.creep.room.find(FIND_HOSTILE_STRUCTURES);
+            //const hostileBuildings = this._creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: (s) => s.structureType == STRUCTURE_INVADER_CORE});
+            const hostileBuildings = this._creep.room.find(FIND_HOSTILE_STRUCTURES);
             if (hostileBuildings.length > 0) {
-                const targetBuilding = s.creep.pos.findClosestByPath(hostileBuildings);
+                const targetBuilding = this._creep.pos.findClosestByPath(hostileBuildings);
                 if (!targetBuilding)
                     return;
 
-                s.creep.memory.targetEnemyId = targetBuilding.id;
+                this._creep.memory.targetEnemyId = targetBuilding.id;
 
-                if (s.creep.attack(targetBuilding) == ERR_NOT_IN_RANGE) {
-                    s.creep.travelTo(targetBuilding);
+                if (this._creep.attack(targetBuilding) == ERR_NOT_IN_RANGE) {
+                    this._creep.travelTo(targetBuilding);
                 }
             } else {
-                const walls = s.creep.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_WALL && s.hits === 1 });
+                const walls = this._creep.room.find(FIND_STRUCTURES, { filter: (s) => s.structureType == STRUCTURE_WALL && s.hits === 1 });
                 if (walls.length > 0) {
-                    const wall = s.creep.pos.findClosestByPath(walls);
+                    const wall = this._creep.pos.findClosestByPath(walls);
                     if (!wall)
                         return;
 
-                    s.creep.memory.targetEnemyId = wall.id;
+                    this._creep.memory.targetEnemyId = wall.id;
 
-                    if (s.creep.attack(wall) == ERR_NOT_IN_RANGE) {
-                        s.creep.travelTo(wall);
+                    if (this._creep.attack(wall) == ERR_NOT_IN_RANGE) {
+                        this._creep.travelTo(wall);
                     }
                 }
             }
         }
-        m.exit();
+
+        return;
     }
 }

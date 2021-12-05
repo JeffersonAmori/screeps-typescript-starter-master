@@ -2,12 +2,11 @@ import * as Kernel from "./kernel";
 import { ProcessPriority } from "./constants";
 import { ProcessStatus } from "./process-status";
 import { ProcessSleep } from "../typings/process-sleep";
-import { MachineInputSource, MachineState, StateMachine } from "when-ts";
-type ConcreteProcess<MachineState, MachineInputSource> = { new(pid: number, parentPID: number, priority?: ProcessPriority): Process<MachineState, MachineInputSource> };
-type DependencyInfo = [ConcreteProcess<MachineState, MachineInputSource>, ProcessSetupCallback];
-type ProcessSetupCallback = (p: Process<MachineState, MachineInputSource>) => void
+type ConcreteProcess = { new(pid: number, parentPID: number, priority?: ProcessPriority): Process };
+type DependencyInfo = [ConcreteProcess, ProcessSetupCallback];
+type ProcessSetupCallback = (p: Process) => void
 
-export abstract class Process<S extends MachineState, I extends MachineInputSource = MachineInputSource> extends StateMachine<S, I> {
+export abstract class Process {
     public status: number;
     public classPath(): string {
         return "None";
@@ -18,16 +17,16 @@ export abstract class Process<S extends MachineState, I extends MachineInputSour
     protected deps: DependencyInfo[] = [];
     protected kernel = Kernel;
     // public static reloadFromTable(pid: number, parentPID: number, priority = ProcessPriority.LowPriority) {
-    //     const p = new Process<MachineState, MachineInputSource>()
+    //     const p = new Process()
     // }
     constructor(public pid: number,
         public parentPID: number,
         priority = ProcessPriority.LowPriority) {
-
-        super(<S>{});
         this.status = ProcessStatus.ALIVE;
         this.priority = priority;
     };
+
+    public abstract run(): number;
 
     public setMemory(memory: any): void {
         this.memory = memory;
@@ -40,7 +39,7 @@ export abstract class Process<S extends MachineState, I extends MachineInputSour
 
     public setup(..._: any[]) { };
 
-    public registerDependency(p: ConcreteProcess<MachineState, MachineInputSource>, processSetup: ProcessSetupCallback) {
+    public registerDependency(p: ConcreteProcess, processSetup: ProcessSetupCallback) {
         let dependencyInfo: DependencyInfo = [p, processSetup];
         this.deps.push(dependencyInfo);
     }

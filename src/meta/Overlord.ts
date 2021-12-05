@@ -23,7 +23,7 @@ import { RolePillager } from "roles/pillager";
 import { RoleSoldier } from "roles/military/soldier";
 import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
-import { UpgradeProcess } from "OS/processes/creep/townsfolk/upgrader";
+import { UpgraderProcess } from "OS/processes/creep/townsfolk/upgrader";
 import { Process } from "OS/kernel/process";
 import { RepairerProcess } from "OS/processes/creep/townsfolk/repairer";
 import { PillagerProcess } from "OS/processes/creep/explorers/pillager";
@@ -64,7 +64,7 @@ export class Overlord {
                     break;
                 }
                 case Consts.roleUpgrader: {
-                    Overlord.startCreepProcess(creep, new UpgradeProcess(0, 0));
+                    Overlord.startCreepProcess(creep, new UpgraderProcess(0, 0));
                     break;
                 }
                 case Consts.roleBuilder: {
@@ -111,7 +111,7 @@ export class Overlord {
         })
     }
 
-    static startCreepProcess(creep: Creep, process: Process<CreepState>): void{
+    static startCreepProcess(creep: Creep, process: Process): void{
         if (!creep.memory.processId || !kernel.getProcessById(creep.memory.processId)) {
             let newProcess = kernel.addProcess(process);
             newProcess.setup(creep.id);

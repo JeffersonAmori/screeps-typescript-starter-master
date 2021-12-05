@@ -4,7 +4,7 @@ import { Process } from "OS/kernel/process";
 import { MachineState, when } from "when-ts";
 import { UpdateOwnedRoomInfo } from "./updateOwnedRoomInfo";
 
-export class UpdateAllOwnedRoomsInfoProcess extends Process<MachineState>{
+export class UpdateAllOwnedRoomsInfoProcess extends Process{
     public classPath(): string {
         return "UpdateAllOwnedRoomsInfoProcess";
     }
@@ -14,8 +14,7 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process<MachineState>{
         this.memory.roomName = _[0];
     }
 
-    @when<MachineState>(true)
-    updateAllOwnedRoomsInfo(s: MachineState, m: UpdateAllOwnedRoomsInfoProcess) {
+    public run():number {
         GlobalMemory.RoomInfo = GlobalMemory.RoomInfo || {};
 
         _.forEach(Game.rooms, (room) => {
@@ -26,6 +25,7 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process<MachineState>{
         });
 
         this.kernel.sleepProcess(this, 200);
-        m.exit();
+
+        return 0;
     }
 }

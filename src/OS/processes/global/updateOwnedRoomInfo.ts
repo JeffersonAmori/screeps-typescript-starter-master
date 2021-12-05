@@ -2,7 +2,7 @@ import { GlobalMemory } from "GlobalMemory";
 import { Process } from "OS/kernel/process";
 import { MachineState, when } from "when-ts";
 
-export class UpdateOwnedRoomInfo extends Process<MachineState>{
+export class UpdateOwnedRoomInfo extends Process{
     public classPath(): string {
         return "UpdateOwnedRoomInfo";
     }
@@ -20,7 +20,7 @@ export class UpdateOwnedRoomInfo extends Process<MachineState>{
     storages: StructureStorage[] = []
 
     @when<MachineState>(true)
-    updateRoomInfo(s: MachineState, m: UpdateOwnedRoomInfo) {
+    public run() : number {
         if(!this.memory.roomName){
             this.kernel.killProcess(this.pid);
         }
@@ -40,7 +40,8 @@ export class UpdateOwnedRoomInfo extends Process<MachineState>{
         this.findStorageLink(room);
 
         this.kernel.killProcess(this.pid);
-        m.exit();
+
+        return 0;
     }
 
     findStorageLink(room: Room) {

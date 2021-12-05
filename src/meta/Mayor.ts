@@ -35,12 +35,12 @@ export class Mayor {
         let mother = new Mother(this._spawn);
         mother.CreateCreeps();
 
-        const controller = this._spawn.room.controller;
-        if (controller && controller.my) {
-            let towerRepairProcess = new RepairViaTowerProcess(0, 0);
-            towerRepairProcess = (<RepairViaTowerProcess>kernel.addProcess(towerRepairProcess));
-            towerRepairProcess.setup(this._spawn.room.name);
-        }
+        // const controller = this._spawn.room.controller;
+        // if (controller && controller.my) {
+        //     let towerRepairProcess = new RepairViaTowerProcess(0, 0);
+        //     towerRepairProcess = (<RepairViaTowerProcess>kernel.addProcess(towerRepairProcess));
+        //     towerRepairProcess.setup(this._spawn.room.name);
+        // }
     }
 }
 

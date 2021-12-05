@@ -2,60 +2,66 @@ import { RoleCommon } from "roles/_common";
 import { when } from "when-ts";
 import { Process } from "../../../kernel/process";
 
-export class UpgradeProcess extends Process<CreepState> {
+export class UpgraderProcess extends Process {
+    private _creep: Creep | null = null;
+
     public classPath(): string {
-        return "UpgradeProcess";
+        return "UpgraderProcess";
     }
 
     // _[0] - creepId
     public setup(..._: any[]) {
         this.memory.creepId = _[0];
-        this.setInitialState({creep: Game.getObjectById<Creep>(this.memory.creepId)!})
     }
 
-    @when<CreepState>(c => !c.creep)
-    noCreepDefined(s: CreepState, m: UpgradeProcess) {
-        const creep = Game.getObjectById<Creep>(this.memory.creepId);
-        if(creep){
-            s.creep = creep;
-            return s;
-        }else{
+    public run(): number {
+        this._creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if (!this._creep) {
             this.kernel.killProcess(this.pid);
-            m.exit();
+            return -1;
+        }
+
+        if (this._creep.memory.working && this._creep.store.getUsedCapacity() === 0) {
+            this._creep.memory.working = false;
+            this._creep.say('harvesting');
+        }
+
+        if (!this._creep.memory.working && this._creep.store.getUsedCapacity() === this._creep.store.getCapacity()) {
+            this._creep.memory.working = true;
+            this._creep.say('upgrading');
+        }
+
+        if (this._creep.memory.working) {
+            this.upgrade();
+        }
+        else {
+            this.getEnergy();
+        }
+
+        return 0;
+    }
+
+    upgrade() {
+        if (!this._creep)
+            return;
+
+        const controller = this._creep.room.controller;
+        if (!controller)
+            return;
+
+        if (this._creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
+            this._creep.travelTo(controller);
         }
 
         return;
     }
 
-    @when<CreepState>(c => c.creep.memory.working && c.creep.store.getUsedCapacity() === 0)
-    finishedWorking(s: CreepState, m: UpgradeProcess) {
-        s.creep.memory.working = false;
-        s.creep.say('harvesting');
-    }
-
-    @when<CreepState>(c => !c.creep.memory.working && c.creep.store.getUsedCapacity() === c.creep.store.getCapacity())
-    startedWorking(s: CreepState, m: UpgradeProcess) {
-        s.creep.memory.working = true;
-        s.creep.say('upgrading');
-    }
-
-    @when<CreepState>(s => s.creep.memory.working)
-    upgrade(s: CreepState, m: UpgradeProcess) {
-        const controller = s.creep.room.controller;
-        if (!controller)
+    getEnergy() {
+        if (!this._creep)
             return;
 
-        if (s.creep.upgradeController(controller) == ERR_NOT_IN_RANGE) {
-            s.creep.travelTo(controller);
-        }
+        RoleCommon.getEnergy(this._creep);
 
-        m.exit();
-    }
-
-    @when<CreepState>(s => !s.creep.memory.working)
-    getEnergy(s: CreepState, m: UpgradeProcess) {
-        RoleCommon.getEnergy(s.creep);
-
-        m.exit();
+        return;
     }
 }

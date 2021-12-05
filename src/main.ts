@@ -3,11 +3,12 @@ import { Architect } from "meta/architect";
 import { Overlord } from "meta/Overlord";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { MachineState, StateMachine } from "when-ts";
-import { resetRoomsInfoProcess } from "OS/processes/global/resetRoomsInfoProcess";
 import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
 import * as profiler from "libs/profiler/screeps-profiler"
 import * as kernel from "OS/kernel/kernel"
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
+import { Process } from "OS/kernel/process";
+import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
 
 declare global {
     /*
@@ -29,6 +30,7 @@ declare global {
         forceMoveToTargetContainer?: boolean;
         isRenewing?: boolean;
         otherResources?: ResourceConstant[];
+        linkReadyForActivation?: boolean;
         role?: string;
         room?: string;
         structureToRepairId?: string;
@@ -65,7 +67,9 @@ declare global {
 // profiler.registerClass(RoleMinerTeleporter, 'RoleMinerTeleporter');
 // profiler.registerClass(RoleMiner, 'RoleMiner');
 //profiler.registerClass(StateMachine, 'StateMachine');
-
+//profiler.registerObject(kernel);
+profiler.registerClass(Overlord.rule, 'Overlord.Rule');
+//profiler.registerFN(CarrierProcess.prototype.run, 'Carrier.run');
 profiler.enable();
 
 export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
@@ -126,7 +130,7 @@ export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
     }
     catch { }
 
-     kernel.AddProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
+     kernel.addProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
 
     Overlord.rule();
 
@@ -136,7 +140,7 @@ export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
 );
 
 function Init() {
-    kernel.addProcess(new resetRoomsInfoProcess(0, 0));
+    //kernel.addProcess(new resetRoomsInfoProcess(0, 0));
 }
 
 function LoadMemory() {

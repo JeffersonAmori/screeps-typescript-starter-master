@@ -1,7 +1,6 @@
 import { Process } from "OS/kernel/process";
-import { MachineState, when } from "when-ts";
 
-export class RepairViaTowerProcess extends Process<MachineState>{
+export class RepairViaTowerProcess extends Process {
 
     public classPath(): string {
         return "RepairViaTowerProcess";
@@ -12,38 +11,34 @@ export class RepairViaTowerProcess extends Process<MachineState>{
         this.memory.roomName = _[0];
     }
 
-    @when(true)
-    repair(s: MachineState, m: RepairViaTowerProcess) {
-        if(!this.memory.roomName){
+    run(): number {
+        if (!this.memory.roomName) {
             console.log('RepairViaTowerProcess - memory.roomName is no set.')
-            m.exit();
-            return;
+            return -1;
         }
         const currentRoom = Game.rooms[this.memory.roomName];
         const towers: StructureTower[] | null = currentRoom.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER && (s.store.getUsedCapacity(RESOURCE_ENERGY)) > (s.store.getCapacity(RESOURCE_ENERGY) / 2) });
         if (!towers || towers.length === 0) {
             this.kernel.killProcess(this.pid);
-            m.exit();
-            return;
+            return -1;
         }
 
         let structures = currentRoom.find(FIND_STRUCTURES, { filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL) });
         if (!structures || structures.length === 0) {
             this.kernel.killProcess(this.pid);
-            m.exit();
-            return;
+            return -1;
         }
 
         let targetStructure = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
 
         if (!targetStructure) {
             this.kernel.killProcess(this.pid);
-            m.exit();
-            return;
+            return -1;
         }
 
         towers.forEach(t => t.repair(targetStructure));
         this.kernel.killProcess(this.pid);
-        m.exit();
+        return 0;
+
     }
 }
