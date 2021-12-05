@@ -1,8 +1,9 @@
+import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
 import { RoleBuilder } from "roles/builder";
 import { RoleCommon } from "roles/_common";
-import { when } from "when-ts";
 
+@profile
 export class RepairerProcess extends Process {
     private _creep: Creep | null = null;
 

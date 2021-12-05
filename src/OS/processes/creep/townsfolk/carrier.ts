@@ -1,7 +1,9 @@
 import { GlobalMemory } from "GlobalMemory";
+import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
 import { RoleCommon } from "roles/_common";
 
+@profile
 export class CarrierProcess extends Process {
     private _creep: Creep | null = null;
 

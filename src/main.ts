@@ -4,7 +4,8 @@ import { Overlord } from "meta/Overlord";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { MachineState, StateMachine } from "when-ts";
 import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
-import * as profiler from "libs/profiler/screeps-profiler"
+
+import * as Profiler from "libs/Profiler-ts/Profiler";
 import * as kernel from "OS/kernel/kernel"
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 import { Process } from "OS/kernel/process";
@@ -57,9 +58,13 @@ declare global {
     namespace NodeJS {
         interface Global {
             log: any;
+            Profiler: Profiler;
         }
     }
+
 }
+
+global.Profiler = Profiler.init();
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
@@ -68,11 +73,13 @@ declare global {
 // profiler.registerClass(RoleMiner, 'RoleMiner');
 //profiler.registerClass(StateMachine, 'StateMachine');
 //profiler.registerObject(kernel);
-profiler.registerClass(Overlord.rule, 'Overlord.Rule');
+//profiler.registerClass(Overlord.rule, 'Overlord.Rule');
 //profiler.registerFN(CarrierProcess.prototype.run, 'Carrier.run');
-profiler.enable();
+//profiler.enable();
 
-export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
+export const loop = ErrorMapper.wrapLoop(() =>
+//profiler.wrap(() =>
+{
     LoadMemory();
     kernel.loadProcessTable();
     kernel.run();
@@ -130,14 +137,14 @@ export const loop = ErrorMapper.wrapLoop(() => profiler.wrap(() => {
     }
     catch { }
 
-     kernel.addProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
+    kernel.addProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
 
     Overlord.rule();
 
     SaveMemory();
     kernel.storeProcessTable();
-})
-);
+    //})
+});
 
 function Init() {
     //kernel.addProcess(new resetRoomsInfoProcess(0, 0));

@@ -1,7 +1,8 @@
+import { profile } from "libs/Profiler-ts/Profiler";
 import { RoleCommon } from "roles/_common";
-import { when } from "when-ts";
 import { Process } from "../../../kernel/process";
 
+@profile
 export class UpgraderProcess extends Process {
     private _creep: Creep | null = null;
 

@@ -2,8 +2,10 @@ import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
 import { ResourceDistanceMap } from "models/ResourceDistanceMap";
 import { Process } from 'OS/kernel/process';
+import { profile } from "libs/Profiler-ts/Profiler";
 import "libs/Traveler/Traveler";
 
+@profile
 export class MinerLinkerProcess extends Process {
     private _creep: Creep | null = null;
 
@@ -109,7 +111,6 @@ export class MinerLinkerProcess extends Process {
             const closestStructureLink: StructureLink | null = this._creep.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK });
             if (!closestStructureLink)
                 return;
-
 
             this._creep.memory.targetStructureLinkId = closestStructureLink.id;
         }
