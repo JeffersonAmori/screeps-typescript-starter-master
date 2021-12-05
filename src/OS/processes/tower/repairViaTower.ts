@@ -19,8 +19,8 @@ export class RepairViaTowerProcess extends Process {
         const currentRoom = Game.rooms[this.memory.roomName];
         const towers: StructureTower[] | null = currentRoom.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER && (s.store.getUsedCapacity(RESOURCE_ENERGY)) > (s.store.getCapacity(RESOURCE_ENERGY) / 2) });
         if (!towers || towers.length === 0) {
-            this.kernel.killProcess(this.pid);
-            return -1;
+            this.kernel.sleepProcessByTime(this, 50);
+            return 0;
         }
 
         let structures = currentRoom.find(FIND_STRUCTURES, { filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL) });

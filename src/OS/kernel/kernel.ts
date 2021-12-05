@@ -5,6 +5,7 @@ import { ProcessStatus } from "./process-status";
 import { ProcessPriority } from "./constants";
 import { Process } from "../typings/process";
 import { Lookup as processLookup } from "./process";
+import { ProcessSleepByProcess, ProcessSleepByTime } from "OS/kernel/process";
 
 let ticlyQueue: Process[] = [];
 let ticlyLastQueue: Process[] = [];
@@ -78,9 +79,24 @@ export let killProcess = function (pid: number) {
     return pid;
 };
 
-export let sleepProcess = function (p: Process, ticks: number) {
+export let forkProcess = function (origin: Process, newProcess: Process): Process {
+    sleepProcessByProcess(origin, newProcess);
+    addProcess(newProcess);
+    newProcess.parentPID = origin.pid;
+    return newProcess;
+}
+
+export let sleepProcessByTime = function (p: Process, ticks: number): Process {
+    return sleepProcess(p, { start: Game.time, duration: ticks });
+}
+
+export let sleepProcessByProcess = function (p: Process, p2: Process): Process {
+    return sleepProcess(p, { pID: p2.pid });
+}
+
+export let sleepProcess = function (p: Process, sleepInfo: ProcessSleepByTime | ProcessSleepByProcess): Process {
     p.status = ProcessStatus.SLEEP;
-    p.sleepInfo = { start: Game.time, duration: ticks };
+    p.sleepInfo = sleepInfo;
     return p;
 }
 
@@ -113,12 +129,13 @@ let runOneQueue = function (queue: Process[]) {
                         killProcess(process.pid);
                     }
                 }
-                if ((process.status === ProcessStatus.SLEEP) &&
-                    ((process.sleepInfo!.start + process.sleepInfo!.duration) < Game.time) &&
-                    (process.sleepInfo!.duration !== -1)) {
-                    process.status = ProcessStatus.ALIVE;
-                    process.sleepInfo = undefined;
-                }
+                if (process.status === ProcessStatus.SLEEP)
+                    if ((process.sleepInfo instanceof ProcessSleepByTime && ((process.sleepInfo!.start + process.sleepInfo!.duration) < Game.time) && (process.sleepInfo!.duration !== -1)) ||
+                        process.sleepInfo instanceof ProcessSleepByProcess && (!processTable[process.sleepInfo.pID] || processTable[process.sleepInfo.pID].status === ProcessStatus.DEAD)) {
+                        process.status = ProcessStatus.ALIVE;
+                        process.sleepInfo = undefined;
+                    }
+
                 if (process.status === ProcessStatus.ALIVE) {
                     process.run();
                 }

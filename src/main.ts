@@ -134,6 +134,10 @@ export const loop = ErrorMapper.wrapLoop(() =>
         //             Game.creeps.Diplo.moveTo(controller);
         //     }
         // }
+
+        if (Game.creeps.Lolito.room != Game.flags.center.room)
+            Game.creeps.Lolito.moveTo(Game.flags.center);
+
     }
     catch { }
 

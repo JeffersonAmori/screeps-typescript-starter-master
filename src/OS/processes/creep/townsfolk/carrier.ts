@@ -109,7 +109,10 @@ export class CarrierProcess extends Process {
                 if (this._creep.store.getFreeCapacity() === 0 || energyRemaining === 0) {
                     RoleCommon.deleteGetEnergyRelatedMemory(this._creep);
                 }
+            } else {
+                this._creep.travelTo(targetEnergySource);
             }
+
         }
 
         if (this._creep.store.getFreeCapacity() == 0) {

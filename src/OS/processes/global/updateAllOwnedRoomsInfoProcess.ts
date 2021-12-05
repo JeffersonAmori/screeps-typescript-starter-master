@@ -24,7 +24,7 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process{
             p.setup(room.name);
         });
 
-        this.kernel.sleepProcess(this, 200);
+        this.kernel.sleepProcessByTime(this, 200);
 
         return 0;
     }

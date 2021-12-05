@@ -29,6 +29,7 @@ import { RepairerProcess } from "OS/processes/creep/townsfolk/repairer";
 import { PillagerProcess } from "OS/processes/creep/explorers/pillager";
 import { MinerLinkerProcess } from "OS/processes/creep/townsfolk/minerLinker";
 import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
+import { HarvesterProcess } from "OS/processes/creep/townsfolk/harvester";
 
 export class Overlord {
     public static rule(): void {
@@ -44,7 +45,7 @@ export class Overlord {
         const creeps = _.forEach(Game.creeps, creep => {
             switch (creep.memory.role) {
                 case Consts.roleHarvester: {
-                    RoleHarvester.run(creep);
+                    Overlord.startCreepProcess(creep, new HarvesterProcess(0, 0));
                     break;
                 }
                 case Consts.roleMiner: {

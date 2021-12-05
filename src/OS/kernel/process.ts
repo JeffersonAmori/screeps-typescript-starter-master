@@ -1,7 +1,6 @@
 import * as Kernel from "./kernel";
 import { ProcessPriority } from "./constants";
 import { ProcessStatus } from "./process-status";
-import { ProcessSleep } from "../typings/process-sleep";
 type ConcreteProcess = { new(pid: number, parentPID: number, priority?: ProcessPriority): Process };
 type DependencyInfo = [ConcreteProcess, ProcessSetupCallback];
 type ProcessSetupCallback = (p: Process) => void
@@ -11,7 +10,7 @@ export abstract class Process {
     public classPath(): string {
         return "None";
     };
-    public sleepInfo?: ProcessSleep;
+    public sleepInfo?: ProcessSleepByTime | ProcessSleepByProcess;
     public priority: ProcessPriority;
     public memory: any;
     protected deps: DependencyInfo[] = [];
@@ -69,4 +68,12 @@ export let Lookup = {
     getProcess: function (id: string): any | null {
         return data[id];
     }
+}
+
+export class ProcessSleepByTime {
+    start: number = 0;
+    duration: number = -1;
+}
+export class ProcessSleepByProcess {
+    pID: number = -1;
 }
