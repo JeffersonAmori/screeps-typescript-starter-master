@@ -1,25 +1,12 @@
 import { Consts } from "consts";
-import { filter, initial } from "lodash";
-import { Defcon } from "military/defcon";
-import { Mother } from "meta/Mother";
-import { getMaxListeners } from "process";
 import { RoleBuilder } from "roles/builder";
-import { RoleCarrier } from "roles/carrier";
 import { RoleCarrierTeleporter } from "roles/carrierTeleporter";
 import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
 import { FighterHealer } from "roles/fighterHealer";
 import { FighterMelee } from "roles/fighterMelee";
 import { FighterRanged } from "roles/fighterRanged";
-import { RoleHarvester } from "roles/harvester";
-import { RoleMiner } from "roles/miner";
-import { RoleMinerTeleporter } from "roles/minerTeleporter";
 import { RolePioneer } from "roles/pioneer";
-import { RoleRepairer } from "roles/repairer";
-import { RoleUpgrader } from "roles/upgrader";
-import { RoomData, RoomInfo } from "roomInfo";
-import { ErrorMapper } from "utils/ErrorMapper";
 import { Mayor } from "./Mayor";
-import { RolePillager } from "roles/pillager";
 import { RoleSoldier } from "roles/military/soldier";
 import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
@@ -30,6 +17,7 @@ import { PillagerProcess } from "OS/processes/creep/explorers/pillager";
 import { MinerLinkerProcess } from "OS/processes/creep/townsfolk/minerLinker";
 import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
 import { HarvesterProcess } from "OS/processes/creep/townsfolk/harvester";
+import { CarrierLinkerProcess } from "OS/processes/creep/townsfolk/carrierLinker";
 
 export class Overlord {
     public static rule(): void {
@@ -61,7 +49,7 @@ export class Overlord {
                     break;
                 }
                 case Consts.roleCarrierTeleporter: {
-                    RoleCarrierTeleporter.run(creep);
+                    Overlord.startCreepProcess(creep, new CarrierLinkerProcess(0, 0));
                     break;
                 }
                 case Consts.roleUpgrader: {
