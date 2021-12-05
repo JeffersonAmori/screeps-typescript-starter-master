@@ -1,7 +1,8 @@
 import { GlobalMemory } from "GlobalMemory";
+import { profile } from "libs/Profiler-ts";
 import { Process } from "OS/kernel/process";
-import { MachineState, when } from "when-ts";
 
+@profile
 export class UpdateOwnedRoomInfo extends Process{
     public classPath(): string {
         return "UpdateOwnedRoomInfo";
@@ -19,7 +20,6 @@ export class UpdateOwnedRoomInfo extends Process{
     storage: StructureStorage | null = null;
     storages: StructureStorage[] = []
 
-    @when<MachineState>(true)
     public run() : number {
         if(!this.memory.roomName){
             this.kernel.killProcess(this.pid);
@@ -44,14 +44,6 @@ export class UpdateOwnedRoomInfo extends Process{
         return 0;
     }
 
-    findStorageLink(room: Room) {
-        if (!this.storage)
-            return;
-
-        GlobalMemory.RoomInfo[room.name].storageLinkId = this.storage.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK })?.id;
-        return;
-    }
-
     calculateAmountOfCarriersNeededOnRoom(room: Room): void {
         if (!room || !room.controller || !room.controller.my || !this.sources) {
             return;
@@ -65,10 +57,18 @@ export class UpdateOwnedRoomInfo extends Process{
         let sumOfDistancesToSourcesFromSpawn: number = 0;
         let sourcesWithoutLink = this.sources;
         if (this.links && this.links.length > 0 && this.sources && this.sources.length > 0)
-            sourcesWithoutLink = _.filter(this.sources, source => source.pos.inRangeTo(source.pos.findClosestByPath(this.links)!.pos, 3));
+            sourcesWithoutLink = _.filter(this.sources, source => !source.pos.inRangeTo(source.pos.findClosestByPath(this.links)!.pos, 3));
         sourcesWithoutLink.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(home.pos, s.pos).path.length);
         let sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20);
         GlobalMemory.RoomInfo[room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
+        return;
+    }
+
+    findStorageLink(room: Room) {
+        if (!this.storage)
+            return;
+
+        GlobalMemory.RoomInfo[room.name].storageLinkId = this.storage.pos.findClosestByPath(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_LINK })?.id;
         return;
     }
 }

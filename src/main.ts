@@ -59,12 +59,14 @@ declare global {
         interface Global {
             log: any;
             Profiler: Profiler;
+            kernel: any;
         }
     }
 
 }
 
 global.Profiler = Profiler.init();
+global.kernel = kernel;
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
@@ -135,8 +137,8 @@ export const loop = ErrorMapper.wrapLoop(() =>
         //     }
         // }
 
-        if (Game.creeps.Lolito.room != Game.flags.center.room)
-            Game.creeps.Lolito.moveTo(Game.flags.center);
+        // if (Game.creeps.Lolito.room != Game.flags.center.room)
+        //     Game.creeps.Lolito.moveTo(Game.flags.center);
 
     }
     catch { }

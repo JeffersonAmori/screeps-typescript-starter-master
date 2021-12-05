@@ -1,10 +1,11 @@
 import { GlobalMemory } from "GlobalMemory";
+import { profile } from "libs/Profiler-ts/Profiler";
 import { ProcessPriority } from "OS/kernel/constants";
 import { Process } from "OS/kernel/process";
-import { MachineState, when } from "when-ts";
 import { UpdateOwnedRoomInfo } from "./updateOwnedRoomInfo";
 
-export class UpdateAllOwnedRoomsInfoProcess extends Process{
+@profile
+export class UpdateAllOwnedRoomsInfoProcess extends Process {
     public classPath(): string {
         return "UpdateAllOwnedRoomsInfoProcess";
     }
@@ -14,7 +15,7 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process{
         this.memory.roomName = _[0];
     }
 
-    public run():number {
+    public run(): number {
         GlobalMemory.RoomInfo = GlobalMemory.RoomInfo || {};
 
         _.forEach(Game.rooms, (room) => {
@@ -25,6 +26,7 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process{
         });
 
         this.kernel.sleepProcessByTime(this, 200);
+        //this.kernel.killProcess(this.pid);
 
         return 0;
     }
