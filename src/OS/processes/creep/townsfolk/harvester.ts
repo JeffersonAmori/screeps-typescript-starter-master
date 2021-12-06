@@ -1,6 +1,7 @@
 import { profile } from "libs/Profiler-ts";
 import { Process } from "OS/kernel/process";
 import "libs/Traveler/Traveler";
+import { Consts } from "consts";
 
 @profile
 export class HarvesterProcess extends Process {
@@ -23,6 +24,8 @@ export class HarvesterProcess extends Process {
         if (this._creep.store.getUsedCapacity(RESOURCE_ENERGY) == this._creep.store.getCapacity(RESOURCE_ENERGY)) {
             this._creep.say('transfering');
             this._creep.memory.working = false;
+            if (this.memory.Role !== Consts.roleHarvester)
+                this.kernel.killProcess(this.pid);
         }
 
         if (this._creep.memory.working) {
@@ -100,6 +103,8 @@ export class HarvesterProcess extends Process {
                 if (this._creep.store.getUsedCapacity() == 0) {
                     this._creep.say('harvesting');
                     this._creep.memory.working = true;
+                    if (this.memory.Role !== Consts.roleHarvester)
+                        this.kernel.killProcess(this.pid);
                 }
             }
         }

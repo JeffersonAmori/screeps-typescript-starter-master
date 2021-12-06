@@ -1,6 +1,3 @@
-import { Consts } from "consts";
-import { CreepFactory } from "creepFactory";
-import { MyStructureTower } from "structure/tower";
 
 export class Defcon {
     public static run(room: Room): void {

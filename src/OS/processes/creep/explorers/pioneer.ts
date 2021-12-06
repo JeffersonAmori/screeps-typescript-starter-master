@@ -1,6 +1,6 @@
 import "libs/Traveler/Traveler";
 import { Process } from "OS/kernel/process";
-import { RoleBuilder } from "roles/builder";
+import { BuilderProcess } from "../townsfolk/builder";
 
 export class PioneerProcess extends Process {
     private _creep: Creep | null = null;
@@ -20,11 +20,12 @@ export class PioneerProcess extends Process {
             return -1;
         }
 
-        let targetSpawnRoom : StructureSpawn | Flag = Game.flags.colonizeFlag || _.sortBy(Game.spawns, s => s.room.controller?.level)[0];
+        let targetSpawnRoom: StructureSpawn | Flag = Game.flags.colonizeFlag || _.sortBy(Game.spawns, s => s.room.controller?.level)[0];
         if (this._creep.room != targetSpawnRoom.room)
-        this._creep.travelTo(targetSpawnRoom);
+            this._creep.travelTo(targetSpawnRoom);
         else {
-            RoleBuilder.run(this._creep)
+            this.kernel.forkProcess(this, new BuilderProcess(0, this.pid))
+                .setup(this.memory.creepId);
         }
 
         return 0;

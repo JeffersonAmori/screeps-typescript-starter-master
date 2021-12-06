@@ -1,3 +1,4 @@
+import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
 import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
@@ -119,6 +120,8 @@ export class CarrierProcess extends Process {
             this._creep.say('delivering ' + this._creep.name);
             this._creep.memory.working = false;
             RoleCommon.deleteGetEnergyRelatedMemory(this._creep);
+            if (this._creep.memory.role !== Consts.roleCarrier)
+                this.kernel.killProcess(this.pid);
         }
     }
 
@@ -186,6 +189,8 @@ export class CarrierProcess extends Process {
             if (this._creep.store.getUsedCapacity() == 0) {
                 this._creep.say('getting');
                 this._creep.memory.working = true;
+                if (this._creep.memory.role !== Consts.roleCarrier)
+                    this.kernel.killProcess(this.pid);
             }
         }
     }

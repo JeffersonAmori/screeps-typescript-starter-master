@@ -1,8 +1,8 @@
+import { Consts } from "consts";
 import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
-import { RoleBuilder } from "roles/builder";
-import { RoleCommon } from "roles/_common";
 import { getEnergyProcess } from "../common/getEnergy";
+import { BuilderProcess } from "./builder";
 
 @profile
 export class RepairerProcess extends Process {
@@ -27,11 +27,15 @@ export class RepairerProcess extends Process {
         if (this._creep.memory.working && this._creep.store.getUsedCapacity() === 0) {
             this._creep.memory.working = false;
             this._creep.say('harvesting');
+            if (this._creep.memory.role !== Consts.roleRepairer)
+                this.kernel.killProcess(this.pid);
         }
 
         if (!this._creep.memory.working && this._creep.store.getUsedCapacity() === this._creep.store.getCapacity()) {
             this._creep.memory.working = true;
             this._creep.say('repairing');
+            if (this._creep.memory.role !== Consts.roleRepairer)
+                this.kernel.killProcess(this.pid);
         }
 
         if (this._creep.memory.working) {
@@ -57,7 +61,8 @@ export class RepairerProcess extends Process {
         });
 
         if (!structures) {
-            RoleBuilder.run(this._creep);
+            this.kernel.forkProcess(this, new BuilderProcess(0, this.pid))
+                .setup(this.memory.creepId);
             return;
         }
 

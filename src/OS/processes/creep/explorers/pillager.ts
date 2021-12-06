@@ -1,6 +1,6 @@
 import { profile } from "libs/Profiler-ts";
-import { RoleHarvester } from "roles/harvester";
 import { Process } from "../../../kernel/process";
+import { HarvesterProcess } from "../townsfolk/harvester";
 
 @profile
 export class PillagerProcess extends Process {
@@ -47,7 +47,8 @@ export class PillagerProcess extends Process {
             this._creep.travelTo(Game.flags.pillageFlag);
         }
         else {
-            RoleHarvester.run(this._creep);
+            this.kernel.forkProcess(this, new HarvesterProcess(0, this.pid))
+                .setup(this.memory.creepId);
         }
 
         return;
@@ -63,7 +64,8 @@ export class PillagerProcess extends Process {
             }
         }
         else {
-            RoleHarvester.run(this._creep);
+            this.kernel.forkProcess(this, new HarvesterProcess(0, this.pid))
+                .setup(this.memory.creepId);
         }
 
         return { creep: this._creep };

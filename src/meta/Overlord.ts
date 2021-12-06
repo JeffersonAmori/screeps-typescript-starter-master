@@ -1,8 +1,4 @@
 import { Consts } from "consts";
-import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
-import { FighterHealer } from "roles/fighterHealer";
-import { FighterMelee } from "roles/fighterMelee";
-import { FighterRanged } from "roles/fighterRanged";
 import { MayorProcess } from "./Mayor";
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { UpgraderProcess } from "OS/processes/creep/townsfolk/upgrader";
@@ -28,11 +24,7 @@ export class Overlord extends Process {
 
     public run(): number {
         for (let r in Game.rooms) {
-            if (GlobalMemory.RoomInfo[r].mayorProcessId)
-                if (!this.kernel.getProcessById(GlobalMemory.RoomInfo[r].mayorProcessId!))
-                    delete GlobalMemory.RoomInfo[r].mayorProcessId;
-
-            if (!GlobalMemory.RoomInfo[r].mayorProcessId) {
+            if (!GlobalMemory.RoomInfo[r].mayorProcessId || !this.kernel.getProcessById(GlobalMemory.RoomInfo[r].mayorProcessId!)) {
                 let mayorProcess = this.kernel.addProcess(new MayorProcess(0, this.pid, ProcessPriority.TiclyLast));
                 mayorProcess.setup(r);
                 GlobalMemory.RoomInfo[r].mayorProcessId = mayorProcess.pid;
@@ -89,22 +81,6 @@ export class Overlord extends Process {
                 }
                 case Consts.roleSoldier: {
                     this.startCreepProcess(creep, new SoldierProcess(0, this.pid));
-                    break;
-                }
-                case Consts.roleFighterMelee: {
-                    FighterMelee.run(creep);
-                    break;
-                }
-                case Consts.roleFighterMeleeForAnotherRoom: {
-                    FighterMeleeForAnotherRoom.run(creep);
-                    break;
-                }
-                case Consts.roleFighterRanged: {
-                    FighterRanged.run(creep);
-                    break;
-                }
-                case Consts.rolefighterHealer: {
-                    FighterHealer.run(creep);
                     break;
                 }
                 default: {

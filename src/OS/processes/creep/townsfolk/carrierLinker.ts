@@ -1,8 +1,8 @@
 import { GlobalMemory } from "GlobalMemory";
 import { Process } from "OS/kernel/process";
-import "libs/Traveler/Traveler";
-import { RoleCarrier } from "roles/carrier";
 import { profile } from "libs/Profiler-ts/Profiler";
+import { CarrierProcess } from "./carrier";
+import "libs/Traveler/Traveler";
 
 @profile
 export class CarrierLinkerProcess extends Process {
@@ -66,7 +66,8 @@ export class CarrierLinkerProcess extends Process {
                 }
             }
         } else {
-            RoleCarrier.run(this._creep);
+            this.kernel.forkProcess(this, new CarrierProcess(0, this.pid))
+                .setup(this.memory.creepId);
         }
 
         return 0;
