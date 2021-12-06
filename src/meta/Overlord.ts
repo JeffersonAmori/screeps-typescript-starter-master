@@ -18,12 +18,16 @@ import { ProcessPriority } from "OS/kernel/constants";
 
 @profile
 export class Overlord extends Process {
-    public classPath(){
+    public classPath() {
         return 'Overlord';
     }
 
     public run(): number {
         for (let r in Game.rooms) {
+            const room: Room = Game.rooms[r];
+            if (!room || !room.controller || !room.controller.my)
+                continue;
+
             if (!GlobalMemory.RoomInfo[r].mayorProcessId || !this.kernel.getProcessById(GlobalMemory.RoomInfo[r].mayorProcessId!)) {
                 let mayorProcess = this.kernel.addProcess(new MayorProcess(0, this.pid, ProcessPriority.TiclyLast));
                 mayorProcess.setup(r);

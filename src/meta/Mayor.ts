@@ -30,7 +30,7 @@ export class MayorProcess extends Process {
         }
 
         this.breedTownsfolk();
-        //this.checkForHostiles();
+        this.checkForHostiles();
 
         //this.repairUsingTower();
 
@@ -70,10 +70,10 @@ export class MayorProcess extends Process {
         if (hostiles.length > 0) {
 
             if (!GlobalMemory.RoomInfo[this._room.name].sheriffProcessId || !this.kernel.getProcessById(GlobalMemory.RoomInfo[this._room.name].sheriffProcessId!)) {
-                this.kernel.addProcess(new SheriffProcess(0, this.parentPID))
-                    .setup(this.memory.roomName);
+                const sheriffProcess = this.kernel.addProcess(new SheriffProcess(0, this.parentPID));
+                sheriffProcess.setup(this.memory.roomName);
+                GlobalMemory.RoomInfo[this._room.name].sheriffProcessId = sheriffProcess.pid;
             }
         }
     }
-
 }

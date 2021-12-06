@@ -69,7 +69,7 @@ export let killProcess = function (pid: number) {
     Memory.processMemory[pid] = undefined;
 
     // When a process is killed, we also need to kill all of its child processes
-    console.log("Shutting down process with pid:" + pid);
+    console.log("Shutting down process with pid: " + pid);
     for (let otherPid in processTable) {
         const process = processTable[pid];
 

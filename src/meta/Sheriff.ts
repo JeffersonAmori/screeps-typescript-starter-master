@@ -9,13 +9,17 @@ export class SheriffProcess extends Process {
 
     public run(): number {
         this._room = Game.rooms[this.memory.roomName];
-        console.log('Mother run ' + this._room.name);
+        console.log('Sheriff run ' + this._room.name);
         if (!this._room) {
             this.kernel.killProcess(this.pid);
             return -1;
         }
 
         this.defendTown();
+
+        var hostiles = this._room.find(FIND_HOSTILE_CREEPS);
+        if (!hostiles || hostiles.length === 0)
+            this.kernel.killProcess(this.pid);
 
         return 0;
     }
@@ -31,15 +35,15 @@ export class SheriffProcess extends Process {
         }
 
         var hostiles = this._room.find(FIND_HOSTILE_CREEPS);
-        if (hostiles.length > 1) {
+        if (hostiles.length > 0) {
             var username = hostiles[0].owner.username;
             Game.notify(`User ${username} spotted in room ${this._room.name}`);
 
-            let towers: Structure[] = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
+            let towers: StructureTower[] = this._room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_TOWER});
             for (let t in towers) {
                 let closestEnemy = towers[t].pos.findClosestByRange(FIND_HOSTILE_CREEPS);
                 if (closestEnemy) {
-                    (<StructureTower>towers[t]).attack(closestEnemy);
+                    towers[t].attack(closestEnemy);
                 }
             }
         }
