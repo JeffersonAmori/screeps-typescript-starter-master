@@ -128,15 +128,15 @@ export class CreepFactory {
             new BodyPartRequest(MOVE, 20)])
     ];
 
-    private _spawn: StructureSpawn;
+    private _room: Room;
 
-    constructor(spawn: StructureSpawn) {
-        this._spawn = spawn;
+    constructor(room: Room) {
+        this._room = room;
     }
 
     private GetBodyPartsInternal(desirableBody: BodyPartRequest[], sortBody: boolean = true): BodyPartConstant[] {
         let bodyParts: BodyPartConstant[] = [];
-        let energyAvailable: number = this.isEmergencyState ? 300 : Math.max(this._spawn.room.energyAvailable, Math.max(this._spawn.room.energyCapacityAvailable / 2, 300));
+        let energyAvailable: number = this.isEmergencyState ? 300 : Math.max(this._room.energyAvailable, Math.max(this._room.energyCapacityAvailable / 2, 300));
         let isBuilding: boolean = true;
 
         while (energyAvailable > 0) {
@@ -191,7 +191,7 @@ export class CreepFactory {
             return;
 
         if (!memory) {
-            memory = { role: role, room: this._spawn.room.name }
+            memory = { role: role, room: this._room.name }
         }
 
         if (!memory.role) {
@@ -199,7 +199,7 @@ export class CreepFactory {
         }
 
         if (!memory.room) {
-            memory.room = this._spawn.room.name;
+            memory.room = this._room.name;
         }
 
         if (!memory.otherResources) {
@@ -211,6 +211,10 @@ export class CreepFactory {
         if (!bodyPartsReference)
             throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole - role: ' + role);
 
-        let ret = this._spawn.spawnCreep(this.GetBodyPartsByRole(role), this._spawn.room.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
+        const spawn : StructureSpawn[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning });
+        if (!spawn || spawn.length === 0)
+            return;
+
+        let ret = spawn[0].spawnCreep(this.GetBodyPartsByRole(role), this._room.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
     }
 }

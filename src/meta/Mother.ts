@@ -5,27 +5,27 @@ import { GlobalMemory } from "GlobalMemory";
 import { RoomData, RoomInfo } from "roomInfo";
 
 export class Mother {
-    private _spawn: StructureSpawn;
+    private _room: Room;
 
-    constructor(spawn: StructureSpawn) {
-        this._spawn = spawn;
+    constructor(room: Room) {
+        this._room = room;
     }
 
     public CreateCreeps(): void {
-        const controller = this._spawn.room.controller;
+        const controller = this._room.controller;
         if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
             return;
 
 
-        const creepFactory: CreepFactory = new CreepFactory(this._spawn);
-        const containers = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
-        const links = this._spawn.room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
-        const sources: Source[] | null = this._spawn.room.find(FIND_SOURCES);
-        const extractors: StructureExtractor[] | null = this._spawn.room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_EXTRACTOR });
-        const minerals: Mineral[] = this._spawn.room.find(FIND_MINERALS);
+        const creepFactory: CreepFactory = new CreepFactory(this._room);
+        const containers = this._room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
+        const links = this._room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
+        const sources: Source[] | null = this._room.find(FIND_SOURCES);
+        const extractors: StructureExtractor[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_EXTRACTOR });
+        const minerals: Mineral[] = this._room.find(FIND_MINERALS);
 
 
-        const roomsCreeps = this._spawn.room.find(FIND_MY_CREEPS);
+        const roomsCreeps = this._room.find(FIND_MY_CREEPS);
 
         const harvesters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleHarvester);
         const carriers = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrier && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
@@ -47,11 +47,11 @@ export class Mother {
         }
 
         if (containers.length > 0) {
-            if (!GlobalMemory.RoomInfo[this._spawn.room.name].upgraderContainerId) {
-                if (this._spawn.room.controller) {
-                    const possibleContainers = this._spawn.room.controller.pos.findInRange(FIND_STRUCTURES, 5, { filter: c => c.structureType === STRUCTURE_CONTAINER });
+            if (!GlobalMemory.RoomInfo[this._room.name].upgraderContainerId) {
+                if (this._room.controller) {
+                    const possibleContainers = this._room.controller.pos.findInRange(FIND_STRUCTURES, 5, { filter: c => c.structureType === STRUCTURE_CONTAINER });
                     if (possibleContainers.length > 0)
-                        GlobalMemory.RoomInfo[this._spawn.room.name].upgraderContainerId = possibleContainers[0].id;
+                        GlobalMemory.RoomInfo[this._room.name].upgraderContainerId = possibleContainers[0].id;
                 }
             }
 
@@ -59,7 +59,7 @@ export class Mother {
                 creepFactory.CreateCreep(Consts.roleMiner)
             }
 
-            if (carriers.length < (GlobalMemory.RoomInfo[this._spawn.room.name].sumOfDistancesToSourcesFromSpawnHeuristic)!) {
+            if (carriers.length < (GlobalMemory.RoomInfo[this._room.name].sumOfDistancesToSourcesFromSpawnHeuristic)!) {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else if (links.length === 0) {
@@ -70,8 +70,8 @@ export class Mother {
 
         const upgraders = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleUpgrader && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
         let additionalUpgrader = 0;
-        let roomStorage = this._spawn.room.storage;
-        let roomController = this._spawn.room.controller;
+        let roomStorage = this._room.storage;
+        let roomController = this._room.controller;
         if (roomStorage && roomController) {
             const energyStoredInRoom = roomStorage.store.getUsedCapacity();
             additionalUpgrader = energyStoredInRoom > roomController.level * 20000 ? 1 : 0;
@@ -85,7 +85,7 @@ export class Mother {
             creepFactory.CreateCreep(Consts.roleRepairer)
         }
 
-        if (this._spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+        if (this._room.find(FIND_CONSTRUCTION_SITES).length > 0) {
             const builders = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleBuilder);
             if (builders.length < Consts.maxNumberBuilder) {
                 creepFactory.CreateCreep(Consts.roleBuilder)
@@ -110,7 +110,7 @@ export class Mother {
         }
 
         if (Game.flags.pillageFlag && Game.flags.depositFlag) {
-            if (this._spawn.room === Game.flags.depositFlag.room) {
+            if (this._room === Game.flags.depositFlag.room) {
                 const pillagers = _.filter(Game.creeps, (c) => c.memory.role === Consts.rolePillager);
                 if (pillagers.length < Consts.maxNumberPillager) {
                     creepFactory.CreateCreep(Consts.rolePillager);

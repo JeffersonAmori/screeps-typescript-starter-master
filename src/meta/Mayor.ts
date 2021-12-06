@@ -26,30 +26,30 @@ import { profile } from "libs/Profiler-ts";
 
 @profile
 export class Mayor {
-    private _spawn: StructureSpawn;
+    private _room: Room;
 
-    constructor(spawn: StructureSpawn) {
-        this._spawn = spawn;
+    constructor(spawn: Room) {
+        this._room = spawn;
     }
 
     public govern() {
-        checkForHostiles(this._spawn);
-        let mother = new Mother(this._spawn);
+        checkForHostiles(this._room);
+        let mother = new Mother(this._room);
         mother.CreateCreeps();
 
-        const controller = this._spawn.room.controller;
+        const controller = this._room.controller;
         if (controller && controller.my) {
             let towerRepairProcess = new RepairViaTowerProcess(0, 0);
             towerRepairProcess = (<RepairViaTowerProcess>kernel.addProcessIfNoExists(towerRepairProcess));
-            towerRepairProcess.setup(this._spawn.room.name);
+            towerRepairProcess.setup(this._room.name);
         }
     }
 }
 
-function checkForHostiles(spawn: StructureSpawn) {
-    var hostiles = spawn.room.find(FIND_HOSTILE_CREEPS);
+function checkForHostiles(room: Room) {
+    var hostiles = room.find(FIND_HOSTILE_CREEPS);
     if (hostiles.length > 0) {
-        const sheriff = new Sheriff(spawn);
-        Defcon.run(spawn);
+        const sheriff = new Sheriff(room);
+        Defcon.run(room);
     }
 }

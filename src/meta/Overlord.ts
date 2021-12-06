@@ -26,9 +26,9 @@ import { profile } from "libs/Profiler-ts";
 @profile
 export class Overlord {
     public static rule(): void {
-        for (let s in Game.spawns) {
-            const spawn: StructureSpawn = Game.spawns[s]; 0
-            const mayor = new Mayor(spawn);
+        for (let r in Game.rooms) {
+            const room: Room = Game.rooms[r]; 0
+            const mayor = new Mayor(room);
             mayor.govern();
         }
         Overlord.CreepsAct();

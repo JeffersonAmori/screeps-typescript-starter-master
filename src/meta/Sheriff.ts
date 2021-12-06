@@ -1,8 +1,8 @@
 export class Sheriff {
-    private _spawn: StructureSpawn;
+    private _room: Room;
 
-    constructor(spawn: StructureSpawn){
-        this._spawn = spawn;
+    constructor(room: Room){
+        this._room = room;
     }
 
     public defendTown(){
