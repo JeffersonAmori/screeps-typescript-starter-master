@@ -38,6 +38,7 @@ export class Overlord extends Process {
                 GlobalMemory.RoomInfo[r].mayorProcessId = mayorProcess.pid;
             }
         }
+
         this.CreepsAct();
 
         return 0;
