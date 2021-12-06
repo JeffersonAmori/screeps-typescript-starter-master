@@ -195,7 +195,11 @@ export let loadProcessTable = function () {
             console.log("Error when loading: " + classPath + ' | ' + e.message);
         }
     }
-};
+}
+
+export let resetProcessTable = function () {
+    processTable = {};
+}
 
 export let getChildProcess = function (p: Process) {
     let result: Process[] = [];
