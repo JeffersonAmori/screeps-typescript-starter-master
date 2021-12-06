@@ -17,8 +17,11 @@ export class BuilderProcess extends Process {
     }
 
     public run(): number {
-        if (!this._creep)
+        this._creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if (!this._creep) {
+            this.kernel.killProcess(this.pid);
             return -1;
+        }
 
         if (this._creep.memory.working && this._creep.store.getUsedCapacity() === 0) {
             this._creep.memory.working = false;

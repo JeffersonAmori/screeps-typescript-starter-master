@@ -32,4 +32,7 @@ export class Consts {
     public static minTicksBeforeRepairing = 50;
     public static minTicksBeforeSpawningReplacement = 50;
     public static shouldRenewCreeps = false;
+
+    public static garbageCollectionInterval = 100;
+    public static towerRepairSleepTimer = 100;
 };

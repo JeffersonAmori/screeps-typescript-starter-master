@@ -10,6 +10,7 @@ import * as kernel from "OS/kernel/kernel"
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 import { Process } from "OS/kernel/process";
 import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
+import { garbageCollectionProcess } from "OS/processes/memory/garbageCollection";
 
 declare global {
     /*
@@ -83,19 +84,14 @@ export const loop = ErrorMapper.wrapLoop(() =>
 //profiler.wrap(() =>
 {
     LoadMemory();
-    kernel.loadProcessTable();
     kernel.run();
 
     console.log(`Current game tick is ${Game.time}`);
-    if (!Memory.Started)
-        Init();
 
     if (Memory.RunArchitect) {
         Memory.RunArchitect = false;
         console.log(Architect.RoomCanFitBunker(Game.rooms['E31S54']));
     }
-
-    CleanMemory();
 
     try {
         // if (Game.creeps.Jeff.room != Game.flags.attackFlag.room) {
@@ -144,7 +140,7 @@ export const loop = ErrorMapper.wrapLoop(() =>
     catch { }
 
     kernel.addProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
-
+    kernel.addProcessIfNoExists(new garbageCollectionProcess(0, 0));
 
     if (!GlobalMemory.overlordProcessId) {
         let overlordProcess = kernel.addProcess(new Overlord(0, 0));
@@ -152,26 +148,18 @@ export const loop = ErrorMapper.wrapLoop(() =>
     }
 
     SaveMemory();
-    kernel.storeProcessTable();
     //})
 });
 
-function Init() {
-    //kernel.addProcess(new resetRoomsInfoProcess(0, 0));
-}
-
 function LoadMemory() {
+    kernel.loadProcessTable();
     GlobalMemory.RoomInfo = JSON.parse(Memory.RoomsInfo);
 }
 
 function SaveMemory() {
     Memory.RoomsInfo = JSON.stringify(GlobalMemory.RoomInfo);
+    kernel.storeProcessTable();
 }
 
 function CleanMemory() {
-    for (const name in Memory.creeps) {
-        if (!(name in Game.creeps)) {
-            delete Memory.creeps[name];
-        }
-    }
 }

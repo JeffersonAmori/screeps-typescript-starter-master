@@ -5,7 +5,7 @@ import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
 import { FighterHealer } from "roles/fighterHealer";
 import { FighterMelee } from "roles/fighterMelee";
 import { FighterRanged } from "roles/fighterRanged";
-import { Mayor as MayorProcess } from "./Mayor";
+import { MayorProcess } from "./Mayor";
 import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { UpgraderProcess } from "OS/processes/creep/townsfolk/upgrader";
