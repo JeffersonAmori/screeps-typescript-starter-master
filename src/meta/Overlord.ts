@@ -5,9 +5,7 @@ import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
 import { FighterHealer } from "roles/fighterHealer";
 import { FighterMelee } from "roles/fighterMelee";
 import { FighterRanged } from "roles/fighterRanged";
-import { RolePioneer } from "roles/pioneer";
-import { Mayor } from "./Mayor";
-import { RoleSoldier } from "roles/military/soldier";
+import { Mayor as MayorProcess } from "./Mayor";
 import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { UpgraderProcess } from "OS/processes/creep/townsfolk/upgrader";
@@ -22,63 +20,68 @@ import { BuilderProcess } from "OS/processes/creep/townsfolk/builder";
 import { PioneerProcess } from "OS/processes/creep/explorers/pioneer";
 import { SoldierProcess } from "OS/processes/creep/military/soldier";
 import { profile } from "libs/Profiler-ts";
+import { GlobalMemory } from "GlobalMemory";
 
 @profile
-export class Overlord {
-    public static rule(): void {
+export class Overlord extends Process {
+    public run(): number {
         for (let r in Game.rooms) {
-            const room: Room = Game.rooms[r]; 0
-            const mayor = new Mayor(room);
-            mayor.govern();
+            if (!GlobalMemory.RoomInfo[r].mayorProcessId) {
+                let mayorProcess = kernel.addProcess(new MayorProcess(0, this.pid));
+                mayorProcess.setup(r);
+                GlobalMemory.RoomInfo[r].mayorProcessId = mayorProcess.pid;
+            }
         }
-        Overlord.CreepsAct();
+        this.CreepsAct();
+
+        return 0;
     }
 
-    static CreepsAct(): void {
-        const creeps = _.forEach(Game.creeps, creep => {
+    CreepsAct(): void {
+        _.forEach(Game.creeps, creep => {
             switch (creep.memory.role) {
                 case Consts.roleHarvester: {
-                    Overlord.startCreepProcess(creep, new HarvesterProcess(0, 0));
+                    this.startCreepProcess(creep, new HarvesterProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleMiner: {
-                    Overlord.startCreepProcess(creep, new MinerProcess(0, 0));
+                    this.startCreepProcess(creep, new MinerProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleMinerLinker: {
-                    Overlord.startCreepProcess(creep, new MinerLinkerProcess(0, 0));
+                    this.startCreepProcess(creep, new MinerLinkerProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleCarrier: {
-                    Overlord.startCreepProcess(creep, new CarrierProcess(0, 0));
+                    this.startCreepProcess(creep, new CarrierProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleCarrierTeleporter: {
-                    Overlord.startCreepProcess(creep, new CarrierLinkerProcess(0, 0));
+                    this.startCreepProcess(creep, new CarrierLinkerProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleUpgrader: {
-                    Overlord.startCreepProcess(creep, new UpgraderProcess(0, 0));
+                    this.startCreepProcess(creep, new UpgraderProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleBuilder: {
-                    Overlord.startCreepProcess(creep, new BuilderProcess(0, 0));
+                    this.startCreepProcess(creep, new BuilderProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleRepairer: {
-                    Overlord.startCreepProcess(creep, new RepairerProcess(0, 0));
+                    this.startCreepProcess(creep, new RepairerProcess(0, this.pid));
                     break;
                 }
                 case Consts.rolePioneer: {
-                    Overlord.startCreepProcess(creep, new PioneerProcess(0, 0));
+                    this.startCreepProcess(creep, new PioneerProcess(0, this.pid));
                     break;
                 }
                 case Consts.rolePillager: {
-                    Overlord.startCreepProcess(creep, new PillagerProcess(0, 0));
+                    this.startCreepProcess(creep, new PillagerProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleSoldier: {
-                    Overlord.startCreepProcess(creep, new SoldierProcess(0, 0));
+                    this.startCreepProcess(creep, new SoldierProcess(0, this.pid));
                     break;
                 }
                 case Consts.roleFighterMelee: {
@@ -104,7 +107,7 @@ export class Overlord {
         })
     }
 
-    static startCreepProcess(creep: Creep, process: Process): void{
+    startCreepProcess(creep: Creep, process: Process): void {
         if (!creep.memory.processId || !kernel.getProcessById(creep.memory.processId)) {
             let newProcess = kernel.addProcess(process);
             newProcess.setup(creep.id);

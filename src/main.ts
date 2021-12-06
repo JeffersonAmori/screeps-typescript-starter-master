@@ -145,7 +145,11 @@ export const loop = ErrorMapper.wrapLoop(() =>
 
     kernel.addProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
 
-    Overlord.rule();
+
+    if (!GlobalMemory.overlordProcessId) {
+        let overlordProcess = kernel.addProcess(new Overlord(0, 0));
+        GlobalMemory.overlordProcessId = overlordProcess.pid;
+    }
 
     SaveMemory();
     kernel.storeProcessTable();

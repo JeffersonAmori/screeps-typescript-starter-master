@@ -9,4 +9,6 @@ export class GlobalMemory {
     public static set RoomInfo(value: RoomInfo) {
         GlobalMemory._roomInfo = value;
     }
+
+    public static overlordProcessId?: number;
 }

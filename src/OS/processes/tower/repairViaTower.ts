@@ -1,5 +1,7 @@
+import { profile } from "libs/Profiler-ts";
 import { Process } from "OS/kernel/process";
 
+@profile
 export class RepairViaTowerProcess extends Process {
 
     public classPath(): string {
@@ -19,7 +21,7 @@ export class RepairViaTowerProcess extends Process {
         const currentRoom = Game.rooms[this.memory.roomName];
         const towers: StructureTower[] | null = currentRoom.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER && (s.store.getUsedCapacity(RESOURCE_ENERGY)) >= (s.store.getCapacity(RESOURCE_ENERGY) / 2) });
         if (!towers || towers.length === 0) {
-            this.kernel.sleepProcessByTime(this, 50);
+            this.kernel.sleepProcessByTime(this, 150);
             return 0;
         }
 
@@ -43,6 +45,7 @@ export class RepairViaTowerProcess extends Process {
         }
 
         towers.forEach(t => t.repair(targetStructure));
+        this.kernel.killProcess(this.pid);
         return 0;
 
     }

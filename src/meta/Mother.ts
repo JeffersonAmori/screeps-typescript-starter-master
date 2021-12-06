@@ -1,17 +1,34 @@
 import { Consts } from "consts";
 import { CreepFactory } from "creepFactory";
-import { link } from "fs";
 import { GlobalMemory } from "GlobalMemory";
-import { RoomData, RoomInfo } from "roomInfo";
+import { Process } from "OS/kernel/process";
 
-export class Mother {
-    private _room: Room;
+export class Mother extends Process {
+    private _room: Room | null = null;
 
-    constructor(room: Room) {
-        this._room = room;
+    // _[0] - roomId
+    public setup(..._: any) {
+        this.memory.roomName = _[0];
     }
 
-    public CreateCreeps(): void {
+    public run(): number {
+        this._room = Game.rooms[this.memory.roomName];
+        if (!this._room) {
+            this.kernel.killProcess(this.pid);
+            return -1;
+        }
+
+        this.createCreeps();
+
+        return 0;
+    }
+
+
+
+    createCreeps(): void {
+        if (!this._room)
+            return;
+
         const controller = this._room.controller;
         if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
             return;

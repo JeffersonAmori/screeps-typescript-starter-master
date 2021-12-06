@@ -1,52 +1,47 @@
 import { Consts } from "consts";
 import { filter, initial } from "lodash";
 import { Defcon } from "military/defcon";
-import { Mother } from "meta/Mother";
-import { getMaxListeners } from "process";
-import { RoleBuilder } from "roles/builder";
-import { RoleCarrier } from "roles/carrier";
-import { RoleCarrierTeleporter } from "roles/carrierTeleporter";
-import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
-import { FighterHealer } from "roles/fighterHealer";
-import { FighterMelee } from "roles/fighterMelee";
-import { FighterRanged } from "roles/fighterRanged";
-import { RoleHarvester } from "roles/harvester";
-import { RoleMiner } from "roles/miner";
-import { RoleMinerTeleporter } from "roles/minerTeleporter";
-import { RolePioneer } from "roles/pioneer";
-import { RoleRepairer } from "roles/repairer";
-import { RoleUpgrader } from "roles/upgrader";
-import { RoomData, RoomInfo } from "roomInfo";
-import { ErrorMapper } from "utils/ErrorMapper";
+import { Mother as MotherProcess } from "meta/Mother";
 import { Sheriff } from "./Sheriff";
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 import * as kernel from "OS/kernel/kernel"
 import { profile } from "libs/Profiler-ts";
 import { GlobalMemory } from "GlobalMemory";
+import { Process } from "OS/kernel/process";
 
 
 @profile
-export class Mayor {
-    private _room: Room;
+export class MayorProcess extends Process {
+    private _room: Room | null = null;
 
-    constructor(spawn: Room) {
-        this._room = spawn;
+    // _[0] - roomId
+    public setup(..._: any) {
+        this.memory.roomName = _[0];
     }
 
-    public govern() {
+    public run(): number {
+        this._room = Game.rooms[this.memory.roomName];
+        if (!this._room) {
+            this.kernel.killProcess(this.pid);
+            return -1;
+        }
+
         checkForHostiles(this._room);
 
         this.breedTownsfolk();
-        this.repairUsingTower();
+        //this.repairUsingTower();
+
+        return 0;
     }
 
     private repairUsingTower() {
+        if (!this._room)
+            return;
+
         const controller = this._room.controller;
         if (controller && controller.my) {
-            if(!GlobalMemory.RoomInfo[this._room.name].towerRepairProcessId){
-
-                let towerRepairProcess = new RepairViaTowerProcess(0, 0);
-                towerRepairProcess = kernel.addProcess(towerRepairProcess);
+            if (!GlobalMemory.RoomInfo[this._room.name].towerRepairProcessId) {
+                const towerRepairProcess = kernel.addProcess(new RepairViaTowerProcess(0, this.pid));
                 towerRepairProcess.setup(this._room.name);
                 GlobalMemory.RoomInfo[this._room.name].towerRepairProcessId = towerRepairProcess.pid;
             }
@@ -54,8 +49,14 @@ export class Mayor {
     }
 
     private breedTownsfolk() {
-        let mother = new Mother(this._room);
-        mother.CreateCreeps();
+        if (!this._room)
+            return;
+
+        if (!GlobalMemory.RoomInfo[this._room.name].motherProcessId) {
+            const motherProcess = kernel.addProcess(new MotherProcess(0, this.pid));
+            motherProcess.setup(this._room.name);
+            GlobalMemory.RoomInfo[this._room.name].motherProcessId = motherProcess.pid;
+        }
     }
 }
 
