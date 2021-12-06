@@ -31,7 +31,8 @@ let getFreePid = function () {
 export let garbageCollection = function () {
     Memory.processMemory = _.pick(Memory.processMemory,
         (_: any, k: string) => (processTable[k]));
-}
+};
+
 export let addProcess = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
     let pid = getFreePid();
     p.pid = pid;
@@ -53,7 +54,7 @@ export let addProcessIfNoExists = function <T extends Process>(p: T, priority = 
     }
 
     return addProcess(p, priority);
-}
+};
 
 export let killProcess = function (pid: number) {
     if (pid === 0) {
@@ -86,21 +87,21 @@ export let forkProcess = function (origin: Process, newProcess: Process): Proces
     console.log(`new process: ${newProcess.classPath()} - ${newProcess.pid}`);
     sleepProcessByProcess(origin, newProcess);
     return newProcess;
-}
+};
 
 export let sleepProcessByTime = function (p: Process, ticks: number): Process {
     return sleepProcess(p, { start: Game.time, duration: ticks });
-}
+};
 
 export let sleepProcessByProcess = function (p: Process, p2: Process): Process {
     return sleepProcess(p, { pID: p2.pid });
-}
+};
 
 export let sleepProcess = function (p: Process, sleepInfo: ProcessSleepByTime | ProcessSleepByProcess): Process {
     p.status = ProcessStatus.SLEEP;
     p.sleepInfo = sleepInfo;
     return p;
-}
+};
 
 export let getProcessById = function (pid: number): Process | null {
     return processTable[pid];
@@ -149,8 +150,8 @@ let runOneQueue = function (queue: Process[]) {
             process = queue.pop();
         }
     }
-
 }
+
 export let run = function () {
     runOneQueue(ticlyQueue);
     runOneQueue(ticlyLastQueue);
@@ -197,11 +198,11 @@ export let loadProcessTable = function () {
             console.log("Error when loading: " + classPath + ' | ' + e.message);
         }
     }
-}
+};
 
 export let resetProcessTable = function () {
     processTable = {};
-}
+};
 
 export let getChildProcess = function (p: Process) {
     let result: Process[] = [];
@@ -212,4 +213,4 @@ export let getChildProcess = function (p: Process) {
         }
     }
     return result;
-}
+};
