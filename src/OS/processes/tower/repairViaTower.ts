@@ -17,19 +17,25 @@ export class RepairViaTowerProcess extends Process {
             return -1;
         }
         const currentRoom = Game.rooms[this.memory.roomName];
-        const towers: StructureTower[] | null = currentRoom.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER && (s.store.getUsedCapacity(RESOURCE_ENERGY)) > (s.store.getCapacity(RESOURCE_ENERGY) / 2) });
+        const towers: StructureTower[] | null = currentRoom.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER && (s.store.getUsedCapacity(RESOURCE_ENERGY)) >= (s.store.getCapacity(RESOURCE_ENERGY) / 2) });
         if (!towers || towers.length === 0) {
             this.kernel.sleepProcessByTime(this, 50);
             return 0;
         }
 
-        let structures = currentRoom.find(FIND_STRUCTURES, { filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL) });
-        if (!structures || structures.length === 0) {
-            this.kernel.killProcess(this.pid);
-            return -1;
+        if (!this.memory.targetStructureToRepair) {
+            let structures = currentRoom.find(FIND_STRUCTURES, { filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL) });
+            if (!structures || structures.length === 0) {
+                this.kernel.killProcess(this.pid);
+                return -1;
+            }
+
+            let targetStructure = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
+
+            this.memory.targetStructureToRepair = targetStructure.id;
         }
 
-        let targetStructure = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
+        const targetStructure = Game.getObjectById<AnyStructure>(this.memory.targetStructureToRepair);
 
         if (!targetStructure) {
             this.kernel.killProcess(this.pid);
@@ -37,7 +43,6 @@ export class RepairViaTowerProcess extends Process {
         }
 
         towers.forEach(t => t.repair(targetStructure));
-        this.kernel.killProcess(this.pid);
         return 0;
 
     }

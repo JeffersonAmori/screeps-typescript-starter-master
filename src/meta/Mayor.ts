@@ -22,6 +22,7 @@ import { Sheriff } from "./Sheriff";
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 import * as kernel from "OS/kernel/kernel"
 import { profile } from "libs/Profiler-ts";
+import { GlobalMemory } from "GlobalMemory";
 
 
 @profile
@@ -34,15 +35,27 @@ export class Mayor {
 
     public govern() {
         checkForHostiles(this._room);
-        let mother = new Mother(this._room);
-        mother.CreateCreeps();
 
+        this.breedTownsfolk();
+        this.repairUsingTower();
+    }
+
+    private repairUsingTower() {
         const controller = this._room.controller;
         if (controller && controller.my) {
-            let towerRepairProcess = new RepairViaTowerProcess(0, 0);
-            towerRepairProcess = (<RepairViaTowerProcess>kernel.addProcessIfNoExists(towerRepairProcess));
-            towerRepairProcess.setup(this._room.name);
+            if(!GlobalMemory.RoomInfo[this._room.name].towerRepairProcessId){
+
+                let towerRepairProcess = new RepairViaTowerProcess(0, 0);
+                towerRepairProcess = kernel.addProcess(towerRepairProcess);
+                towerRepairProcess.setup(this._room.name);
+                GlobalMemory.RoomInfo[this._room.name].towerRepairProcessId = towerRepairProcess.pid;
+            }
         }
+    }
+
+    private breedTownsfolk() {
+        let mother = new Mother(this._room);
+        mother.CreateCreeps();
     }
 }
 
