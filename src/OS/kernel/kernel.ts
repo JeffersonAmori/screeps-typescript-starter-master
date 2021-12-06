@@ -80,9 +80,11 @@ export let killProcess = function (pid: number) {
 };
 
 export let forkProcess = function (origin: Process, newProcess: Process): Process {
-    sleepProcessByProcess(origin, newProcess);
-    addProcess(newProcess);
+    console.log(`forking process ${origin.classPath()} to process ${newProcess.classPath()}`);
+    newProcess = addProcess(newProcess);
     newProcess.parentPID = origin.pid;
+    console.log(`new process: ${newProcess.classPath()} - ${newProcess.pid}`);
+    sleepProcessByProcess(origin, newProcess);
     return newProcess;
 }
 
@@ -129,13 +131,13 @@ let runOneQueue = function (queue: Process[]) {
                         killProcess(process.pid);
                     }
                 }
-                if (process.status === ProcessStatus.SLEEP)
-                    if ((process.sleepInfo instanceof ProcessSleepByTime && ((process.sleepInfo!.start + process.sleepInfo!.duration) < Game.time) && (process.sleepInfo!.duration !== -1)) ||
-                        process.sleepInfo instanceof ProcessSleepByProcess && (!processTable[process.sleepInfo.pID] || processTable[process.sleepInfo.pID].status === ProcessStatus.DEAD)) {
+                if (process.status === ProcessStatus.SLEEP) {
+                    if (((((<ProcessSleepByTime>process.sleepInfo)!.start + (<ProcessSleepByTime>process.sleepInfo)!.duration) < Game.time) && (<ProcessSleepByTime>process.sleepInfo)!.duration !== -1) ||
+                        (!processTable[(<ProcessSleepByProcess>process.sleepInfo).pID])) {
                         process.status = ProcessStatus.ALIVE;
                         process.sleepInfo = undefined;
                     }
-
+                }
                 if (process.status === ProcessStatus.ALIVE) {
                     process.run();
                 }
@@ -172,7 +174,6 @@ export let loadProcessTable = function () {
             //let p = new processClass(pid, parentPID, priority) as Process;
             p.setMemory(memory);
 
-            console.log(`PID: ${p.pid} | ${classPath}\t| (${p.status})\t| Memory: ${JSON.stringify(memory)}`);
             processTable[p.pid] = p;
             const sleepInfo = remaining.pop();
             if (sleepInfo) {
@@ -191,6 +192,7 @@ export let loadProcessTable = function () {
             if (priority === ProcessPriority.LowPriority) {
                 lowPriorityQueue.push(p);
             }
+            //console.log(`PID: ${p.pid} | ${classPath}\t| (${p.status})\t| Memory: ${JSON.stringify(memory)}`);
         } catch (e: any) {
             console.log("Error when loading: " + classPath + ' | ' + e.message);
         }

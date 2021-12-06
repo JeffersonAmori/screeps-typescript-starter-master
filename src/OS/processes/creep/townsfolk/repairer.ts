@@ -2,6 +2,7 @@ import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
 import { RoleBuilder } from "roles/builder";
 import { RoleCommon } from "roles/_common";
+import { getEnergyProcess } from "../common/getEnergy";
 
 @profile
 export class RepairerProcess extends Process {
@@ -92,7 +93,9 @@ export class RepairerProcess extends Process {
             return;
 
         delete this._creep.memory.structureToRepairId;
-        RoleCommon.getEnergy(this._creep);
+        let p = this.kernel.forkProcess(this, new getEnergyProcess(0, this.pid));
+        p.setup(this.memory.creepId);
+//        RoleCommon.getEnergy(this._creep);
 
         return;
     }

@@ -5,18 +5,20 @@ export class getEnergyProcess extends Process {
     private _creep: Creep | null = null;
 
     public classPath(): string {
-        return "PillagerProcess";
+        return "getEnergyProcess";
     }
 
     // _[0] - creepId
     public setup(..._: any[]) {
         this.memory.creepId = _[0];
     }
-    /** @param {Creep} creep **/
-    public  run(): number {
-        if (!this._creep)
+    public run(): number {
+        this._creep = Game.getObjectById<Creep>(this.memory.creepId);
+        if (!this._creep) {
+            this.kernel.killProcess(this.pid);
             return -1;
-
+        }
+        console.log('getEnergyProcess past creep check');
         if (this._creep.memory.targetEnergySourceId) {
             let targetEnergySource: Resource | Structure | Source | null = null;
             try {
@@ -54,6 +56,7 @@ export class getEnergyProcess extends Process {
 
             if (this._creep.store.getFreeCapacity() == 0) {
                 this.deleteGetEnergyRelatedMemory();
+                this.kernel.killProcess(this.pid);
             }
         }
         else {
@@ -97,7 +100,7 @@ export class getEnergyProcess extends Process {
         return 0;
     }
 
-    public  findEnergySource(): Source | undefined {
+    public findEnergySource(): Source | undefined {
         if (!this._creep)
             return;
         const source = this._creep.pos.findClosestByRange(FIND_SOURCES_ACTIVE);
@@ -109,7 +112,7 @@ export class getEnergyProcess extends Process {
         return undefined;
     }
 
-    public  findContainer(): StructureContainer | undefined {
+    public findContainer(): StructureContainer | undefined {
         if (!this._creep)
             return;
         const container: StructureContainer | null = this._creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -124,7 +127,7 @@ export class getEnergyProcess extends Process {
         return undefined;
     }
 
-    public  findStorage(): StructureStorage | undefined {
+    public findStorage(): StructureStorage | undefined {
         if (!this._creep)
             return;
         const storage: StructureStorage | null = this._creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -142,7 +145,7 @@ export class getEnergyProcess extends Process {
         return undefined;
     }
 
-    public  findDroppedResource(): Resource<ResourceConstant> | undefined {
+    public findDroppedResource(): Resource<ResourceConstant> | undefined {
         if (!this._creep)
             return;
         // Find all energies
@@ -158,7 +161,7 @@ export class getEnergyProcess extends Process {
         return undefined;
     }
 
-    public  findTombstone(creep: Creep): Tombstone | undefined {
+    public findTombstone(creep: Creep): Tombstone | undefined {
         if (!this._creep)
             return;
         // Find all tombstones
