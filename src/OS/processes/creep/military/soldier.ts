@@ -1,11 +1,11 @@
 import "libs/Traveler/Traveler";
 import { Process } from "OS/kernel/process";
 
-export class SolderProcess extends Process {
+export class SoldierProcess extends Process {
     private _creep: Creep | null = null;
 
     public classPath(): string {
-        return "SolderProcess";
+        return "SoldierProcess";
     }
 
     // _[0] - creepId

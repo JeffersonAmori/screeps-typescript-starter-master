@@ -21,8 +21,10 @@ import { ErrorMapper } from "utils/ErrorMapper";
 import { Sheriff } from "./Sheriff";
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 import * as kernel from "OS/kernel/kernel"
+import { profile } from "libs/Profiler-ts";
 
 
+@profile
 export class Mayor {
     private _spawn: StructureSpawn;
 

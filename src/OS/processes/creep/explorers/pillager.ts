@@ -1,7 +1,8 @@
+import { profile } from "libs/Profiler-ts";
 import { RoleHarvester } from "roles/harvester";
 import { Process } from "../../../kernel/process";
 
-
+@profile
 export class PillagerProcess extends Process {
     private _creep: Creep | null = null;
     public classPath(): string {

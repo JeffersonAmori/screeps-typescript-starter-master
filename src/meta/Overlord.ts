@@ -18,6 +18,9 @@ import { MinerLinkerProcess } from "OS/processes/creep/townsfolk/minerLinker";
 import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
 import { HarvesterProcess } from "OS/processes/creep/townsfolk/harvester";
 import { CarrierLinkerProcess } from "OS/processes/creep/townsfolk/carrierLinker";
+import { BuilderProcess } from "OS/processes/creep/townsfolk/builder";
+import { PioneerProcess } from "OS/processes/creep/explorers/pioneer";
+import { SoldierProcess } from "OS/processes/creep/military/soldier";
 
 export class Overlord {
     public static rule(): void {
@@ -57,7 +60,7 @@ export class Overlord {
                     break;
                 }
                 case Consts.roleBuilder: {
-                    RoleBuilder.run(creep);
+                    Overlord.startCreepProcess(creep, new BuilderProcess(0, 0));
                     break;
                 }
                 case Consts.roleRepairer: {
@@ -65,7 +68,7 @@ export class Overlord {
                     break;
                 }
                 case Consts.rolePioneer: {
-                    RolePioneer.run(creep);
+                    Overlord.startCreepProcess(creep, new PioneerProcess(0, 0));
                     break;
                 }
                 case Consts.rolePillager: {
@@ -73,8 +76,7 @@ export class Overlord {
                     break;
                 }
                 case Consts.roleSoldier: {
-                    const roleSoldier = new RoleSoldier(creep);
-                    roleSoldier.run();
+                    Overlord.startCreepProcess(creep, new SoldierProcess(0, 0));
                     break;
                 }
                 case Consts.roleFighterMelee: {
