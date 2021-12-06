@@ -10,21 +10,21 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process {
         return "UpdateAllOwnedRoomsInfoProcess";
     }
 
-    // _[0] - roomName
-    public setup(..._: any[]) {
-        this.memory.roomName = _[0];
-    }
-
     public run(): number {
+        console.log('Running UpdateAllOwnedRoomsInfoProcess');
         GlobalMemory.RoomInfo = GlobalMemory.RoomInfo || {};
 
         _.forEach(Game.rooms, (room) => {
-            GlobalMemory.RoomInfo[room.name] = GlobalMemory.RoomInfo[room.name] || {};
-            let p = new UpdateOwnedRoomInfo(0, this.pid);
-            p = this.kernel.addProcess(p, ProcessPriority.LowPriority);
-            p.setup(room.name);
+            if (room.controller && room.controller.my) {
+                GlobalMemory.RoomInfo[room.name] = GlobalMemory.RoomInfo[room.name] || {};
+                let p = new UpdateOwnedRoomInfo(0, this.pid);
+                p = this.kernel.addProcess(p, ProcessPriority.LowPriority);
+                p.setup(room.name);
+            }
         });
 
+
+        console.log('Sleeping UpdateAllOwnedRoomsInfoProcess');
         this.kernel.sleepProcessByTime(this, 200);
         //this.kernel.killProcess(this.pid);
 

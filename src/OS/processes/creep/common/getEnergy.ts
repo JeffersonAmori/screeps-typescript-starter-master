@@ -1,4 +1,3 @@
-import { Consts } from "consts";
 import { Process } from "OS/kernel/process";
 
 export class getEnergyProcess extends Process {
@@ -18,7 +17,6 @@ export class getEnergyProcess extends Process {
             this.kernel.killProcess(this.pid);
             return -1;
         }
-        console.log('getEnergyProcess past creep check');
         if (this._creep.memory.targetEnergySourceId) {
             let targetEnergySource: Resource | Structure | Source | null = null;
             try {

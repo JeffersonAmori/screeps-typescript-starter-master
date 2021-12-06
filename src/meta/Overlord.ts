@@ -21,7 +21,9 @@ import { CarrierLinkerProcess } from "OS/processes/creep/townsfolk/carrierLinker
 import { BuilderProcess } from "OS/processes/creep/townsfolk/builder";
 import { PioneerProcess } from "OS/processes/creep/explorers/pioneer";
 import { SoldierProcess } from "OS/processes/creep/military/soldier";
+import { profile } from "libs/Profiler-ts";
 
+@profile
 export class Overlord {
     public static rule(): void {
         for (let s in Game.spawns) {

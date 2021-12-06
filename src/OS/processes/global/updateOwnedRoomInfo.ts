@@ -21,6 +21,7 @@ export class UpdateOwnedRoomInfo extends Process{
     storages: StructureStorage[] = []
 
     public run() : number {
+        console.log('Running UpdateOwnedRoomInfo');
         if(!this.memory.roomName){
             this.kernel.killProcess(this.pid);
         }

@@ -1,6 +1,7 @@
 import { profile } from "libs/Profiler-ts/Profiler";
 import { RoleCommon } from "roles/_common";
 import { Process } from "../../../kernel/process";
+import { getEnergyProcess } from "../common/getEnergy";
 
 @profile
 export class UpgraderProcess extends Process {
@@ -61,7 +62,8 @@ export class UpgraderProcess extends Process {
         if (!this._creep)
             return;
 
-        RoleCommon.getEnergy(this._creep);
+        let p = this.kernel.forkProcess(this, new getEnergyProcess(0, this.pid));
+        p.setup(this.memory.creepId);
 
         return;
     }

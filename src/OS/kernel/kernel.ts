@@ -134,7 +134,7 @@ let runOneQueue = function (queue: Process[]) {
                 }
                 if (process.status === ProcessStatus.SLEEP) {
                     if (((((<ProcessSleepByTime>process.sleepInfo)!.start + (<ProcessSleepByTime>process.sleepInfo)!.duration) < Game.time) && (<ProcessSleepByTime>process.sleepInfo)!.duration !== -1) ||
-                        (!processTable[(<ProcessSleepByProcess>process.sleepInfo).pID])) {
+                        ((<ProcessSleepByProcess>process.sleepInfo) && !processTable[(<ProcessSleepByProcess>process.sleepInfo).pID] && !(<ProcessSleepByTime>process.sleepInfo)!.duration)) {
                         process.status = ProcessStatus.ALIVE;
                         process.sleepInfo = undefined;
                     }

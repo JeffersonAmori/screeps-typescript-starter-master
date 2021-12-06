@@ -95,7 +95,6 @@ export class RepairerProcess extends Process {
         delete this._creep.memory.structureToRepairId;
         let p = this.kernel.forkProcess(this, new getEnergyProcess(0, this.pid));
         p.setup(this.memory.creepId);
-//        RoleCommon.getEnergy(this._creep);
 
         return;
     }

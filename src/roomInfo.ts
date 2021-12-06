@@ -6,4 +6,5 @@ export class RoomData {
     public sumOfDistancesToSourcesFromSpawnHeuristic?: number = 0;
     public storageLinkId?: string | null = null;
     public upgraderContainerId?: string | null = null;
+    public towerRepairProcessId?: string | null = null;
 }
