@@ -1,18 +1,20 @@
-import { Consts } from "consts";
-import { filter, initial } from "lodash";
 import { Defcon } from "military/defcon";
-import { Mother as MotherProcess } from "meta/Mother";
+import { MotherProcess } from "meta/Mother";
 import { Sheriff } from "./Sheriff";
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
-import * as kernel from "OS/kernel/kernel"
 import { profile } from "libs/Profiler-ts";
 import { GlobalMemory } from "GlobalMemory";
 import { Process } from "OS/kernel/process";
+import * as kernel from "OS/kernel/kernel"
 
 
 @profile
 export class MayorProcess extends Process {
     private _room: Room | null = null;
+
+    public classPath(){
+        return 'MayorProcess';
+    }
 
     // _[0] - roomId
     public setup(..._: any) {
@@ -52,7 +54,7 @@ export class MayorProcess extends Process {
         if (!this._room)
             return;
 
-        if (!GlobalMemory.RoomInfo[this._room.name].motherProcessId) {
+        if (!GlobalMemory.RoomInfo[this._room.name].motherProcessId || !kernel.processTable[GlobalMemory.RoomInfo[this._room.name].motherProcessId!]) {
             const motherProcess = kernel.addProcess(new MotherProcess(0, this.pid));
             motherProcess.setup(this._room.name);
             GlobalMemory.RoomInfo[this._room.name].motherProcessId = motherProcess.pid;

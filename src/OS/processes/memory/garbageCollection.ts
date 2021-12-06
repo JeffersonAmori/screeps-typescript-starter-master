@@ -2,6 +2,11 @@ import { Consts } from "consts";
 import { Process } from "OS/kernel/process";
 
 export class garbageCollectionProcess extends Process {
+
+    public classPath(){
+        return 'garbageCollectionProcess';
+    }
+
     public run(): number {
 
         this.kernel.garbageCollection();
@@ -11,6 +16,8 @@ export class garbageCollectionProcess extends Process {
                 delete Memory.creeps[name];
             }
         }
+
+        //this.kernel.killProcess(this.pid);
 
         this.kernel.sleepProcessByTime(this, Consts.garbageCollectionInterval);
         return 0;

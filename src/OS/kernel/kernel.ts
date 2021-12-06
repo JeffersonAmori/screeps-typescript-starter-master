@@ -44,7 +44,7 @@ export let addProcess = function <T extends Process>(p: T, priority = ProcessPri
     return p;
 };
 
-export let addProcessIfNoExists = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
+export let addProcessIfNotExists = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {
     let storedTable = Memory.processTable;
     for (let item of storedTable) {
         let [pid, parentPID, classPath, priority, ...remaining] = item;
@@ -193,7 +193,7 @@ export let loadProcessTable = function () {
             if (priority === ProcessPriority.LowPriority) {
                 lowPriorityQueue.push(p);
             }
-            //console.log(`PID: ${p.pid} | ${classPath}\t| (${p.status})\t| Memory: ${JSON.stringify(memory)}`);
+            console.log(`PID: ${p.pid} | ${classPath}\t| (${p.status})\t| Priority: ${p.priority}\t| Memory: ${JSON.stringify(memory)}`);
         } catch (e: any) {
             console.log("Error when loading: " + classPath + ' | ' + e.message);
         }

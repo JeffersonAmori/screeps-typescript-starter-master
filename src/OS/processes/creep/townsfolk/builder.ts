@@ -2,6 +2,8 @@ import { profile } from "libs/Profiler-ts";
 import { Process } from "OS/kernel/process";
 import { RoleRepairer } from "roles/repairer";
 import { RoleCommon } from "roles/_common";
+import { getEnergyProcess } from "../common/getEnergy";
+import { UpgraderProcess } from "./upgrader";
 
 @profile
 export class BuilderProcess extends Process {
@@ -41,11 +43,13 @@ export class BuilderProcess extends Process {
                 this.workingWithoutTargetConstructionSiteId();
             }
             else {
-                RoleRepairer.run(this._creep);
+                const upgraderProcess = this.kernel.forkProcess(this, new UpgraderProcess(0, this.pid));
+                upgraderProcess.setup(this.memory.creepId);
             }
         }
         else {
-            RoleCommon.getEnergy(this._creep);
+            const getEnergy = this.kernel.forkProcess(this, new getEnergyProcess(0, this.pid));
+            getEnergy.setup(this.memory.creepId);
         }
 
         return 0;

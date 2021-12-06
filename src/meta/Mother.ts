@@ -3,8 +3,12 @@ import { CreepFactory } from "creepFactory";
 import { GlobalMemory } from "GlobalMemory";
 import { Process } from "OS/kernel/process";
 
-export class Mother extends Process {
+export class MotherProcess extends Process {
     private _room: Room | null = null;
+
+    public classPath(){
+        return 'MotherProcess';
+    }
 
     // _[0] - roomId
     public setup(..._: any) {
@@ -13,6 +17,7 @@ export class Mother extends Process {
 
     public run(): number {
         this._room = Game.rooms[this.memory.roomName];
+        console.log('Mother run ' + this._room.name);
         if (!this._room) {
             this.kernel.killProcess(this.pid);
             return -1;
@@ -20,10 +25,14 @@ export class Mother extends Process {
 
         this.createCreeps();
 
+        const timeToSleep = this.getSleepTimer() - 100;
+        console.log('Time to sleep: ' + timeToSleep);
+
+        if (timeToSleep >= 100)
+            this.kernel.sleepProcessByTime(this, timeToSleep);
+
         return 0;
     }
-
-
 
     createCreeps(): void {
         if (!this._room)
@@ -33,14 +42,12 @@ export class Mother extends Process {
         if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
             return;
 
-
         const creepFactory: CreepFactory = new CreepFactory(this._room);
         const containers = this._room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
         const links = this._room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
         const sources: Source[] | null = this._room.find(FIND_SOURCES);
         const extractors: StructureExtractor[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_EXTRACTOR });
         const minerals: Mineral[] = this._room.find(FIND_MINERALS);
-
 
         const roomsCreeps = this._room.find(FIND_MY_CREEPS);
 
@@ -141,5 +148,19 @@ export class Mother extends Process {
                 creepFactory.CreateCreep(Consts.roleSoldier);
             }
         }
+    }
+
+    getSleepTimer(): number {
+        if (!this._room)
+            return -1;
+
+        const creepsInThisRoom: Creep[] | null = _.sortBy(this._room.find(FIND_MY_CREEPS), c => c.ticksToLive);
+        if (creepsInThisRoom && creepsInThisRoom.length > 0) {
+            const nextCreepToDie = creepsInThisRoom[0];
+            if (nextCreepToDie.ticksToLive)
+                return nextCreepToDie.ticksToLive;
+        }
+
+        return -1;
     }
 }

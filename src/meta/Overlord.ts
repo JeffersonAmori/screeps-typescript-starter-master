@@ -1,12 +1,9 @@
 import { Consts } from "consts";
-import { RoleBuilder } from "roles/builder";
-import { RoleCarrierTeleporter } from "roles/carrierTeleporter";
 import { FighterMeleeForAnotherRoom } from "roles/fighterForAnotherRoom";
 import { FighterHealer } from "roles/fighterHealer";
 import { FighterMelee } from "roles/fighterMelee";
 import { FighterRanged } from "roles/fighterRanged";
 import { MayorProcess } from "./Mayor";
-import * as kernel from "OS/kernel/kernel"
 import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
 import { UpgraderProcess } from "OS/processes/creep/townsfolk/upgrader";
 import { Process } from "OS/kernel/process";
@@ -21,13 +18,22 @@ import { PioneerProcess } from "OS/processes/creep/explorers/pioneer";
 import { SoldierProcess } from "OS/processes/creep/military/soldier";
 import { profile } from "libs/Profiler-ts";
 import { GlobalMemory } from "GlobalMemory";
+import { ProcessPriority } from "OS/kernel/constants";
 
 @profile
 export class Overlord extends Process {
+    public classPath(){
+        return 'Overlord';
+    }
+
     public run(): number {
         for (let r in Game.rooms) {
+            if (GlobalMemory.RoomInfo[r].mayorProcessId)
+                if (!this.kernel.getProcessById(GlobalMemory.RoomInfo[r].mayorProcessId!))
+                    delete GlobalMemory.RoomInfo[r].mayorProcessId;
+
             if (!GlobalMemory.RoomInfo[r].mayorProcessId) {
-                let mayorProcess = kernel.addProcess(new MayorProcess(0, this.pid));
+                let mayorProcess = this.kernel.addProcess(new MayorProcess(0, this.pid, ProcessPriority.TiclyLast));
                 mayorProcess.setup(r);
                 GlobalMemory.RoomInfo[r].mayorProcessId = mayorProcess.pid;
             }
@@ -108,8 +114,8 @@ export class Overlord extends Process {
     }
 
     startCreepProcess(creep: Creep, process: Process): void {
-        if (!creep.memory.processId || !kernel.getProcessById(creep.memory.processId)) {
-            let newProcess = kernel.addProcess(process);
+        if (!creep.memory.processId || !this.kernel.getProcessById(creep.memory.processId)) {
+            let newProcess = this.kernel.addProcess(process);
             newProcess.setup(creep.id);
             creep.memory.processId = newProcess.pid;
         }

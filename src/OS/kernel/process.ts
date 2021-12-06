@@ -7,9 +7,7 @@ type ProcessSetupCallback = (p: Process) => void
 
 export abstract class Process {
     public status: number;
-    public classPath(): string {
-        return "None";
-    };
+    public abstract classPath(): string;
     public sleepInfo?: ProcessSleepByTime | ProcessSleepByProcess;
     public priority: ProcessPriority;
     public memory: any;

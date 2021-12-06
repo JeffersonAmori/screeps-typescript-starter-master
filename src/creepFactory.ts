@@ -1,4 +1,3 @@
-import { error } from "console";
 import { Consts } from "consts";
 
 export class BodyPartRequest {
@@ -46,9 +45,9 @@ export class CreepFactory {
         CARRY,
         ATTACK,
         RANGED_ATTACK,
-        HEAL,
+        CLAIM,
         MOVE,
-        CLAIM
+        HEAL
     ]
 
     public static BodyPartsReferenceByRole: BodyPartsReference[] = [
@@ -211,10 +210,11 @@ export class CreepFactory {
         if (!bodyPartsReference)
             throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole - role: ' + role);
 
-        const spawn : StructureSpawn[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning });
-        if (!spawn || spawn.length === 0)
+        const spawns : StructureSpawn[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning });
+
+        if (!spawns || spawns.length === 0)
             return;
 
-        let ret = spawn[0].spawnCreep(this.GetBodyPartsByRole(role), this._room.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
+        let ret = spawns[0].spawnCreep(this.GetBodyPartsByRole(role), this._room.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
     }
 }

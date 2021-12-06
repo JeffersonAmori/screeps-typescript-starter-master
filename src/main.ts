@@ -11,6 +11,7 @@ import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 import { Process } from "OS/kernel/process";
 import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
 import { garbageCollectionProcess } from "OS/processes/memory/garbageCollection";
+import { ProcessPriority } from "OS/kernel/constants";
 
 declare global {
     /*
@@ -61,6 +62,7 @@ declare global {
             log: any;
             Profiler: Profiler;
             kernel: any;
+            GlobalMemory:any;
         }
     }
 
@@ -68,17 +70,10 @@ declare global {
 
 global.Profiler = Profiler.init();
 global.kernel = kernel;
+global.GlobalMemory = GlobalMemory;
 
 // When compiling TS to JS and bundling with rollup, the line numbers and file names in error messages change
 // This utility uses source maps to get the line numbers and file names of the original, TS source code
-
-// profiler.registerClass(RoleMinerTeleporter, 'RoleMinerTeleporter');
-// profiler.registerClass(RoleMiner, 'RoleMiner');
-//profiler.registerClass(StateMachine, 'StateMachine');
-//profiler.registerObject(kernel);
-//profiler.registerClass(Overlord.rule, 'Overlord.Rule');
-//profiler.registerFN(CarrierProcess.prototype.run, 'Carrier.run');
-//profiler.enable();
 
 export const loop = ErrorMapper.wrapLoop(() =>
 //profiler.wrap(() =>
@@ -139,13 +134,9 @@ export const loop = ErrorMapper.wrapLoop(() =>
     }
     catch { }
 
-    kernel.addProcessIfNoExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
-    kernel.addProcessIfNoExists(new garbageCollectionProcess(0, 0));
-
-    if (!GlobalMemory.overlordProcessId) {
-        let overlordProcess = kernel.addProcess(new Overlord(0, 0));
-        GlobalMemory.overlordProcessId = overlordProcess.pid;
-    }
+    kernel.addProcessIfNotExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
+    kernel.addProcessIfNotExists(new garbageCollectionProcess(0, 0));
+    kernel.addProcessIfNotExists(new Overlord(0, 0, ProcessPriority.Ticly));
 
     SaveMemory();
     //})

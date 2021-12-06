@@ -1,4 +1,7 @@
+import { Consts } from "consts";
 import { profile } from "libs/Profiler-ts/Profiler";
+import { RoleCarrier } from "roles/carrier";
+import { RoleUpgrader } from "roles/upgrader";
 import { RoleCommon } from "roles/_common";
 import { Process } from "../../../kernel/process";
 import { getEnergyProcess } from "../common/getEnergy";
@@ -26,6 +29,8 @@ export class UpgraderProcess extends Process {
         if (this._creep.memory.working && this._creep.store.getUsedCapacity() === 0) {
             this._creep.memory.working = false;
             this._creep.say('harvesting');
+            if (this._creep.memory.role !== Consts.roleUpgrader)
+                this.kernel.killProcess(this.pid);
         }
 
         if (!this._creep.memory.working && this._creep.store.getUsedCapacity() === this._creep.store.getCapacity()) {
