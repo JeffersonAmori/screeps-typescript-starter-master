@@ -22,7 +22,7 @@ export class RepairViaTowerProcess extends Process {
         const currentRoom = Game.rooms[this.memory.roomName];
         const towers: StructureTower[] | null = currentRoom.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER && (s.store.getUsedCapacity(RESOURCE_ENERGY)) >= (s.store.getCapacity(RESOURCE_ENERGY) / 2) });
         if (!towers || towers.length === 0) {
-            this.kernel.sleepProcessByTime(this, 150);
+            this.kernel.sleepProcessByTime(this, 300);
             return 0;
         }
 

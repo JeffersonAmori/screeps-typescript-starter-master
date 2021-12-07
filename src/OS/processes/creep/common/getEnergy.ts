@@ -160,7 +160,7 @@ export class getEnergyProcess extends Process {
         return undefined;
     }
 
-    public findTombstone(creep: Creep): Tombstone | undefined {
+    public findTombstone(): Tombstone | undefined {
         if (!this._creep)
             return;
         // Find all tombstones
