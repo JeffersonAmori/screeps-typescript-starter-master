@@ -19,20 +19,21 @@ export class RepairerProcess extends Process {
     }
 
     public run(): number {
+
         this._creep = Game.getObjectById<Creep>(this.memory.creepId);
         if (!this._creep) {
             this.kernel.killProcess(this.pid);
             return -1;
         }
 
-        if (this._creep.memory.working && this._creep.store.getUsedCapacity() === 0) {
+        if (this._creep.memory.working && this._creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
             this._creep.memory.working = false;
             this._creep.say('harvesting');
             if (this._creep.memory.role !== Consts.roleRepairer)
                 this.kernel.killProcess(this.pid);
         }
 
-        if (!this._creep.memory.working && this._creep.store.getUsedCapacity() === this._creep.store.getCapacity()) {
+        if (!this._creep.memory.working && this._creep.store.getUsedCapacity(RESOURCE_ENERGY) === this._creep.store.getCapacity(RESOURCE_ENERGY)) {
             this._creep.memory.working = true;
             this._creep.say('repairing');
             if (this._creep.memory.role !== Consts.roleRepairer)

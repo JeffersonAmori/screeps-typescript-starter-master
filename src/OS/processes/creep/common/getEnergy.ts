@@ -148,7 +148,7 @@ export class getEnergyProcess extends Process {
         if (!this._creep)
             return;
         // Find all energies
-        const dropedEnergies: Resource<ResourceConstant>[] = this._creep.room.find(FIND_DROPPED_RESOURCES);
+        const dropedEnergies: Resource<ResourceConstant>[] = _.filter(this._creep.room.find(FIND_DROPPED_RESOURCES), e => e.resourceType === RESOURCE_ENERGY);
         // Find the closest one
         const closestEnergy = this._creep.pos.findClosestByPath(dropedEnergies);
         // If found something...
