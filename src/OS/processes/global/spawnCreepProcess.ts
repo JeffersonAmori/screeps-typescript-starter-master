@@ -25,10 +25,12 @@ export class SpawnCreepProcess extends Process {
 
         const nextCreep = this.memory.nextCreep || GlobalMemory.RoomInfo[this.memory.roomName].spawnCreepQueue!.pop()
         if (nextCreep) {
+
+            console.log('SpawnCreepProcess breeding ' + nextCreep + ' on room ' + this.memory.roomName);
             const creepFactory: CreepFactory = new CreepFactory(Game.rooms[this.memory.roomName]);
-            if(creepFactory.CreateCreep(nextCreep) === OK){
+            if (creepFactory.CreateCreep(nextCreep) === OK) {
                 delete this.memory.nextCreep;
-            }else{
+            } else {
                 this.memory.nextCreep = nextCreep;
             }
         }

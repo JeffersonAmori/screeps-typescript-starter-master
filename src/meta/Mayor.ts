@@ -29,18 +29,18 @@ export class MayorProcess extends Process {
         this._room = Game.rooms[this.memory.roomName];
         console.log('Mayor run ' + this._room.name);
 
-        this._roomInfo = GlobalMemory.RoomInfo[this._room.name];
-        this._roomInfo.processes = this._roomInfo.processes || {};
-
         if (!this._room) {
             this.kernel.killProcess(this.pid);
             return -1;
         }
 
-        this.breedTownsfolk();
-        this.checkForHostiles();
+        this._roomInfo = GlobalMemory.RoomInfo[this._room.name];
+        this._roomInfo.processes = this._roomInfo.processes || {};
+        this._roomInfo.spawnCreepQueue = this._roomInfo.spawnCreepQueue || [];
 
-        //this.repairUsingTower();
+        this.checkForHostiles();
+        this.breedTownsfolk();
+        this.repairUsingTower();
 
         return 0;
     }
@@ -49,12 +49,9 @@ export class MayorProcess extends Process {
         if (!this._room || !this._roomInfo)
             return;
 
-        const controller = this._room.controller;
-        if (controller && controller.my) {
-            if (!this.processAlreadyRunningOnThisRoom(RepairViaTowerProcess.name)) {
-                const towerRepairProcess = kernel.addProcess(new RepairViaTowerProcess(0, this.pid)).setup(this._room.name);
-                this._roomInfo.processes[RepairViaTowerProcess.name] = towerRepairProcess.pid;
-            }
+        if (!this.processAlreadyRunningOnThisRoom(RepairViaTowerProcess.name)) {
+            const towerRepairProcess = kernel.addProcess(new RepairViaTowerProcess(0, this.pid)).setup(this._room.name);
+            this._roomInfo.processes[RepairViaTowerProcess.name] = towerRepairProcess.pid;
         }
     }
 
@@ -62,10 +59,10 @@ export class MayorProcess extends Process {
         if (!this._room || !this._roomInfo)
             return;
 
-        if (!this.processAlreadyRunningOnThisRoom(SpawnCreepProcess.name)) {
-            const spawnCreepProcess = kernel.addProcess(new SpawnCreepProcess(0, this.pid)).setup(this._room.name);
-            this._roomInfo.processes[SpawnCreepProcess.name] = spawnCreepProcess.pid;
-        }
+        // if (!this.processAlreadyRunningOnThisRoom(SpawnCreepProcess.name)) {
+        //     const spawnCreepProcess = kernel.addProcess(new SpawnCreepProcess(0, this.pid)).setup(this._room.name);
+        //     this._roomInfo.processes[SpawnCreepProcess.name] = spawnCreepProcess.pid;
+        // }
 
         if (!this.processAlreadyRunningOnThisRoom(MotherProcess.name)) {
             const motherProcess = kernel.addProcess(new MotherProcess(0, this.pid)).setup(this._room.name);

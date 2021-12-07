@@ -11,6 +11,6 @@ export class RoomData {
     public motherProcessId?: number | null = null;
     public noActiveResourceHarvest?: boolean = false;
     public sheriffProcessId?: number | null = null;
-    public spawnCreepQueue?: string[] = [];
+    public spawnCreepQueue: string[] = [];
     public processes: { [id: string]: number } = {};
 }

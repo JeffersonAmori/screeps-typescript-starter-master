@@ -6,7 +6,7 @@ import { Process } from "OS/kernel/process";
 export class MotherProcess extends Process {
     private _room: Room | null = null;
 
-    public classPath(){
+    public classPath() {
         return 'MotherProcess';
     }
 
@@ -26,11 +26,11 @@ export class MotherProcess extends Process {
 
         this.createCreeps();
 
-        const timeToSleep = this.getSleepTimer() - 100;
-        console.log('Time to sleep: ' + timeToSleep);
+        // const timeToSleep = this.getSleepTimer() - 100;
+        // console.log('Time to sleep: ' + timeToSleep);
 
-        if (timeToSleep >= 100)
-            this.kernel.sleepProcessByTime(this, timeToSleep);
+        // if (timeToSleep >= 100)
+        this.kernel.sleepProcessByTime(this, 20);
 
         return 0;
     }
@@ -42,6 +42,8 @@ export class MotherProcess extends Process {
         const controller = this._room.controller;
         if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
             return;
+
+        const roomInfo = GlobalMemory.RoomInfo[this._room.name];
 
         const creepFactory: CreepFactory = new CreepFactory(this._room);
         const containers = this._room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_CONTAINER) });
@@ -62,7 +64,7 @@ export class MotherProcess extends Process {
 
         if (links.length > 0) {
             if (minersTeleporters.length < (links.length - 1)) {
-                creepFactory.CreateCreep(Consts.roleMinerLinker)
+                creepFactory.CreateCreep(Consts.roleMinerLinker);
             }
 
             if (carriersTeleporters.length < Consts.maxNumberCarrierTeleporter) {

@@ -67,10 +67,43 @@ export class CarrierLinkerProcess extends Process {
                 }
             }
         } else {
-            this.kernel.forkProcess(this, new CarrierProcess(0, this.pid))
-                .setup(this.memory.creepId);
-        }
+            if (!this._creep)
+                return -1;
 
+            let target: StructureExtension | StructureTower | StructureStorage | null = null;
+
+            if (this._creep.memory.targetEnergyDepositId) {
+                target = Game.getObjectById<StructureExtension | StructureTower | StructureStorage>(this._creep.memory.targetEnergyDepositId);
+                if (target?.store.getFreeCapacity() === 0)
+                    target = null;
+            }
+
+            if (!target) {
+                target = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType === STRUCTURE_EXTENSION || structure.structureType === STRUCTURE_SPAWN) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
+            }
+
+            if (!target) {
+                target = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: (structure) => (structure.structureType === STRUCTURE_TOWER) && structure.store.getFreeCapacity(RESOURCE_ENERGY) >= (structure.store.getCapacity(RESOURCE_ENERGY) / 2) });
+            }
+
+            if (!target) {
+                target = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
+            }
+            if (target) {
+                if (this._creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+                    this._creep.memory.targetEnergyDepositId = target.id;
+                    this._creep.travelTo(target);
+                } else {
+                    delete this._creep.memory.targetEnergyDepositId;
+                }
+
+                if (this._creep.store.getUsedCapacity() == 0) {
+                    this._creep.say('getting');
+                    this._creep.memory.working = true;
+                }
+            }
+
+        }
         return 0;
     }
 }
