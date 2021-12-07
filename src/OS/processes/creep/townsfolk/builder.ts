@@ -15,6 +15,7 @@ export class BuilderProcess extends Process {
     // _[0] - creepId
     public setup(..._: any[]) {
         this.memory.creepId = _[0];
+        return this;
     }
 
     public run(): number {
@@ -42,12 +43,15 @@ export class BuilderProcess extends Process {
         if (this._creep.memory.working) {
             if (!this._creep.memory.targetConstructionSiteId) {
                 this.workingWithTargetConstructionSiteId();
+
+                if (!this._creep.memory.targetConstructionSiteId) {
+                    const upgraderProcess = this.kernel.forkProcess(this, new UpgraderProcess(0, this.pid));
+                    upgraderProcess.setup(this.memory.creepId);
+                }
             } else if (this._creep.memory.targetConstructionSiteId) {
                 this.workingWithoutTargetConstructionSiteId();
             }
             else {
-                const upgraderProcess = this.kernel.forkProcess(this, new UpgraderProcess(0, this.pid));
-                upgraderProcess.setup(this.memory.creepId);
             }
         }
         else {

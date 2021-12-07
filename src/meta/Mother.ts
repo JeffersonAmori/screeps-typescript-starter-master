@@ -11,8 +11,9 @@ export class MotherProcess extends Process {
     }
 
     // _[0] - roomId
-    public setup(..._: any) {
+    public setup(..._: any): Process {
         this.memory.roomName = _[0];
+        return this;
     }
 
     public run(): number {
@@ -57,8 +58,7 @@ export class MotherProcess extends Process {
         const carriersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleCarrierTeleporter && c.ticksToLive && c.ticksToLive > Consts.minTicksBeforeSpawningReplacement);
         const minersTeleporters = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleMinerLinker);
 
-        if (((carriers.length + carriersTeleporters.length) === 0 || (miners.length + minersTeleporters.length) === 0) && (harvesters.length === 0))
-            creepFactory.isEmergencyState = true;
+        GlobalMemory.RoomInfo[this.memory.roomName].noActiveResourceHarvest = ((carriers.length + carriersTeleporters.length) === 0 || (miners.length + minersTeleporters.length) === 0) && (harvesters.length === 0);
 
         if (links.length > 0) {
             if (minersTeleporters.length < (links.length - 1)) {

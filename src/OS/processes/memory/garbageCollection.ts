@@ -2,6 +2,9 @@ import { Consts } from "consts";
 import { Process } from "OS/kernel/process";
 
 export class garbageCollectionProcess extends Process {
+    public setup(..._: any[]): Process {
+        return this;
+    }
 
     public classPath(){
         return 'garbageCollectionProcess';

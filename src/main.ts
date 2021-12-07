@@ -61,7 +61,6 @@ declare global {
             GlobalMemory:any;
         }
     }
-
 }
 
 global.Profiler = Profiler.init();

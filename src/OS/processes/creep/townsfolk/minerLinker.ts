@@ -16,6 +16,7 @@ export class MinerLinkerProcess extends Process {
     // _[0] - creepId
     public setup(..._: any[]) {
         this.memory.creepId = _[0];
+        return this;
     }
 
     public run(): number {

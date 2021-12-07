@@ -1,4 +1,5 @@
 import { Consts } from "consts";
+import { GlobalMemory } from "GlobalMemory";
 
 export class BodyPartRequest {
     private _bodyPart: BodyPartConstant;
@@ -135,7 +136,7 @@ export class CreepFactory {
 
     private GetBodyPartsInternal(desirableBody: BodyPartRequest[], sortBody: boolean = true): BodyPartConstant[] {
         let bodyParts: BodyPartConstant[] = [];
-        let energyAvailable: number = this.isEmergencyState ? 300 : Math.max(this._room.energyAvailable, Math.max(this._room.energyCapacityAvailable / 2, 300));
+        let energyAvailable: number = GlobalMemory.RoomInfo[this._room.name].noActiveResourceHarvest ? 300 : Math.max(this._room.energyAvailable, Math.max(this._room.energyCapacityAvailable / 2, 300));
         let isBuilding: boolean = true;
 
         while (energyAvailable > 0) {
@@ -185,36 +186,36 @@ export class CreepFactory {
         return bodyParts;
     }
 
-    public CreateCreep(role: string, memory?: CreepMemory) {
+    public CreateCreep(role: string, memory?: CreepMemory): number {
         if (this._isBuilding)
-            return;
+            return ERR_BUSY;
 
-        if (!memory) {
+        if (!memory)
             memory = { role: role, room: this._room.name }
-        }
 
-        if (!memory.role) {
+        if (!memory.role)
             memory.role = role;
-        }
 
-        if (!memory.room) {
+        if (!memory.room)
             memory.room = this._room.name;
-        }
 
-        if (!memory.otherResources) {
+        if (!memory.otherResources)
             memory.otherResources = [];
-        }
 
         this._isBuilding = true;
         let bodyPartsReference: BodyPartsReference | undefined = _.find(CreepFactory.BodyPartsReferenceByRole, bp => bp.role === role);
         if (!bodyPartsReference)
             throw new Error('CreepFactory.CreateCreep - role not found on BodyPartsReferenceByRole - role: ' + role);
 
-        const spawns : StructureSpawn[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning });
+        const spawns: StructureSpawn[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning });
 
         if (!spawns || spawns.length === 0)
-            return;
+            return ERR_BUSY;
 
-        let ret = spawns[0].spawnCreep(this.GetBodyPartsByRole(role), this._room.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
+        return spawns[0].spawnCreep(this.GetBodyPartsByRole(role), this._room.name + '-' + role + '-' + Math.random().toString(36).substr(2, 5), { memory: memory });
+    }
+
+    public calculateTimeToSpawnCreep(role: string): number {
+        return this.GetBodyPartsByRole(role).length * CREEP_SPAWN_TIME;
     }
 }

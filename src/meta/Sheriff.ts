@@ -27,6 +27,7 @@ export class SheriffProcess extends Process {
     // _[0] = roomName
     public setup(..._: any) {
         this.memory.roomName = _[0];
+        return this;
     }
 
     defendTown() {

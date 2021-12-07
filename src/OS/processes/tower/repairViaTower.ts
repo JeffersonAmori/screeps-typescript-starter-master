@@ -11,6 +11,7 @@ export class RepairViaTowerProcess extends Process {
     // _[0] - roomName
     setup(..._: any) {
         this.memory.roomName = _[0];
+        return this;
     }
 
     run(): number {

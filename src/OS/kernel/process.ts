@@ -34,7 +34,7 @@ export abstract class Process {
         return signal;
     }
 
-    public setup(..._: any[]) { };
+    public abstract setup(..._: any[]): Process;
 
     public registerDependency(p: ConcreteProcess, processSetup: ProcessSetupCallback) {
         let dependencyInfo: DependencyInfo = [p, processSetup];
@@ -56,6 +56,17 @@ export abstract class Process {
         }
     }
 
+    public suicide(): void {
+        this.kernel.killProcess(this.pid);
+    }
+
+    public fallAsleepByTime(ticks: number): void {
+        this.kernel.sleepProcessByTime(this, ticks);
+    }
+
+    public fallAsleepByProcess(p: Process): void {
+        this.kernel.sleepProcessByProcess(this, p);
+    }
 }
 
 const data: any = {}

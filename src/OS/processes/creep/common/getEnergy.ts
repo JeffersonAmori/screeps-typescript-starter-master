@@ -8,8 +8,9 @@ export class getEnergyProcess extends Process {
     }
 
     // _[0] - creepId
-    public setup(..._: any[]) {
+    public setup(..._: any[]): Process {
         this.memory.creepId = _[0];
+        return this;
     }
     public run(): number {
         this._creep = Game.getObjectById<Creep>(this.memory.creepId);

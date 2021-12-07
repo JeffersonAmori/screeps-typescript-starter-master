@@ -6,8 +6,13 @@ import { UpdateOwnedRoomInfo } from "./updateOwnedRoomInfo";
 
 @profile
 export class UpdateAllOwnedRoomsInfoProcess extends Process {
+
     public classPath(): string {
         return "UpdateAllOwnedRoomsInfoProcess";
+    }
+
+    public setup(..._: any[]): Process {
+        return this;
     }
 
     public run(): number {

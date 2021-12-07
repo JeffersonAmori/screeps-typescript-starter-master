@@ -22,6 +22,10 @@ export class Overlord extends Process {
         return 'Overlord';
     }
 
+    public setup(..._: any[]): Process {
+        return this;
+    }
+
     public run(): number {
         for (let r in Game.rooms) {
             const room: Room = Game.rooms[r];

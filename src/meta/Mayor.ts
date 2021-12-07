@@ -6,11 +6,14 @@ import { profile } from "libs/Profiler-ts";
 import { GlobalMemory } from "GlobalMemory";
 import { Process } from "OS/kernel/process";
 import * as kernel from "OS/kernel/kernel"
+import { SpawnCreepProcess } from "OS/processes/global/spawnCreepProcess";
+import { RoomData, RoomInfo } from "roomInfo";
 
 
 @profile
 export class MayorProcess extends Process {
-    private _room: Room | null = null;
+    private _room?: Room;
+    private _roomInfo?: RoomData;
 
     public classPath() {
         return 'MayorProcess';
@@ -19,11 +22,16 @@ export class MayorProcess extends Process {
     // _[0] - roomName
     public setup(..._: any) {
         this.memory.roomName = _[0];
+        return this;
     }
 
     public run(): number {
         this._room = Game.rooms[this.memory.roomName];
         console.log('Mayor run ' + this._room.name);
+
+        this._roomInfo = GlobalMemory.RoomInfo[this._room.name];
+        this._roomInfo.processes = this._roomInfo.processes || {};
+
         if (!this._room) {
             this.kernel.killProcess(this.pid);
             return -1;
@@ -38,28 +46,38 @@ export class MayorProcess extends Process {
     }
 
     private repairUsingTower() {
-        if (!this._room)
+        if (!this._room || !this._roomInfo)
             return;
 
         const controller = this._room.controller;
         if (controller && controller.my) {
-            if (!GlobalMemory.RoomInfo[this._room.name].towerRepairProcessId) {
-                const towerRepairProcess = kernel.addProcess(new RepairViaTowerProcess(0, this.pid));
-                towerRepairProcess.setup(this._room.name);
-                GlobalMemory.RoomInfo[this._room.name].towerRepairProcessId = towerRepairProcess.pid;
+            if (!this.processAlreadyRunningOnThisRoom(RepairViaTowerProcess.name)) {
+                const towerRepairProcess = kernel.addProcess(new RepairViaTowerProcess(0, this.pid)).setup(this._room.name);
+                this._roomInfo.processes[RepairViaTowerProcess.name] = towerRepairProcess.pid;
             }
         }
     }
 
     private breedTownsfolk() {
-        if (!this._room)
+        if (!this._room || !this._roomInfo)
             return;
 
-        if (!GlobalMemory.RoomInfo[this._room.name].motherProcessId || !this.kernel.getProcessById(GlobalMemory.RoomInfo[this._room.name].motherProcessId!)) {
-            const motherProcess = kernel.addProcess(new MotherProcess(0, this.pid));
-            motherProcess.setup(this._room.name);
-            GlobalMemory.RoomInfo[this._room.name].motherProcessId = motherProcess.pid;
+        if (!this.processAlreadyRunningOnThisRoom(SpawnCreepProcess.name)) {
+            const spawnCreepProcess = kernel.addProcess(new SpawnCreepProcess(0, this.pid)).setup(this._room.name);
+            this._roomInfo.processes[SpawnCreepProcess.name] = spawnCreepProcess.pid;
         }
+
+        if (!this.processAlreadyRunningOnThisRoom(MotherProcess.name)) {
+            const motherProcess = kernel.addProcess(new MotherProcess(0, this.pid)).setup(this._room.name);
+            this._roomInfo.processes[MotherProcess.name] = motherProcess.pid;
+        }
+    }
+
+    private processAlreadyRunningOnThisRoom(processType: string): boolean {
+        if (!this._room || !this._roomInfo)
+            return false;
+
+        return !!this._roomInfo.processes[processType] && !!this.kernel.getProcessById(this._roomInfo.processes[processType]);
     }
 
     private checkForHostiles() {

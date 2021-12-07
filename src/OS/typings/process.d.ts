@@ -10,7 +10,7 @@ export interface Process {
     memory: any;
     setMemory(memory: any): void;
     run(): number;
-    setup(..._: any[]): void;
+    setup(..._: any[]): Process;
     //run(forever?: boolean): Readonly<S & I>;
     stop(signal: number): number;
 }
