@@ -66,7 +66,9 @@
   },
   "dependencies": {
     "reflect-metadata": "^0.1.13",
+    "require-relative": "^0.8.7",
     "source-map": "~0.6.1",
+    "typescript-memoize": "^1.1.0",
     "when-ts": "^1.0.2"
   }
 }

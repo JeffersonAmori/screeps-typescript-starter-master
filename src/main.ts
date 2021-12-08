@@ -8,6 +8,7 @@ import { garbageCollectionProcess } from "OS/processes/memory/garbageCollection"
 import { ProcessPriority } from "OS/kernel/constants";
 import * as Profiler from "libs/Profiler-ts/Profiler";
 import * as kernel from "OS/kernel/kernel"
+import { PlanRunProcess } from "libs/GlitchAssassin/RoomPlanner/planRooms";
 
 declare global {
     /*
@@ -19,6 +20,21 @@ declare global {
       Interfaces matching on name from @types/screeps will be merged. This is how you can extend the 'built-in' interfaces from @types/screeps.
     */
     // Memory extension samples
+    interface RoomMemory {
+        controllerId?: Id<StructureController>,
+        sourceIds?: Id<Source>[],
+        mineralId?: Id<Mineral>,
+        mineralType?: MineralConstant,
+        rcl?: number,
+        owner?: string,
+        reserver?: string,
+        reservation?: number,
+        rclMilestones?: Record<number, number>,
+        eligibleForOffice?: boolean,
+        lastHostileSeen?: number,
+        invaderCore?: number,
+    }
+
     interface Memory {
         RoomsInfo: string;
         Started: boolean;
@@ -132,6 +148,7 @@ export const loop = ErrorMapper.wrapLoop(() =>
     kernel.addProcessIfNotExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
     kernel.addProcessIfNotExists(new garbageCollectionProcess(0, 0));
     kernel.addProcessIfNotExists(new Overlord(0, 0, ProcessPriority.Ticly));
+    kernel.addProcessIfNotExists(new PlanRunProcess(0, 0));
 
     SaveMemory();
     //})

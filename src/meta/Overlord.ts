@@ -15,6 +15,7 @@ import { SoldierProcess } from "OS/processes/creep/military/soldier";
 import { profile } from "libs/Profiler-ts";
 import { GlobalMemory } from "GlobalMemory";
 import { ProcessPriority } from "OS/kernel/constants";
+import { scanRooms } from "libs/GlitchAssassin/Intel/Rooms";
 
 @profile
 export class Overlord extends Process {
@@ -38,6 +39,8 @@ export class Overlord extends Process {
                 GlobalMemory.RoomInfo[r].mayorProcessId = mayorProcess.pid;
             }
         }
+
+        scanRooms();
 
         this.CreepsAct();
 
