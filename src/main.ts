@@ -148,7 +148,7 @@ export const loop = ErrorMapper.wrapLoop(() =>
     kernel.addProcessIfNotExists(new UpdateAllOwnedRoomsInfoProcess(0, 0));
     kernel.addProcessIfNotExists(new garbageCollectionProcess(0, 0));
     kernel.addProcessIfNotExists(new Overlord(0, 0, ProcessPriority.Ticly));
-    kernel.addProcessIfNotExists(new PlanRunProcess(0, 0));
+    //kernel.addProcessIfNotExists(new PlanRunProcess(0, 0));
 
     SaveMemory();
     //})

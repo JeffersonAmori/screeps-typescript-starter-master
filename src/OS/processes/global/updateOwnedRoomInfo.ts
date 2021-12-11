@@ -61,6 +61,10 @@ export class UpdateOwnedRoomInfo extends Process{
         if (this.links && this.links.length > 0 && this.sources && this.sources.length > 0)
             sourcesWithoutLink = _.filter(this.sources, source => !source.pos.inRangeTo(source.pos.findClosestByPath(this.links)!.pos, 3));
         sourcesWithoutLink.forEach(s => sumOfDistancesToSourcesFromSpawn += PathFinder.search(home.pos, s.pos).path.length);
+        if(GlobalMemory.RoomInfo[room.name].upgraderContainerId){
+            const upgraderContainer = Game.getObjectById<StructureContainer>(GlobalMemory.RoomInfo[room.name].upgraderContainerId!);
+             sumOfDistancesToSourcesFromSpawn += PathFinder.search(upgraderContainer!.pos, upgraderContainer!.pos.findClosestByRange(sourcesWithoutLink)!.pos).path.length;
+        }
         let sumOfDistancesToSourcesFromSpawnHeuristic = Math.ceil(sumOfDistancesToSourcesFromSpawn / 20);
         GlobalMemory.RoomInfo[room.name].sumOfDistancesToSourcesFromSpawnHeuristic = sumOfDistancesToSourcesFromSpawnHeuristic;
         return;
