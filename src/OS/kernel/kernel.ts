@@ -193,7 +193,10 @@ export let loadProcessTable = function () {
             if (priority === ProcessPriority.LowPriority) {
                 lowPriorityQueue.push(p);
             }
-            //console.log(`PID: ${p.pid} | ${String(classPath).padEnd(30)}\t| Status: ${p.status}\t| Priority: ${p.priority}\t| Memory: ${JSON.stringify(memory)}`);
+
+            if(Memory.kernelMemory.printProcess)
+                console.log(`PID: ${p.pid} | ${String(classPath).padEnd(30)}\t| Status: ${p.status}\t| Priority: ${p.priority}\t| Memory: ${JSON.stringify(memory)}`);
+
         } catch (e: any) {
             console.log("Error when loading: " + classPath + ' | ' + e.message);
         }

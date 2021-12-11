@@ -39,6 +39,7 @@ declare global {
         RoomsInfo: string;
         Started: boolean;
         RunArchitect: boolean;
+        kernelMemory: KernelMemory;
     }
 
     interface CreepMemory {
@@ -59,13 +60,8 @@ declare global {
         processId?: number;
     }
 
-    interface CreepState extends MachineState {
-        creep: Creep;
-    }
-
-    interface CreepProcessState extends MachineState {
-        state: number;
-        creep: Creep;
+    interface KernelMemory {
+        printProcess: boolean;
     }
 
     // Syntax for adding proprties to `global` (ex "global.log")
@@ -74,7 +70,7 @@ declare global {
             log: any;
             Profiler: Profiler;
             kernel: any;
-            GlobalMemory:any;
+            GlobalMemory: any;
         }
     }
 }
@@ -157,6 +153,7 @@ export const loop = ErrorMapper.wrapLoop(() =>
 function LoadMemory() {
     kernel.loadProcessTable();
     GlobalMemory.RoomInfo = JSON.parse(Memory.RoomsInfo);
+    Memory.kernelMemory = Memory.kernelMemory || {};
 }
 
 function SaveMemory() {
