@@ -68,7 +68,8 @@ export class RepairerProcess extends Process {
             return;
         }
 
-        let targetStructure = _.sortBy(structures, s => s.hits / s.hitsMax)[0];
+        const rcl = this._creep.room.controller!.level;
+        let targetStructure = _.sortBy(structures, s => (s.hits / s.hitsMax && s.structureType !== STRUCTURE_RAMPART) || (s.hits / (s.hitsMax / (rcl * rcl * 10)) && s.structureType !== STRUCTURE_RAMPART))[0];
         this._creep.memory.structureToRepairId = targetStructure.id;
 
         return;

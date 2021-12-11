@@ -6,7 +6,6 @@ import { ownedMinerals } from "../Selectors/ownedMinerals";
 import { roomIsEligibleForOffice } from "../Selectors/roomIsEligibleForOffice";
 import { cityNames } from "../utils/CityNames";
 import { packPos } from "../utils/packrat";
-import profiler from "../utils/profiler";
 
 declare global {
     interface RoomMemory {
@@ -28,7 +27,7 @@ declare global {
     }
 }
 
-export const scanRooms = profiler.registerFN(() => {
+export const scanRooms = () => {
     Memory.positions ??= {};
     Memory.rooms ??= {};
 
@@ -127,4 +126,4 @@ export const scanRooms = profiler.registerFN(() => {
 
         scanRoomPlanStructures(room);
     }
-}, 'scanRooms');
+};
