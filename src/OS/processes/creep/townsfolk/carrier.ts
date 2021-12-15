@@ -72,13 +72,22 @@ export class CarrierProcess extends Process {
                 }
             }
         }
+
+        // As last resource uses the storage
+        if (!this._creep.memory.targetEnergySourceId) {
+            const storage: StructureStorage[] | null = this._creep.room.find(FIND_STRUCTURES,
+                { filter: structure => (structure.structureType == STRUCTURE_STORAGE && structure.store.getUsedCapacity(RESOURCE_ENERGY) > 0) });
+            if (storage && storage.length > 0)
+                this._creep.memory.targetEnergySourceId = storage[0].id;
+        }
+
     }
 
     workingWithTargetEnergySourceId() {
         if (!this._creep)
             return;
         if (this._creep.memory.targetEnergySourceId) {
-            let targetEnergySource: Resource | StructureContainer | Tombstone | null = Game.getObjectById(this._creep.memory.targetEnergySourceId);
+            let targetEnergySource: Resource | StructureContainer | Tombstone | StructureStorage | null = Game.getObjectById(this._creep.memory.targetEnergySourceId);
             let ret = undefined;
             let energyRemaining: number = Number.MAX_VALUE;
 
@@ -92,7 +101,7 @@ export class CarrierProcess extends Process {
                     ret = this._creep.pickup(targetEnergySource);
                     energyRemaining = targetEnergySource.amount;
                 }
-                else if (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone) {
+                else if (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone || targetEnergySource instanceof StructureStorage) {
                     ret = this._creep.withdraw(targetEnergySource, RESOURCE_ENERGY, Math.min(targetEnergySource.store.getUsedCapacity(RESOURCE_ENERGY), this._creep.store.getFreeCapacity()));
                     energyRemaining = targetEnergySource.store.getUsedCapacity();
                     if (ret === ERR_NOT_ENOUGH_ENERGY) {

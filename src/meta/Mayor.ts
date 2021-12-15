@@ -34,13 +34,17 @@ export class MayorProcess extends Process {
             return -1;
         }
 
+        const towers = Game.rooms[this.memory.roomName].find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER });
+
         this._roomInfo = GlobalMemory.RoomInfo[this._room.name];
         this._roomInfo.processes = this._roomInfo.processes || {};
         this._roomInfo.spawnCreepQueue = this._roomInfo.spawnCreepQueue || [];
 
         this.checkForHostiles();
         this.breedTownsfolk();
-        this.repairUsingTower();
+
+        if (towers && towers.length > 0)
+            this.repairUsingTower();
 
         return 0;
     }

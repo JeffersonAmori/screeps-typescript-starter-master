@@ -34,7 +34,7 @@ export class RepairViaTowerProcess extends Process {
             }
 
             const rcl = Game.rooms[this.memory.roomName].controller!.level;
-            let targetStructure = _.sortBy(structures, s => (s.hits / s.hitsMax && s.structureType !== STRUCTURE_RAMPART) || (s.hits / (s.hitsMax / (rcl * rcl * 10)) && s.structureType !== STRUCTURE_RAMPART))[0];
+            let targetStructure = _.sortBy(structures, s => (s.hits / s.hitsMax && s.structureType !== STRUCTURE_RAMPART) || (s.hits / (s.hitsMax / (rcl * rcl * 100)) && s.structureType === STRUCTURE_RAMPART))[0];
 
             this.memory.targetStructureToRepair = targetStructure.id;
         }
