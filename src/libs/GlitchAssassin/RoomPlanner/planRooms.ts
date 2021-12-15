@@ -6,7 +6,8 @@ export class PlanRunProcess extends Process {
         return 'PlanRunProcess';
     }
     public run(): number {
-        console.log('PlanRunProcess run!')
+        console.log('PlanRunProcess run!');
+        console.log('CPU bucket: ' + Game.cpu.bucket);
         let start = Game.cpu.getUsed();
         if (Game.cpu.bucket < 500) return -1; // Don't do room planning at low bucket levels
 
@@ -19,6 +20,7 @@ export class PlanRunProcess extends Process {
             if (Memory.roomPlans[room]?.complete) continue; // Already planned
             if (!Memory.rooms[room].controllerId) continue; // No controller or room hasn't been properly scanned yet
             if (Game.cpu.getUsed() - start <= 5) {
+                console.log('generateRoomPlans');
                 generateRoomPlans(room);
             }
             Game.rooms[room].visual.circle

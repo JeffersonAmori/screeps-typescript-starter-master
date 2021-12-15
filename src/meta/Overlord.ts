@@ -49,6 +49,8 @@ export class Overlord extends Process {
 
     CreepsAct(): void {
         _.forEach(Game.creeps, creep => {
+            if (creep.spawning) return;
+
             switch (creep.memory.role) {
                 case Consts.roleHarvester: {
                     this.startCreepProcess(creep, new HarvesterProcess(0, this.pid));

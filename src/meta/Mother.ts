@@ -73,7 +73,7 @@ export class MotherProcess extends Process {
         }
 
         if (containers.length > 0) {
-            if (!GlobalMemory.RoomInfo[this._room.name].upgraderContainerId) {
+            if (!GlobalMemory.RoomInfo[this._room.name].upgraderContainerId || !Game.getObjectById(GlobalMemory.RoomInfo[this._room.name].upgraderContainerId!)) {
                 if (this._room.controller) {
                     const possibleContainers = this._room.controller.pos.findInRange(FIND_STRUCTURES, 5, { filter: c => c.structureType === STRUCTURE_CONTAINER });
                     if (possibleContainers.length > 0)

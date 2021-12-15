@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "module": "esnext",
-    "lib": ["esnext"],
-    "target": "es2017",
+    "lib": ["ES2017", "esnext"],
+    "target": "ES2017",
     "moduleResolution": "Node",
     "outDir": "dist",
     "baseUrl": "src/",

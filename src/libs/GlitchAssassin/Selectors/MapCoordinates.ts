@@ -5,6 +5,7 @@ export const calculateAdjacencyMatrix = memoize(
     (proximity: number) => ('' + proximity),
     (proximity=1): {x: number, y: number}[] => {
         let adjacencies = (new Array(proximity * 2 + 1).fill(0)).map((v, i) => i - proximity)
+        console.log('adjacencies: ' + adjacencies + ' ' + typeof adjacencies);
 
         return adjacencies.flatMap((x) => adjacencies.map( y => ({x, y})))
             .filter((a: {x: number, y: number}) => !(a.x === 0 && a.y === 0));

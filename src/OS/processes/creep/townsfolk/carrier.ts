@@ -35,7 +35,7 @@ export class CarrierProcess extends Process {
             }
         }
         else {
-            this.notWorking();
+            this.delivering();
         }
 
         return 0;
@@ -51,7 +51,7 @@ export class CarrierProcess extends Process {
         }
         else {
             const containers: StructureContainer[] | null = this._creep.room.find(FIND_STRUCTURES,
-                { filter: structure => (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > 0) && (this._creep && structure.id !== GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId) });
+                { filter: structure => (structure.structureType == STRUCTURE_CONTAINER && structure.store.getUsedCapacity() > this._creep!.store.getFreeCapacity()) && (this._creep && structure.id !== GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId) });
 
             if (containers && containers.length > 0) {
                 const closestContainer = _.sortBy(containers, c => c.store.getFreeCapacity())[0];
@@ -86,6 +86,7 @@ export class CarrierProcess extends Process {
     workingWithTargetEnergySourceId() {
         if (!this._creep)
             return;
+
         if (this._creep.memory.targetEnergySourceId) {
             let targetEnergySource: Resource | StructureContainer | Tombstone | StructureStorage | null = Game.getObjectById(this._creep.memory.targetEnergySourceId);
             let ret = undefined;
@@ -135,7 +136,7 @@ export class CarrierProcess extends Process {
         }
     }
 
-    notWorking() {
+    delivering() {
         if (!this._creep)
             return;
 
