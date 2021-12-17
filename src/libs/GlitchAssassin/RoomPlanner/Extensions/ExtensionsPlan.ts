@@ -1,3 +1,4 @@
+import { access } from "fs";
 import { ExtensionsPlan } from "..";
 import { PlannedStructure } from "../../RoomPlanner/PlannedStructure";
 import { costMatrixFromRoomPlan } from "../../Selectors/costMatrixFromRoomPlan";
@@ -27,17 +28,24 @@ export function fillExtensions(roomName: string, count: number) {
     const hq = roomPlans(roomName)?.headquarters;
 
     let startingPositions = new Set(
-        [ hq?.terminal.pos, hq?.powerSpawn.pos ]
+        [hq?.terminal.pos, hq?.powerSpawn.pos]
             .concat(hq?.towers.map(t => t.pos) ?? [])
-            .filter(isRoomPosition)
-            .flatMap(calculateAdjacentPositions)
-            .filter(pos => squareIsValid(terrain, cm, pos))
-    )
+            .filter(isRoomPosition));
 
-    if (!startingPositions) throw new Error('No viable starting position, aborting extensions plan')
+    let arr: RoomPosition[] = [];
+
+    startingPositions.forEach(x => {
+        arr.concat(calculateAdjacentPositions(x));
+    });
+
+    arr = arr.filter(pos => squareIsValid(terrain, cm, pos));
+
+    if (!arr) throw new Error('No viable starting position, aborting extensions plan')
 
     // Begin extensions outside HQ, offset diagonally from storage
-    let extensions = fillExtensionsRecursive(terrain, cm, Array.from(startingPositions), count);
+    let extensions = fillExtensionsRecursive(terrain, cm, arr, count);
+
+    console.log('extensions: ' + JSON.stringify(extensions));
 
     if (extensions.length < count) {
         throw new Error('Not enough room to fill extensions')
@@ -87,10 +95,10 @@ function getNeighboringExtensionSquares(pos: RoomPosition) {
 function squareIsValid(terrain: RoomTerrain, costMatrix: CostMatrix, pos: RoomPosition) {
     let positions = [
         pos,
-        new RoomPosition(Math.max(0, pos.x-1), pos.y, pos.roomName),
-        new RoomPosition(Math.min(49, pos.x+1), pos.y, pos.roomName),
-        new RoomPosition(pos.x, Math.max(0, pos.y-1), pos.roomName),
-        new RoomPosition(pos.x, Math.min(49, pos.y+1), pos.roomName),
+        new RoomPosition(Math.max(0, pos.x - 1), pos.y, pos.roomName),
+        new RoomPosition(Math.min(49, pos.x + 1), pos.y, pos.roomName),
+        new RoomPosition(pos.x, Math.max(0, pos.y - 1), pos.roomName),
+        new RoomPosition(pos.x, Math.min(49, pos.y + 1), pos.roomName),
     ]
     return positions.every(p => (
         terrain.get(p.x, p.y) !== TERRAIN_MASK_WALL &&
@@ -110,7 +118,7 @@ function sortExtensions(extensions: PlannedStructure[]) {
             const distanceFromStart = getRangeTo(s.pos, extensions[0].pos);
             let path = PathFinder.search(
                 lastPoint,
-                {pos: s.pos, range: 1},
+                { pos: s.pos, range: 1 },
                 {
                     roomCallback: n => getCostMatrix(n),
                     plainCost: 2,
@@ -120,7 +128,7 @@ function sortExtensions(extensions: PlannedStructure[]) {
 
             if (path.incomplete) throw new Error(`Unable to generate logistics route from ${lastPoint} to ${s.pos}`);
 
-            return {s, length: path.cost + distanceFromStart}
+            return { s, length: path.cost + distanceFromStart }
         }).reduce((a, b) => (!b || a.length < b.length) ? a : b);
 
         route.push(shortest.s);

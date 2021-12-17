@@ -108,7 +108,8 @@ export class CarrierProcess extends Process {
                     if (ret === ERR_NOT_ENOUGH_ENERGY) {
                         RESOURCES_ALL.forEach(r => {
                             if (this._creep && targetEnergySource && (targetEnergySource instanceof StructureContainer || targetEnergySource instanceof Tombstone)) {
-                                this._creep.withdraw(targetEnergySource, r);
+                                if (this._creep.withdraw(targetEnergySource, r) == OK)
+                                    RoleCommon.deleteGetEnergyRelatedMemory(this._creep);
                             }
                         });
                     }

@@ -106,10 +106,11 @@ export class MotherProcess extends Process {
             creepFactory.CreateCreep(Consts.roleUpgrader)
         }
 
-        const repairer = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleRepairer);
-        if (repairer.length < Consts.maxNumberRepairer) {
-            creepFactory.CreateCreep(Consts.roleRepairer)
-        }
+
+        // const repairer = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleRepairer);
+        // if (repairer.length < Consts.maxNumberRepairer) {
+        //     creepFactory.CreateCreep(Consts.roleRepairer)
+        // }
 
         if (this._room.find(FIND_CONSTRUCTION_SITES).length > 0) {
             const builders = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleBuilder);
