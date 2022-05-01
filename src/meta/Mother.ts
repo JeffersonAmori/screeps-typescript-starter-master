@@ -102,7 +102,7 @@ export class MotherProcess extends Process {
             const energyStoredInRoom = roomStorage.store.getUsedCapacity();
             additionalUpgrader = energyStoredInRoom > roomController.level * 20000 ? 1 : 0;
         }
-        if (upgraders.length < (Consts.maxNumberUpgrader /*+ additionalUpgrader*/)) {
+        if (upgraders.length < (Consts.maxNumberUpgrader /* + additionalUpgrader*/)) {
             creepFactory.CreateCreep(Consts.roleUpgrader)
         }
 

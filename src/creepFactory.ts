@@ -88,7 +88,7 @@ export class CreepFactory {
         new BodyPartsReference(Consts.roleBuilder, [
             new BodyPartRequest(WORK, 10),
             new BodyPartRequest(CARRY, 8),
-            new BodyPartRequest(MOVE, 18)]),
+            new BodyPartRequest(MOVE, 9)]),
 
         // ADVENTURERS
         new BodyPartsReference(Consts.rolePioneer, [
