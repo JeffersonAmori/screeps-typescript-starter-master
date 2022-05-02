@@ -26,6 +26,11 @@ export class MayorProcess extends Process {
     }
 
     public run(): number {
+        if(!this.memory){
+            this.kernel.killProcess(this.pid);
+            return -1;
+        }
+
         this._room = Game.rooms[this.memory.roomName];
         console.log('Mayor run ' + this._room.name);
 

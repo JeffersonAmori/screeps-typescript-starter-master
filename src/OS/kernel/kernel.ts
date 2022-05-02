@@ -143,9 +143,9 @@ let runOneQueue = function (queue: Process[]) {
                     process.run();
                 }
             } catch (e: any) {
-                console.log("Fail to run process:" + process.pid);
-                console.log(e.message);
-                console.log(e.stack);
+                console.log("Fail to run process: " + process.pid + " [" + process.classPath() + "]");
+                console.log("Message: " + e.message);
+                console.log("Stack: " + e.stack);
             }
             process = queue.pop();
         }

@@ -152,7 +152,9 @@ export const loop = ErrorMapper.wrapLoop(() =>
 
 function LoadMemory() {
     kernel.loadProcessTable();
-    GlobalMemory.RoomInfo = JSON.parse(Memory.RoomsInfo);
+    if (Memory.RoomsInfo.length > 0) {
+        GlobalMemory.RoomInfo = JSON.parse(Memory.RoomsInfo);
+    }
     Memory.kernelMemory = Memory.kernelMemory || {};
 }
 
