@@ -19,6 +19,7 @@ export class HarvesterProcess extends Process {
 
     /** @param {Creep} creep **/
     public run(): number {
+        this._creep = Game.getObjectById<Creep>(this.memory.creepId);
         if (!this._creep)
             return -1;
 
