@@ -40,6 +40,9 @@ export class MotherProcess extends Process {
             return;
 
         const controller = this._room.controller;
+        if (!controller)
+            return;
+
         if (Object.keys(GlobalMemory.RoomInfo).length > 1)
             if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
                 return;
@@ -90,7 +93,7 @@ export class MotherProcess extends Process {
                 creepFactory.CreateCreep(Consts.roleCarrier)
             }
         } else if (links.length === 0) {
-            if (harvesters.length === 0) {
+            if (harvesters.length < (Math.max(4 - controller.level, 1))) {
                 creepFactory.CreateCreep(Consts.roleHarvester)
             }
         }

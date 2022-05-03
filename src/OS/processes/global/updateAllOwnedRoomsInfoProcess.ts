@@ -17,7 +17,7 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process {
 
     public run(): number {
         console.log('Running UpdateAllOwnedRoomsInfoProcess');
-        GlobalMemory.RoomInfo = {};
+        GlobalMemory.RoomInfo = GlobalMemory.RoomInfo || {};
 
         _.forEach(Game.rooms, (room) => {
             if (room.controller && room.controller.my) {
