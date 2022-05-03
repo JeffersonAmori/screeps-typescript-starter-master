@@ -17,7 +17,7 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process {
 
     public run(): number {
         console.log('Running UpdateAllOwnedRoomsInfoProcess');
-        GlobalMemory.RoomInfo = GlobalMemory.RoomInfo || {};
+        GlobalMemory.RoomInfo = {};
 
         _.forEach(Game.rooms, (room) => {
             if (room.controller && room.controller.my) {
@@ -26,8 +26,10 @@ export class UpdateAllOwnedRoomsInfoProcess extends Process {
                 p = this.kernel.addProcess(p, ProcessPriority.LowPriority);
                 p.setup(room.name);
             }
+            else {
+                delete GlobalMemory.RoomInfo[room.name];
+            }
         });
-
 
         console.log('Sleeping UpdateAllOwnedRoomsInfoProcess');
         this.kernel.sleepProcessByTime(this, 200);
