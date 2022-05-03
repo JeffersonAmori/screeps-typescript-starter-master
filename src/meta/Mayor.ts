@@ -1,4 +1,3 @@
-import { Defcon } from "military/defcon";
 import { MotherProcess } from "meta/Mother";
 import { SheriffProcess } from "./Sheriff";
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
@@ -6,8 +5,7 @@ import { profile } from "libs/Profiler-ts";
 import { GlobalMemory } from "GlobalMemory";
 import { Process } from "OS/kernel/process";
 import * as kernel from "OS/kernel/kernel"
-import { SpawnCreepProcess } from "OS/processes/global/spawnCreepProcess";
-import { RoomData, RoomInfo } from "roomInfo";
+import { RoomData } from "roomInfo";
 
 
 @profile
@@ -71,11 +69,6 @@ export class MayorProcess extends Process {
     private breedTownsfolk() {
         if (!this._room || !this._roomInfo)
             return;
-
-        // if (!this.processAlreadyRunningOnThisRoom(SpawnCreepProcess.name)) {
-        //     const spawnCreepProcess = kernel.addProcess(new SpawnCreepProcess(0, this.pid)).setup(this._room.name);
-        //     this._roomInfo.processes[SpawnCreepProcess.name] = spawnCreepProcess.pid;
-        // }
 
         if (!this.processAlreadyRunningOnThisRoom(MotherProcess.name)) {
             const motherProcess = kernel.addProcess(new MotherProcess(0, this.pid)).setup(this._room.name);
