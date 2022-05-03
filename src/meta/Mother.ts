@@ -40,8 +40,9 @@ export class MotherProcess extends Process {
             return;
 
         const controller = this._room.controller;
-        // if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
-        //     return;
+        if (Object.keys(GlobalMemory.RoomInfo).length > 1)
+            if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
+                return;
 
         const roomInfo = GlobalMemory.RoomInfo[this._room.name];
 
