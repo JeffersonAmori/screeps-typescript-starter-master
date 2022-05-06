@@ -54,6 +54,7 @@ export class MotherProcess extends Process {
         const links = this._room.find(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_LINK) });
         const sources: Source[] | null = this._room.find(FIND_SOURCES);
         const extractors: StructureExtractor[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_EXTRACTOR });
+        const towers: StructureExtractor[] | null = this._room.find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER });
         const minerals: Mineral[] = this._room.find(FIND_MINERALS);
 
         const roomsCreeps = this._room.find(FIND_MY_CREEPS);
@@ -110,11 +111,12 @@ export class MotherProcess extends Process {
             creepFactory.CreateCreep(Consts.roleUpgrader)
         }
 
-
-        // const repairer = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleRepairer);
-        // if (repairer.length < Consts.maxNumberRepairer) {
-        //     creepFactory.CreateCreep(Consts.roleRepairer)
-        // }
+        if (towers.length === 0) {
+            const repairer = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleRepairer);
+            if (repairer.length < Consts.maxNumberRepairer) {
+                creepFactory.CreateCreep(Consts.roleRepairer)
+            }
+        }
 
         if (this._room.find(FIND_CONSTRUCTION_SITES).length > 0) {
             const builders = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleBuilder);

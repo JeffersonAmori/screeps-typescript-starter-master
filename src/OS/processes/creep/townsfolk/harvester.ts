@@ -20,8 +20,10 @@ export class HarvesterProcess extends Process {
     /** @param {Creep} creep **/
     public run(): number {
         this._creep = Game.getObjectById<Creep>(this.memory.creepId);
-        if (!this._creep)
+        if (!this._creep) {
+            this.kernel.killProcess(this.pid);
             return -1;
+        }
 
         if (this._creep.store.getUsedCapacity(RESOURCE_ENERGY) == this._creep.store.getCapacity(RESOURCE_ENERGY)) {
             this._creep.say('transfering');
