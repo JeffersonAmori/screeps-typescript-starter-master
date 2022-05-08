@@ -7,6 +7,7 @@ export class Consts {
     public static maxNumberPioneer = 3;
     public static maxNumberPillager = 1;
     public static maxNumberSoldier = 1;
+    public static maxNumberDiplomats = 1;
     public static maxNumberCarrierTeleporter = 1;
     public static maxNumberMeleeFightersForAnotherRoom = 3;
 
@@ -25,6 +26,7 @@ export class Consts {
     public static roleFighterMelee = 'meleeFighter';
     public static roleFighterMeleeForAnotherRoom = 'meleeFighterForAnotherRoom';
     public static roleFighterRanged = 'rangedFighter';
+    public static roleDiplomat = 'diplomat';
 
     public static roomLevelCanCreatePioneers = 4;
     public static roomLevelCanReceivePioneers = 3;

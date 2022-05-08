@@ -162,6 +162,3 @@ function SaveMemory() {
     Memory.RoomsInfo = JSON.stringify(GlobalMemory.RoomInfo);
     kernel.storeProcessTable();
 }
-
-function CleanMemory() {
-}

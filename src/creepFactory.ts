@@ -125,7 +125,12 @@ export class CreepFactory {
         new BodyPartsReference(Consts.rolefighterHealer, [
             new BodyPartRequest(TOUGH, 10),
             new BodyPartRequest(HEAL, 10),
-            new BodyPartRequest(MOVE, 20)])
+            new BodyPartRequest(MOVE, 20)]),
+
+        // DIPLOMACY
+        new BodyPartsReference(Consts.roleDiplomat, [
+          new BodyPartRequest(CLAIM, 1),
+          new BodyPartRequest(MOVE, 3)])
     ];
 
     private _room: Room;

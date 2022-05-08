@@ -1,0 +1,15 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskLabel": "task-rollup.config",
+      "appliesTo": "rollup.config.js",
+      "type": "launch"
+    },
+    {
+      "taskLabel": "task-package",
+      "appliesTo": "package.json",
+      "type": "launch"
+    }
+  ]
+}
