@@ -41,7 +41,7 @@ export class DiplomatProcess extends Process {
     if (!this._creep)
       return;
 
-    const controller = Game.creeps.Diplo.room.controller;
+    const controller = this._creep.room.controller;
 
     if (controller) {
       let ret = this._creep.claimController(controller);
