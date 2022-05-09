@@ -41,7 +41,7 @@ export class PillagerProcess extends Process {
     }
 
     pillaging() {
-        if (!this._creep)
+      if (!this._creep || !Game.flags.pillageFlag)
             return;
 
         if (this._creep.room !== Game.flags.pillageFlag.room) {
@@ -56,7 +56,7 @@ export class PillagerProcess extends Process {
     }
 
     delivering() {
-        if (!this._creep)
+      if (!this._creep || !Game.flags.pillageFlag)
             return;
 
         if (this._creep.room === Game.flags.pillageFlag.room) {

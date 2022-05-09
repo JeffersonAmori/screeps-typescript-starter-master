@@ -89,6 +89,7 @@ export class CarrierLinkerProcess extends Process {
             if (!target) {
                 target = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
             }
+
             if (target) {
                 if (this._creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                     this._creep.memory.targetEnergyDepositId = target.id;

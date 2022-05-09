@@ -169,7 +169,7 @@ export class CarrierProcess extends Process {
         if (!target) {
             if (GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId) {
                 const upgraderContainer = Game.getObjectById<StructureContainer>(GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId!);
-                if (upgraderContainer)
+              if (upgraderContainer && upgraderContainer.store.getFreeCapacity() > 0)
                     target = upgraderContainer;
             }
         }
@@ -178,16 +178,16 @@ export class CarrierProcess extends Process {
             target = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
         }
 
-        // if (!target) {
-        //     if (GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId) {
-        //         const upgraderContainer = Game.getObjectById<StructureContainer>(GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId!);
-        //         const storage = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
-        //         if (upgraderContainer && storage)
-        //             target = <StructureExtension | StructureContainer | StructureTower | StructureStorage>this._creep.pos.findClosestByPath([upgraderContainer, storage]);
-        //     } else {
-        //         target = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
-        //     }
-        // }
+         if (!target) {
+             if (GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId) {
+                 const upgraderContainer = Game.getObjectById<StructureContainer>(GlobalMemory.RoomInfo[this._creep.room.name].upgraderContainerId!);
+                 const storage = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
+                 if (upgraderContainer && storage)
+                     target = <StructureExtension | StructureContainer | StructureTower | StructureStorage>this._creep.pos.findClosestByPath([upgraderContainer, storage]);
+             } else {
+                 target = this._creep.pos.findClosestByPath(FIND_STRUCTURES, { filter: structure => (structure.structureType === STRUCTURE_STORAGE) && structure.store.getFreeCapacity(RESOURCE_ENERGY) > 0 });
+             }
+         }
 
         if (target) {
             if (this._creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
