@@ -44,7 +44,7 @@ export class MotherProcess extends Process {
       return;
 
     if (Object.keys(GlobalMemory.RoomInfo).length > 1)
-      if (controller && controller.level <= Consts.roomLevelCanReceivePioneers)
+      if (controller && controller.level < Consts.roomLevelCanReceivePioneers)
         return;
 
     const roomInfo = GlobalMemory.RoomInfo[this._room.name];
@@ -111,12 +111,12 @@ export class MotherProcess extends Process {
       creepFactory.CreateCreep(Consts.roleUpgrader)
     }
 
-    if (towers.length === 0) {
+    //if (towers.length === 0) {
       const repairer = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleRepairer);
       if (repairer.length < Consts.maxNumberRepairer) {
         creepFactory.CreateCreep(Consts.roleRepairer)
       }
-    }
+    //}
 
     if (this._room.find(FIND_CONSTRUCTION_SITES).length > 0) {
       const builders = _.filter(roomsCreeps, (c) => c.memory.role === Consts.roleBuilder);

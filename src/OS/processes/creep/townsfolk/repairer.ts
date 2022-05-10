@@ -6,104 +6,105 @@ import { BuilderProcess } from "./builder";
 
 @profile
 export class RepairerProcess extends Process {
-    private _creep: Creep | null = null;
+  private _creep: Creep | null = null;
 
-    public classPath(): string {
-        return "RepairerProcess";
+  public classPath(): string {
+    return "RepairerProcess";
+  }
+
+  // _[0] - creepId
+  public setup(..._: any[]) {
+    this.memory.creepId = _[0];
+    return this;
+  }
+
+  public run(): number {
+
+    this._creep = Game.getObjectById<Creep>(this.memory.creepId);
+    if (!this._creep) {
+      this.kernel.killProcess(this.pid);
+      return -1;
     }
 
-    // _[0] - creepId
-    public setup(..._: any[]) {
-        this.memory.creepId = _[0];
-        return this;
+    if (this._creep.memory.working && this._creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
+      this._creep.memory.working = false;
+      this._creep.say('harvesting');
+      if (this._creep.memory.role !== Consts.roleRepairer)
+        this.kernel.killProcess(this.pid);
     }
 
-    public run(): number {
-
-        this._creep = Game.getObjectById<Creep>(this.memory.creepId);
-        if (!this._creep) {
-            this.kernel.killProcess(this.pid);
-            return -1;
-        }
-
-        if (this._creep.memory.working && this._creep.store.getUsedCapacity(RESOURCE_ENERGY) === 0) {
-            this._creep.memory.working = false;
-            this._creep.say('harvesting');
-            if (this._creep.memory.role !== Consts.roleRepairer)
-                this.kernel.killProcess(this.pid);
-        }
-
-        if (!this._creep.memory.working && this._creep.store.getUsedCapacity(RESOURCE_ENERGY) === this._creep.store.getCapacity(RESOURCE_ENERGY)) {
-            this._creep.memory.working = true;
-            this._creep.say('repairing');
-            if (this._creep.memory.role !== Consts.roleRepairer)
-                this.kernel.killProcess(this.pid);
-        }
-
-        if (this._creep.memory.working) {
-            if (!this._creep.memory.structureToRepairId)
-                this.findConstructionSite();
-
-            if (this._creep.memory.structureToRepairId)
-                this.repair();
-        }
-        else {
-            this.getEnergy();
-        }
-
-        return 0;
+    if (!this._creep.memory.working && this._creep.store.getUsedCapacity(RESOURCE_ENERGY) === this._creep.store.getCapacity(RESOURCE_ENERGY)) {
+      this._creep.memory.working = true;
+      this._creep.say('repairing');
+      if (this._creep.memory.role !== Consts.roleRepairer)
+        this.kernel.killProcess(this.pid);
     }
 
-    findConstructionSite() {
-        if (!this._creep)
-            return;
+    if (this._creep.memory.working) {
+      if (!this._creep.memory.structureToRepairId)
+        this.findConstructionSite();
 
-        let structures = this._creep.room.find(FIND_STRUCTURES, {
-            filter: (s) => (s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL)
-        });
-
-        if (!structures) {
-            this.kernel.forkProcess(this, new BuilderProcess(0, this.pid))
-                .setup(this.memory.creepId);
-            return;
-        }
-
-        const rcl = this._creep.room.controller!.level;
-        let targetStructure = _.sortBy(structures, s => (s.hits / s.hitsMax && s.structureType !== STRUCTURE_RAMPART) || (s.hits / (s.hitsMax / (rcl * rcl * 100)) && s.structureType === STRUCTURE_RAMPART))[0];
-        this._creep.memory.structureToRepairId = targetStructure.id;
-
-        return;
+      if (this._creep.memory.structureToRepairId)
+        this.repair();
+    }
+    else {
+      this.getEnergy();
     }
 
-    repair() {
-        if (!this._creep || !this._creep.memory.structureToRepairId)
-            return;
+    return 0;
+  }
 
-        const structureToRepair: Structure | null = Game.getObjectById<Structure>(this._creep.memory.structureToRepairId);
+  findConstructionSite() {
+    if (!this._creep)
+      return;
 
-        if (!structureToRepair)
-            return;
+    let structures = this._creep.room.find(FIND_STRUCTURES, {
+      filter: (s) => (s.hits < s.hitsMax && s.structureType !== STRUCTURE_WALL)
+    });
 
-        if (structureToRepair.hits === structureToRepair.hitsMax) {
-            delete this._creep.memory.structureToRepairId;
-            return;
-        }
-
-        if (this._creep.repair(structureToRepair) === ERR_NOT_IN_RANGE) {
-            this._creep.travelTo(structureToRepair);
-        }
-
-        return;
+    if (!structures) {
+      this.kernel.forkProcess(this, new BuilderProcess(0, this.pid))
+        .setup(this.memory.creepId);
+      return;
     }
 
-    getEnergy() {
-        if (!this._creep)
-            return;
+    //const rcl = this._creep.room.controller!.level;
+    //let targetStructure = _.sortBy(structures, s => [(s.hits / s.hitsMax && s.structureType !== STRUCTURE_RAMPART) || (s.hits / (s.hitsMax / (rcl * rcl * 100)) && s.structureType === STRUCTURE_RAMPART)])[0];
+    let targetStructure = _.sortBy(structures, s => (s.hits / s.hitsMax))[0];
+    this._creep.memory.structureToRepairId = targetStructure.id;
 
-        delete this._creep.memory.structureToRepairId;
-        let p = this.kernel.forkProcess(this, new getEnergyProcess(0, this.pid));
-        p.setup(this.memory.creepId);
+    return;
+  }
 
-        return;
+  repair() {
+    if (!this._creep || !this._creep.memory.structureToRepairId)
+      return;
+
+    const structureToRepair: Structure | null = Game.getObjectById<Structure>(this._creep.memory.structureToRepairId);
+
+    if (!structureToRepair)
+      return;
+
+    if (structureToRepair.hits === structureToRepair.hitsMax) {
+      delete this._creep.memory.structureToRepairId;
+      return;
     }
+
+    if (this._creep.repair(structureToRepair) === ERR_NOT_IN_RANGE) {
+      this._creep.travelTo(structureToRepair);
+    }
+
+    return;
+  }
+
+  getEnergy() {
+    if (!this._creep)
+      return;
+
+    delete this._creep.memory.structureToRepairId;
+    let p = this.kernel.forkProcess(this, new getEnergyProcess(0, this.pid));
+    p.setup(this.memory.creepId);
+
+    return;
+  }
 };
