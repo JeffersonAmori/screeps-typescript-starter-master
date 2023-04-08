@@ -45,7 +45,7 @@ export abstract class Process {
         let deps = this.memory.deps = this.memory.deps || {};
         for (let dep of this.deps) {
             let [processClass, callback] = dep;
-            let t = new processClass(0, 0, 0);
+            let t = new processClass(0, 0, 1);
             let classPath = t.classPath();
             if ((!deps[classPath]) || (!Kernel.getProcessById(deps[classPath]))) {
                 let p = new processClass(0, this.pid);

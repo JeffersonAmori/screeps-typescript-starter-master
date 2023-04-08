@@ -1,15 +1,7 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\src",
-    "\\src\\OS",
-    "\\src\\OS\\processes",
-    "\\src\\OS\\processes\\creep",
-    "\\src\\OS\\processes\\creep\\explorers",
-    "\\src\\OS\\processes\\creep\\townsfolk",
-    "\\src\\OS\\processes\\global",
-    "\\src\\OS\\processes\\tower",
-    "\\src\\roles"
+    ""
   ],
+  "SelectedNode": "\\README.md",
   "PreviewInSolutionExplorer": false
 }

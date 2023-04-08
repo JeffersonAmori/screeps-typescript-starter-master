@@ -1,5 +1,5 @@
 import { GlobalMemory } from "GlobalMemory";
-import { Architect } from "meta/architect";
+import { Architect } from "meta/Architect";
 import { Overlord } from "meta/Overlord";
 import { ErrorMapper } from "utils/ErrorMapper";
 import { MachineState, StateMachine } from "when-ts";
@@ -62,16 +62,6 @@ declare global {
 
     interface KernelMemory {
         printProcess: boolean;
-    }
-
-    // Syntax for adding proprties to `global` (ex "global.log")
-    namespace NodeJS {
-        interface Global {
-            log: any;
-            Profiler: Profiler;
-            kernel: any;
-            GlobalMemory: any;
-        }
     }
 }
 

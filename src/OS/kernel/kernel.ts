@@ -1,11 +1,11 @@
 //https://github.com/NhanHo/screeps-kernel
 
 import { ProcessStatus } from "./process-status";
-
 import { ProcessPriority } from "./constants";
-import { Process } from "../typings/process";
-import { Lookup as processLookup } from "./process";
+// import { Process } from "../typings/process";
+import { Process, Lookup as processLookup } from "./process";
 import { ProcessSleepByProcess, ProcessSleepByTime } from "OS/kernel/process";
+import * as _ from 'lodash';
 
 let ticlyQueue: Process[] = [];
 let ticlyLastQueue: Process[] = [];
@@ -29,8 +29,13 @@ let getFreePid = function () {
 };
 
 export let garbageCollection = function () {
-  Memory.processMemory = _.pick(Memory.processMemory,
-    (_: any, k: string) => (processTable[k]));
+  // _.mapKeys(Memory.processMemory, (value: any, key: string) => {
+  //   if(processTable[key])
+  //     return processTable[key];
+  // });
+
+  // Memory.processMemory = _.pick(Memory.processMemory, (_: any, key: string) => (processTable[key]));
+  //Memory.processMemory = _.pickBy(Memory.processMemory, (p: Process) => !!processTable[p.pid]);
 };
 
 export let addProcess = function <T extends Process>(p: T, priority = ProcessPriority.LowPriority) {

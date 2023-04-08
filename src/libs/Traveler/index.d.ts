@@ -60,7 +60,6 @@ interface CreepMemory {
 }
 
 interface Memory {
-    empire: any;
 }
 
 type Coord = { x: number, y: number };

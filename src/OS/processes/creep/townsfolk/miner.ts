@@ -1,6 +1,7 @@
 import { Consts } from "consts";
 import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
+import * as _ from 'lodash';
 
 @profile
 export class MinerProcess extends Process {
@@ -97,7 +98,6 @@ export class MinerProcess extends Process {
 
         if (!targetContainer)
             return;
-
 
         this._creep.memory.targetContainerId = targetContainer.id;
     }

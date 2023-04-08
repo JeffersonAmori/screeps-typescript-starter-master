@@ -17,6 +17,7 @@ import { GlobalMemory } from "GlobalMemory";
 import { ProcessPriority } from "OS/kernel/constants";
 import { scanRooms } from "libs/GlitchAssassin/Intel/Rooms";
 import { DiplomatProcess } from "../OS/processes/creep/diplomacy/diplomat";
+import * as _ from 'lodash';
 
 @profile
 export class Overlord extends Process {

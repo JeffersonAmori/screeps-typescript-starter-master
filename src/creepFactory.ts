@@ -1,5 +1,6 @@
 import { Consts } from "consts";
 import { GlobalMemory } from "GlobalMemory";
+import * as _ from 'lodash';
 
 export class BodyPartRequest {
     private _bodyPart: BodyPartConstant;

@@ -17,6 +17,7 @@
         exploreTarget?: string;
     }
     interface RoomMemory {
+        avoid?: number;
         scanned?: number;
     }
 // }

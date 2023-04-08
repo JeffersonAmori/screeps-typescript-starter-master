@@ -2,6 +2,7 @@ import { Consts } from "consts";
 import { CreepFactory } from "creepFactory";
 import { GlobalMemory } from "GlobalMemory";
 import { Process } from "OS/kernel/process";
+import * as _ from 'lodash';
 
 export class MotherProcess extends Process {
   private _room: Room | null = null;
