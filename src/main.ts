@@ -8,7 +8,6 @@ import { garbageCollectionProcess } from "OS/processes/memory/garbageCollection"
 import { ProcessPriority } from "OS/kernel/constants";
 import * as Profiler from "libs/Profiler-ts/Profiler";
 import * as kernel from "OS/kernel/kernel"
-import { PlanRunProcess } from "libs/GlitchAssassin/RoomPlanner/planRooms";
 
 declare global {
     /*
@@ -19,50 +18,6 @@ declare global {
       Types added in this `global` block are in an ambient, global context. This is needed because `main.ts` is a module file (uses import or export).
       Interfaces matching on name from @types/screeps will be merged. This is how you can extend the 'built-in' interfaces from @types/screeps.
     */
-    // Memory extension samples
-    interface RoomMemory {
-        controllerId?: Id<StructureController>,
-        sourceIds?: Id<Source>[],
-        mineralId?: Id<Mineral>,
-        mineralType?: MineralConstant,
-        rcl?: number,
-        owner?: string,
-        reserver?: string,
-        reservation?: number,
-        rclMilestones?: Record<number, number>,
-        eligibleForOffice?: boolean,
-        lastHostileSeen?: number,
-        invaderCore?: number
-    }
-
-    interface Memory {
-        RoomsInfo: string;
-        Started: boolean;
-        RunArchitect: boolean;
-        kernelMemory: KernelMemory;
-    }
-
-    interface CreepMemory {
-        forceMoveToTargetContainer?: boolean;
-        isRenewing?: boolean;
-        otherResources?: ResourceConstant[];
-        linkReadyForActivation?: boolean;
-        role?: string;
-        room?: string;
-        structureToRepairId?: string;
-        targetConstructionSiteId?: string;
-        targetContainerId?: string;
-        targetEnemyId?: string;
-        targetEnergySourceId?: string;
-        targetEnergyDepositId?: string;
-        targetStructureLinkId?: string;
-        working?: boolean;
-        processId?: number;
-    }
-
-    interface KernelMemory {
-        printProcess: boolean;
-    }
 }
 
 global.Profiler = Profiler.init();
