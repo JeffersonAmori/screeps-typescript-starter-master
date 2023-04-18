@@ -1,4 +1,5 @@
 export class Consts {
+    // Population control.
     public static maxNumberHarvester = 0;
     public static maxNumberUpgrader = 1;
     public static maxNumberBuilder = 2;
@@ -10,7 +11,7 @@ export class Consts {
     public static maxNumberDiplomats = 1;
     public static maxNumberCarrierTeleporter = 1;
     public static maxNumberMeleeFightersForAnotherRoom = 3;
-
+    // Roles.
     public static roleBuilder = 'builder';
     public static roleCarrier = 'carrier';
     public static roleCarrierTeleporter = 'carrierTeleporter';
@@ -27,14 +28,14 @@ export class Consts {
     public static roleFighterMeleeForAnotherRoom = 'meleeFighterForAnotherRoom';
     public static roleFighterRanged = 'rangedFighter';
     public static roleDiplomat = 'diplomat';
-
+    // Room config.
     public static roomLevelCanCreatePioneers = 4;
     public static roomLevelCanReceivePioneers = 3;
-
+    // Creep repair.
     public static minTicksBeforeRepairing = 50;
     public static minTicksBeforeSpawningReplacement = 50;
     public static shouldRenewCreeps = false;
-
+    // Misc.
     public static garbageCollectionInterval = 100;
     public static towerRepairSleepTimer = 100;
 };

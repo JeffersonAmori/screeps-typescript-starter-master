@@ -1,7 +1,11 @@
 import { Process } from "./process";
 import { DummyProcess } from "./dummy-process";
 import { ProcessPriority } from "./constants";
+
 export class DummyProcessWithDeps extends Process {
+    public setup(..._: any[]): Process {
+        return this;
+    }
     protected deps = [];
 
     public classPath(): string {

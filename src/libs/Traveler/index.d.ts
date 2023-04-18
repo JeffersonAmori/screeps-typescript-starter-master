@@ -60,6 +60,10 @@ interface CreepMemory {
 }
 
 interface Memory {
+    RoomsInfo: string;
+    Started: boolean;
+    RunArchitect: boolean;
+    kernelMemory: KernelMemory
 }
 
 type Coord = { x: number, y: number };

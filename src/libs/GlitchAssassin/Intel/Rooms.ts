@@ -21,6 +21,7 @@ declare global {
         eligibleForOffice?: boolean,
         lastHostileSeen?: number,
         invaderCore?: number,
+        avoid?: number
     }
     interface Memory {
         positions: Record<string, string>

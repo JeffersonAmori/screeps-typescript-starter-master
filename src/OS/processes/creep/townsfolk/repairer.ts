@@ -3,6 +3,7 @@ import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
 import { getEnergyProcess } from "../common/getEnergy";
 import { BuilderProcess } from "./builder";
+import * as _ from 'lodash';
 
 @profile
 export class RepairerProcess extends Process {

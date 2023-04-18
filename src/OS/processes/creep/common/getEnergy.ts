@@ -1,4 +1,5 @@
 import { Process } from "OS/kernel/process";
+import * as _ from 'lodash';
 
 export class getEnergyProcess extends Process {
     private _creep: Creep | null = null;

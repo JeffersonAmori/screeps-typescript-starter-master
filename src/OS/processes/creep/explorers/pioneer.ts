@@ -1,6 +1,7 @@
 import "libs/Traveler/Traveler";
 import { Process } from "OS/kernel/process";
 import { BuilderProcess } from "../townsfolk/builder";
+import * as _ from 'lodash';
 
 export class PioneerProcess extends Process {
     private _creep: Creep | null = null;

@@ -1,4 +1,5 @@
 import { SourceMapConsumer } from "source-map";
+import * as _ from 'lodash';
 
 export class ErrorMapper {
   // Cache consumer
@@ -6,10 +7,11 @@ export class ErrorMapper {
 
   public static get consumer(): SourceMapConsumer {
     if (this._consumer == null) {
-      this._consumer = new SourceMapConsumer(require("main.js.map"));
-    }
+      new SourceMapConsumer(require("main.js.map")).then(value => {
+          this._consumer = value;
+        })}
 
-    return this._consumer;
+    return this._consumer!;
   }
 
   // Cache previously mapped traces to improve performance

@@ -2,6 +2,7 @@ import { profile } from "libs/Profiler-ts";
 import { Process } from "OS/kernel/process";
 import "libs/Traveler/Traveler";
 import { Consts } from "consts";
+import * as _ from 'lodash';
 
 @profile
 export class HarvesterProcess extends Process {
@@ -53,7 +54,7 @@ export class HarvesterProcess extends Process {
     else {
       let target: Structure | null = null;
       if (!this._creep.memory.otherResources) {
-        let otherResources = _.filter(RESOURCES_ALL, r => r !== RESOURCE_ENERGY && this._creep && this._creep.store.getUsedCapacity(r) > 0)
+        let otherResources = _.filter(RESOURCES_ALL, r => r !== RESOURCE_ENERGY && this._creep && this._creep.store.getUsedCapacity(r) > 0) as ResourceConstant[]
         this._creep.memory.otherResources = otherResources;
       }
 

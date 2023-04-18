@@ -3,6 +3,8 @@
  * Example: var Traveler = require('Traveler.js');
  */
 
+import * as _ from 'lodash';
+
 export class Traveler {
 
     private static structureMatrixCache: { [roomName: string]: CostMatrix } = {};

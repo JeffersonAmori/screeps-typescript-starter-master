@@ -3,6 +3,7 @@ import { profile } from "libs/Profiler-ts/Profiler";
 import { ProcessPriority } from "OS/kernel/constants";
 import { Process } from "OS/kernel/process";
 import { UpdateOwnedRoomInfo } from "./updateOwnedRoomInfo";
+import * as _ from 'lodash';
 
 @profile
 export class UpdateAllOwnedRoomsInfoProcess extends Process {

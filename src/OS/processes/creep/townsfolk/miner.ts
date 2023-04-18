@@ -61,7 +61,7 @@ export class MinerProcess extends Process {
         if (!this._creep)
             return;
 
-        let otherMiner = _.find(this._creep.room.find(FIND_MY_CREEPS), c => this._creep && c.memory.role == Consts.roleMiner && c.id != this._creep.id);
+        let otherMiner = _.find(this._creep.room.find(FIND_MY_CREEPS), c => this._creep && c.memory.role == Consts.roleMiner && c.id != this._creep.id) as Creep;
         if (!otherMiner) {
             const sources: Source[] | null = this._creep.room.find(FIND_SOURCES);
             const minerals: Mineral[] = this._creep.room.find(FIND_MINERALS);

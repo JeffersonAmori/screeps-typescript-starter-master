@@ -4,6 +4,7 @@ import { ResourceDistanceMap } from "models/ResourceDistanceMap";
 import { Process } from 'OS/kernel/process';
 import { profile } from "libs/Profiler-ts/Profiler";
 import "libs/Traveler/Traveler";
+import * as _ from 'lodash';
 
 @profile
 export class MinerLinkerProcess extends Process {

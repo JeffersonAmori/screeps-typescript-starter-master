@@ -3,6 +3,7 @@ import { GlobalMemory } from "GlobalMemory";
 import { profile } from "libs/Profiler-ts/Profiler";
 import { Process } from "OS/kernel/process";
 import { RoleCommon } from "roles/_common";
+import * as _ from 'lodash';
 
 @profile
 export class CarrierProcess extends Process {
@@ -150,7 +151,7 @@ export class CarrierProcess extends Process {
         }
 
         if (!target) {
-            let otherResources = _.filter(RESOURCES_ALL, r => r !== RESOURCE_ENERGY && this._creep && this._creep.store.getUsedCapacity(r) > 0);
+            let otherResources = _.filter(RESOURCES_ALL, r => r !== RESOURCE_ENERGY && this._creep && this._creep.store.getUsedCapacity(r) > 0) as ResourceConstant[];
             this._creep.memory.otherResources = otherResources;
 
             if (this._creep.memory.otherResources.length > 0) {

@@ -1,6 +1,7 @@
 import { GlobalMemory } from "GlobalMemory";
 import { profile } from "libs/Profiler-ts";
 import { Process } from "OS/kernel/process";
+import * as _ from 'lodash';
 
 @profile
 export class UpdateOwnedRoomInfo extends Process {
