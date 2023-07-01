@@ -1,12 +1,10 @@
-import { MotherProcess } from "meta/Mother";
-import { SheriffProcess } from "./Sheriff";
+import * as kernel from "OS/kernel/kernel";
+import { Process } from "OS/kernel/process";
 import { RepairViaTowerProcess } from "OS/processes/tower/repairViaTower";
 import { profile } from "libs/Profiler-ts";
-import { GlobalMemory } from "GlobalMemory";
-import { Process } from "OS/kernel/process";
-import * as kernel from "OS/kernel/kernel"
-import { RoomData } from "roomInfo";
-
+import { MotherProcess } from "meta/Mother";
+import { RoomData } from "roomData";
+import { SheriffProcess } from "./Sheriff";
 
 @profile
 export class MayorProcess extends Process {
@@ -44,6 +42,10 @@ export class MayorProcess extends Process {
         const towers = Game.rooms[this.memory.roomName].find(FIND_MY_STRUCTURES, { filter: s => s.structureType === STRUCTURE_TOWER });
 
         this._roomInfo = GlobalMemory.RoomInfo[this._room.name];
+
+        if(!this._roomInfo)
+            return 1;
+
         this._roomInfo.processes = this._roomInfo.processes || {};
         this._roomInfo.spawnCreepQueue = this._roomInfo.spawnCreepQueue || [];
 

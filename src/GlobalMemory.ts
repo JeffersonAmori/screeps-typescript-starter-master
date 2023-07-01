@@ -1,14 +1,8 @@
-import { RoomData, RoomInfo } from "roomInfo";
+import { RoomInfo } from "roomInfo";
 
-export class GlobalMemory {
-    private static _roomInfo: RoomInfo = {};
 
-    public static get RoomInfo(): RoomInfo {
-        return GlobalMemory._roomInfo;
-    }
-    public static set RoomInfo(value: RoomInfo) {
-        GlobalMemory._roomInfo = value;
-    }
+export type GlobalMemory = {
+     RoomInfo: RoomInfo;
 
-    public static overlordProcessId?: number;
+    overlordProcessId?: number;
 }

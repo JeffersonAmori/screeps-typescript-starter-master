@@ -1,23 +1,22 @@
-import { Consts } from "consts";
-import { MayorProcess } from "./Mayor";
-import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
-import { UpgraderProcess } from "OS/processes/creep/townsfolk/upgrader";
+import { ProcessPriority } from "OS/kernel/constants";
 import { Process } from "OS/kernel/process";
-import { RepairerProcess } from "OS/processes/creep/townsfolk/repairer";
 import { PillagerProcess } from "OS/processes/creep/explorers/pillager";
-import { MinerLinkerProcess } from "OS/processes/creep/townsfolk/minerLinker";
-import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
-import { HarvesterProcess } from "OS/processes/creep/townsfolk/harvester";
-import { CarrierLinkerProcess } from "OS/processes/creep/townsfolk/carrierLinker";
-import { BuilderProcess } from "OS/processes/creep/townsfolk/builder";
 import { PioneerProcess } from "OS/processes/creep/explorers/pioneer";
 import { SoldierProcess } from "OS/processes/creep/military/soldier";
-import { profile } from "libs/Profiler-ts";
-import { GlobalMemory } from "GlobalMemory";
-import { ProcessPriority } from "OS/kernel/constants";
+import { BuilderProcess } from "OS/processes/creep/townsfolk/builder";
+import { CarrierProcess } from "OS/processes/creep/townsfolk/carrier";
+import { CarrierLinkerProcess } from "OS/processes/creep/townsfolk/carrierLinker";
+import { HarvesterProcess } from "OS/processes/creep/townsfolk/harvester";
+import { MinerProcess } from "OS/processes/creep/townsfolk/miner";
+import { MinerLinkerProcess } from "OS/processes/creep/townsfolk/minerLinker";
+import { RepairerProcess } from "OS/processes/creep/townsfolk/repairer";
+import { UpgraderProcess } from "OS/processes/creep/townsfolk/upgrader";
+import { Consts } from "consts";
 import { scanRooms } from "libs/GlitchAssassin/Intel/Rooms";
-import { DiplomatProcess } from "../OS/processes/creep/diplomacy/diplomat";
+import { profile } from "libs/Profiler-ts";
 import * as _ from 'lodash';
+import { DiplomatProcess } from "../OS/processes/creep/diplomacy/diplomat";
+import { MayorProcess } from "./Mayor";
 
 @profile
 export class Overlord extends Process {
@@ -54,7 +53,7 @@ export class Overlord extends Process {
       if (creep.spawning) return;
 
       switch (creep.memory.role) {
-        case Consts.roleHarvester: {
+        case GlobalConsts.roleHarvester: {
           this.startCreepProcess(creep, new HarvesterProcess(0, this.pid));
           break;
         }

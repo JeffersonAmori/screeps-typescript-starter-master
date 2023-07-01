@@ -1,11 +1,14 @@
-import * as Kernel from "./kernel";
 import { ProcessPriority } from "./constants";
+import * as Kernel from "./kernel";
 import { ProcessStatus } from "./process-status";
+
 type ConcreteProcess = { new(pid: number, parentPID: number, priority?: ProcessPriority): Process };
 type DependencyInfo = [ConcreteProcess, ProcessSetupCallback];
-type ProcessSetupCallback = (p: Process) => void
+type ProcessSetupCallback = (p: Process) => void;
 
 export abstract class Process {
+    public pid: number;
+    public parentPID: number;
     public status: number;
     public abstract classPath(): string;
     public sleepInfo?: ProcessSleepByTime | ProcessSleepByProcess;
@@ -16,11 +19,13 @@ export abstract class Process {
     // public static reloadFromTable(pid: number, parentPID: number, priority = ProcessPriority.LowPriority) {
     //     const p = new Process()
     // }
-    constructor(public pid: number,
-        public parentPID: number,
+    constructor(pid: number,
+        parentPID: number,
         priority = ProcessPriority.LowPriority) {
-        this.status = ProcessStatus.ALIVE;
-        this.priority = priority;
+            this.pid = pid;
+            this.parentPID = parentPID;
+            this.status = ProcessStatus.ALIVE;
+            this.priority = priority;
     };
 
     public abstract run(): number;
@@ -83,6 +88,7 @@ export class ProcessSleepByTime {
     start: number = 0;
     duration: number = -1;
 }
+
 export class ProcessSleepByProcess {
-    pID: number = -1;
+    pid: number = -1;
 }

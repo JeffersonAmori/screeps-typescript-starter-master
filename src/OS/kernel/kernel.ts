@@ -1,17 +1,19 @@
 //https://github.com/NhanHo/screeps-kernel
 
-import { ProcessStatus } from "./process-status";
 import { ProcessPriority } from "./constants";
+import { ProcessStatus } from "./process-status";
 // import { Process } from "../typings/process";
-import { Process, Lookup as processLookup } from "./process";
 import { ProcessSleepByProcess, ProcessSleepByTime } from "OS/kernel/process";
 import * as _ from 'lodash';
+import { Process } from "./process";
 
 let ticlyQueue: Process[] = [];
 let ticlyLastQueue: Process[] = [];
 let lowPriorityQueue: Process[] = [];
 
-export let processTable: { [pid: string]: Process } = {};
+type ProcessTable = { [pid: string]: Process };
+
+export let processTable: ProcessTable = {};
 
 export let reboot = function () {
   ticlyQueue = [];
@@ -68,7 +70,7 @@ export let killProcess = function (pid: number) {
   }
 
   if (!processTable[pid])
-    return;
+    return -2;
 
   processTable[pid].status = ProcessStatus.DEAD;
   Memory.processMemory[pid] = undefined;
@@ -99,7 +101,7 @@ export let sleepProcessByTime = function (p: Process, ticks: number): Process {
 };
 
 export let sleepProcessByProcess = function (p: Process, p2: Process): Process {
-  return sleepProcess(p, { pID: p2.pid });
+  return sleepProcess(p, { pid: p2.pid });
 };
 
 export let sleepProcess = function (p: Process, sleepInfo: ProcessSleepByTime | ProcessSleepByProcess): Process {
@@ -137,13 +139,13 @@ let runOneQueue = function (queue: Process[]) {
             killProcess(process.pid);
           }
         }
-        if (process.status === ProcessStatus.SLEEP) {
-          if (((((<ProcessSleepByTime>process.sleepInfo)!.start + (<ProcessSleepByTime>process.sleepInfo)!.duration) < Game.time) && (<ProcessSleepByTime>process.sleepInfo)!.duration !== -1) ||
-            ((<ProcessSleepByProcess>process.sleepInfo) && !processTable[(<ProcessSleepByProcess>process.sleepInfo).pID] && !(<ProcessSleepByTime>process.sleepInfo)!.duration)) {
-            process.status = ProcessStatus.ALIVE;
-            process.sleepInfo = undefined;
-          }
-        }
+        // if (process.status === ProcessStatus.SLEEP) {
+        //   if (((((<ProcessSleepByTime>process.sleepInfo)!.start + (<ProcessSleepByTime>process.sleepInfo)!.duration) < Game.time) && (<ProcessSleepByTime>process.sleepInfo)!.duration !== -1) ||
+        //     ((<ProcessSleepByProcess>process.sleepInfo) && !processTable[(<ProcessSleepByProcess>process.sleepInfo).pid] && !(<ProcessSleepByTime>process.sleepInfo)!.duration)) {
+        //     process.status = ProcessStatus.ALIVE;
+        //     process.sleepInfo = undefined;
+        //   }
+        // }
         if (process.status === ProcessStatus.ALIVE) {
           process.run();
         }
@@ -213,9 +215,9 @@ export let resetProcessTable = function () {
 };
 
 export let getChildProcess = function (p: Process) {
-  let result: Process[] = [];
+  var result: Process[] = [];
   for (let i in processTable) {
-    let process = processTable[i];
+    var process = processTable[i];
     if (process.parentPID === p.pid) {
       result.push(process);
     }

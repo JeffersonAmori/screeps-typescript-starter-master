@@ -3,6 +3,7 @@ declare var Profiler: Profiler;
 declare var kernel: any;
 declare var GlobalMemory: any;
 declare var KernelMemory: KernelMemory;
+declare var GlobalConsts: Consts
 
 interface KernelMemory {
     printProcess: boolean;
@@ -48,4 +49,58 @@ interface RoomMemory {
     lastHostileSeen?: number,
     invaderCore?: number,
     avoid?: number
+}
+
+interface RoomData {
+    sumOfDistancesToSourcesFromSpawnHeuristic?: number;
+    storageLinkId?: string | null;
+    upgraderContainerId?: string | null;
+    towerRepairProcessId?: number | null;
+    mayorProcessId?: number | null ;
+    motherProcessId?: number | null;
+    noActiveResourceHarvest?: boolean;
+    sheriffProcessId?: number | null;
+    spawnCreepQueue: string[];
+    processes: { [id: string]: number };
+}
+
+interface Consts {
+    maxNumberHarvester : number;
+    maxNumberUpgrader : number;
+    maxNumberBuilder : number;
+    maxNumberRepairer : number;
+    maxNumberCarrier : number;
+    maxNumberPioneer : number;
+    maxNumberPillager : number;
+    maxNumberSoldier : number;
+    maxNumberDiplomats : number;
+    maxNumberCarrierTeleporter : number;
+    maxNumberMeleeFightersForAnotherRoom : number;
+    // Roles.
+    roleBuilder : string;
+    roleCarrier : string;
+    roleCarrierTeleporter : string;
+    roleHarvester : string;
+    roleMiner : string;
+    roleMinerLinker  : string;
+    roleRepairer : string;
+    roleUpgrader : string;
+    rolePioneer : string;
+    rolePillager : string;
+    roleSoldier : string;
+    rolefighterHealer : string;
+    roleFighterMelee : string;
+    roleFighterMeleeForAnotherRoom : string;
+    roleFighterRanged : string;
+    roleDiplomat : string;
+    // Room config.
+    roomLevelCanCreatePioneers : number;
+    roomLevelCanReceivePioneers : number;
+    // Creep repair.
+    minTicksBeforeRepairing : number;
+    minTicksBeforeSpawningReplacement : number;
+    shouldRenewCreeps : boolean;
+    // Misc.
+    garbageCollectionInterval : string;
+    towerRepairSleepTimer : string;
 }

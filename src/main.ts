@@ -1,13 +1,11 @@
-import { GlobalMemory } from "GlobalMemory";
+import { ProcessPriority } from "OS/kernel/constants";
+import * as kernel from "OS/kernel/kernel";
+import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
+import { garbageCollectionProcess } from "OS/processes/memory/garbageCollection";
+import * as Profiler from "libs/Profiler-ts/Profiler";
 import { Architect } from "meta/Architect";
 import { Overlord } from "meta/Overlord";
 import { ErrorMapper } from "utils/ErrorMapper";
-import { MachineState, StateMachine } from "when-ts";
-import { UpdateAllOwnedRoomsInfoProcess } from "OS/processes/global/updateAllOwnedRoomsInfoProcess";
-import { garbageCollectionProcess } from "OS/processes/memory/garbageCollection";
-import { ProcessPriority } from "OS/kernel/constants";
-import * as Profiler from "libs/Profiler-ts/Profiler";
-import * as kernel from "OS/kernel/kernel"
 
 declare global {
     /*
@@ -100,7 +98,7 @@ function LoadMemory() {
     if (Memory.RoomsInfo.length > 0) {
         GlobalMemory.RoomInfo = JSON.parse(Memory.RoomsInfo);
     }
-    Memory.kernelMemory = Memory.kernelMemory || {};
+    Memory.kernelMemory = Memory.kernelMemory || {  printProcess: false};
 }
 
 function SaveMemory() {
